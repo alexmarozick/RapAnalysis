@@ -8,7 +8,6 @@ import os
 from werkzeug.utils import secure_filename
 from werkzeug.exceptions import HTTPException, default_exceptions, Aborter
 import pprint
-import locationParse
 import requests
 import json
 import config
@@ -22,12 +21,12 @@ default_exceptions[400] = FileTypeException
 abort = Aborter()
 
 app = Flask(__name__)
-app.config['UPLOAD_PATH'] = 'TestFiles'
-app.config['UPLOAD_EXTENSIONS'] = ['.gpx', '.xml'] # can add other file types in the list
-secret_key = os.urandom(24)
-app.secret_key = secret_key
+# app.config['UPLOAD_PATH'] = 'TestFiles'
+# app.config['UPLOAD_EXTENSIONS'] = ['.gpx', '.xml'] # can add other file types in the list
+# secret_key = os.urandom(24)
+# app.secret_key = secret_key
 
-mapbox_key = config.get('mapbox_key')
+# mapbox_key = config.get('mapbox_key')
 
 @app.route('/', methods=['GET', 'POST'])
 def index():

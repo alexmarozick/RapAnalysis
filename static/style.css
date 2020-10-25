@@ -3,13 +3,18 @@
     --secondary-color: #536390;
     --font-color: #232835;
     --link-font-color: rgb(137, 137, 141);
-    --bg-color: #fab883;
+    --bg-color: #1DB954;
     --button-color: rgb(41, 41, 43);
     --button-color: #232835;
     --button-color-hover: #39435c;
     --button-color-text: white;
 
 }
+/* 
+  #ADDFAD moss green  
+  #1DB954 Spotify green
+*/
+
 
 *{
     margin: 0px;
@@ -20,12 +25,12 @@
 }
 
 [data-mode="dark"] {
-    --font-color: #fab883;
+    --font-color: #1DB954;
     --link-font-color:#e1e1ff;
     --bg-color: #232835;
     --heading-color: #818cab;
-    --button-color: #fab883;
-    --button-color-hover: #faa763;
+    --button-color: #1DB954;
+    --button-color-hover: #ADDFAD;
     --button-color-text: black;
 }
 
@@ -239,7 +244,7 @@ label.btn input[type=file]{
     height:360px;
     padding: 10px;
     border:10px solid #191d20;
-    color: #fab883;
+    color: #1DB954;
     font: 16px/26px;
     overflow:auto;
     border-radius: 1rem;
