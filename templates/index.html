@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+        <script src="https://kit.fontawesome.com/75ff20203d.js" crossorigin="anonymous"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Saira:wght@300;500&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="../static/style.css">
+        
+        <!-- For the mapbox map -->
+        <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+        <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
+
+        <!-- Javascript:  JQuery from a content distribution network (CDN) -->
+        <script
+        src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js">
+        </script>
+
+        <title>Your Favorite Rapper</title>
+    </head>
+
+
+<body>
+    <div class="nav-menu"> 
+        <div class="bar top"></div> <!--top bar of menu-->
+        <div class="bar"></div>     <!--mid bar of menu-->
+        <div class="bar bot"></div> <!--bottom bar of menu-->
+    </div>
+    <nav class="top-nav">
+        <ul class="nav-list">
+
+            <li class="nav-item">
+                <a href="#Home" class="nav-link">Home</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="#About" class="nav-link">About</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="#Contact" class="nav-link">Contact</a>
+            </li>
+            <li class="nav-social"> 
+                <div class="socials">
+                    <a href="https://github.com/Abduarraheem/Reverse-Geocode" class="icon-link" target="_blank">
+                        <i class="fa fa-github" aria-hidden="true"></i>
+                    </a>
+                </div>
+            </li>
+
+        </ul>
+        <!-- <li class="nav-item"> -->
+            <label class="switch">
+                <input type="checkbox" id="checkbox" />
+                <span class="slider"></span>
+            </label>
+        <!-- </li> -->
+    </nav>
+
+
+    <h1 class="title" id="Home">Your Favorite Rapper</h1>
+        <div class="btn-container">
+            <form method="POST" action="" enctype="multipart/form-data">
+                <label class="btn" id="upload-label">
+                    <input type="file" name="gpx_file" id="originalBtn" required>
+                    Upload GPX File:
+                    <span id="file-name">No file chosen</span>
+                </label>
+                <input class="btn" type="submit" name="Submit" value="Submit" id="submit-btn">
+            </form>
+        </div>
+        
+
+        <div class="output-box">
+            <div class="wrapper">
+               LYRICS HERE MAYBE
+            </div>
+        </div>
+
+        <!-- MAPBOX  -->
+       
+
+        </script>
+         <br> <br>
+        <!-- END OF MAPBOX -->
+
+
+        <section  id="About">
+            <h1 class="header-section">About</h1>
+            <div class="about-text">
+             ABOUT THE PROJECT GOES HERE 
+            </div>
+        
+        </section>
+
+        <section  id="Contact">
+            <h1 class="header-section">Contact</h1>
+                <ul class = "contact-list">
+                    <li class="contact-info">
+                        Juno Mayer: 
+                        <a href="https://github.com/Saybrr" class="contact-icon" target="_blank">
+                            <i class="fa fa-github" aria-hidden="true"></i>
+                        </a>
+
+                        <a href="https://www.linkedin.com/in/juno-mayer-b50a441a2/" class="contact-icon" target="_blank">
+                            <i class="fa fa-linkedin-square" aria-hidden="true"></i>
+                        </a>
+                        <br>
+                        <a class="email-link" href="mailto:gjvmayer@gmail.com"> gjvmayer@gmail.com</a>
+                    </li>
+
+                    <li class="contact-info">
+                        Alex Marozick: 
+
+                        <a href="https://github.com/alexmarozick" class="contact-icon" target="_blank">
+                            <i class="fa fa-github" aria-hidden="true"></i>
+                        </a>
+
+                        <a href="https://www.linkedin.com/in/alex-marozick-290b85195/" class="contact-icon" target="_blank">
+                            <i class="fa fa-linkedin-square" aria-hidden="true"></i>
+                        </a>
+
+                        <br>
+                        <a class="email-link" href="mailto:alexmarozick@gmail.com">alexmarozick@gmail.com</a>
+                    </li>
+
+                    <li class="contact-info">
+                        Abduarraheem Elfandi:  
+
+                        <a href="https://github.com/Abduarraheem" class="contact-icon" target="_blank">
+                            <i class="fa fa-github" aria-hidden="true"></i>
+                        </a>
+                        <br>
+                        <a class="email-link" href="mailto:elfandi.a23@gmail.com">elfandi.a23@gmail.com</a>
+                    </li>
+                </ul>
+        </section>
+        <br><br><br><br>
+    <script src="../static/main.js"></script>
+</body>
+
+</html>
