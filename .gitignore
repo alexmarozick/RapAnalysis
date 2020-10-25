@@ -1,12 +1,15 @@
 
+rap_analysis/.vscode/
+rap_analysis/.pytest_cache/
+rap_analysis/__pycache__/
 .vscode/
 .pytest_cache/
 __pycache__/
 # Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
+rap_analysis/*.env
+rap_analysis/*.venv
+rap_analysis/env/
+rap_analysis/venv/
+rap_analysis/ENV/
+rap_analysis/env.bak/
+rap_analysis/venv.bak/
