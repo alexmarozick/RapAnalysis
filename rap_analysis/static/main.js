@@ -67,21 +67,21 @@ for (var i = 0 ; i < navLink.length; i++) {
 const originalBtn = document.getElementById("originalBtn");
 const fileName = document.getElementById("file-name");
 
-originalBtn.addEventListener('change', ()=>{
-    if(originalBtn.value){
-        fileName.innerHTML = originalBtn.files[0].name;
-    }
-    else{
-        fileName.innerHTML = "No file chosen";
+// originalBtn.addEventListener('change', ()=>{
+//     if(originalBtn.value){
+//         fileName.innerHTML = originalBtn.files[0].name;
+//     }
+//     else{
+//         fileName.innerHTML = "No file chosen";
 
-    }
-});
+//     }
+// });
 
 const outputbox = document.querySelector('.output-box');
 const submitBtn = document.getElementById("submit-btn");
 
-submitBtn.addEventListener('click', ()=>{
-    if(originalBtn.value){
-        outputbox.innerHTML = "Processing data...";
-    }
-});
+// submitBtn.addEventListener('click', ()=>{
+//     if(originalBtn.value){
+//         outputbox.innerHTML = "Processing data...";
+//     }
+// });
