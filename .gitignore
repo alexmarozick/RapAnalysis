@@ -1,14 +1,18 @@
-
+#vscode
 rap_analysis/.vscode/
+#pycache
 rap_analysis/.pytest_cache/
 rap_analysis/__pycache__/
 rap_analysis/.flask_session/
 rap_analysis/.spotify_caches/
+.flask_session/
+.spotify_caches/
 rap_analysis/Prototypes/
 .vscode/
 .pytest_cache/
 __pycache__/
 # Environments
+/env
 rap_analysis/*.env
 rap_analysis/*.venv
 rap_analysis/env/

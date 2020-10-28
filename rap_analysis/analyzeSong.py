@@ -24,22 +24,10 @@ def possible_phones(word):
     return phone_dictionary[word]
 
 
-def word_similarity(first_word, second_word, start_phone=None, end_phone=None,debug=False):
-    # print(f"looking up Phonemes for {first_word} and {second_word}")
-    first_phones = possible_phones(first_word)
-    second_phones = possible_phones(second_word)
-
-
-
-    if not first_phones or not second_phones:
-        return 0
-
-    #just use first pronounciation of the words
-    first_phones = first_phones[0]
-    second_phones = second_phones[0]
-
-    first_range = first_phones[start_phone:end_phone]
-    second_range = second_phones[start_phone:end_phone]
+def phon_match(first_phon : list, second_phon : list,start : int, end: int,debug=False) -> int:
+    logging.debug(f"FIRST: {first_phon} SECOND: {second_phon}")
+    first_range = first_phon[start:end]
+    second_range = second_phon[start:end]
 
     first_range = first_range[::-1]
     second_range = second_range[::-1]
@@ -64,7 +52,34 @@ def word_similarity(first_word, second_word, start_phone=None, end_phone=None,de
                 hits += 1
                 total += 1
 
-    return hits / total
+    return hits/total
+
+def word_similarity(first_word, second_word, start_phone=None, end_phone=None,debug=False):
+    # print(f"looking up Phonemes for {first_word} and {second_word}")
+    first_phones = possible_phones(first_word)
+    second_phones = possible_phones(second_word)
+
+    if not first_phones or not second_phones:
+        return 0
+
+    #just use first pronounciation of the words
+
+    if len(first_phones) + len(second_phones) == 2:
+        first_phones = first_phones[0]
+        second_phones = second_phones[0] 
+        return phon_match(first_phones, second_phones,start_phone,end_phone,debug=True)
+    
+    else:
+    #we want to find if any pronouciations result in a rhyme
+        scorelist = []
+        for f_p in first_phones:
+            for s_p in second_phones: 
+                scorelist.append(phon_match(f_p,s_p,start_phone,end_phone,debug=True))
+            
+        if 1 in scorelist:
+            return 1
+        else: 
+            return 0
 
 
 
@@ -92,6 +107,7 @@ def mark_with_rhymes(lyrics : str, delims : dict) -> str:
     prev_found = 0
     for word in split_lyrics:
         found = False
+        iter_seg = iter_copy[split_lyrics.index(word)-20:split_lyrics.index(word)+20]
         for cpyword in iter_copy:
     #       if word similarity(word, copyword) > 0 then its a rhyme
             if word != cpyword: 
@@ -105,7 +121,10 @@ def mark_with_rhymes(lyrics : str, delims : dict) -> str:
                     logging.debug(f"cpyword {cpyword} was not found in CMUDict")
                     iter_copy.remove(cpyword)
                 else:
-                    shortest_phon = word_phon[0] if len(word_phon[0]) <= len(cpyword_phon[0]) else cpyword_phon[0]
+                    shortest_word_phon = min(word_phon, key=len)
+                    shortest_cpy_phon = min(cpyword_phon, key=len)
+                    shortest_phon = min([shortest_cpy_phon,shortest_word_phon], key=len)
+                    # word_phon if len(word_phon[0]) <= len(cpyword_phon[0]) else cpyword_phon
 
                     logging.debug(f"WORD: {word} {word_phon}, CPYWORD: {cpyword} {cpyword_phon}, SHORTEST: {shortest_phon}")
                     logging.debug(f"{len(shortest_phon)} phonemes in {shortest_phon}")
@@ -232,3 +251,32 @@ if __name__ == "__main__":
 #     '6complication6', '18from18', 'the', '17wire17', '28testimony28', '23was23', '6thin6', 
 #     '9caused9', '23his23', '6man6', 'to', '24go24', 'up', 'north', 'the', '2ball2', '5hit5', '18em18', '6again6', 
 #     '18lame18', '0rap0', 'snitch', 'nigga', '6even6', '20told20', '11on11', 'the', '11mexican11']
+
+
+# ['0rap0', 'snitches', '1telling1', '2all2', '3their3', '4business4', 
+# '5sit5', '6in6', '7the7', '5court5', '9and9', '7be7', '3their3', '6own6', '3star3', '4witness4', 
+
+# '14do14', '14you14', '10see10', '7the7', '16perpetrator16', 'yeah', "17i'm17", '5right5', '3here3',
+#  '18fuck18', '6around6', '5get5', '7the7', '2whole2', '2label2', '5sent5', '0up0', '16for16', '24years24',
+
+#   '0type0', '2profile2', '25low25', '18like18', '7a7', '6in6', '9paid9', '6in6', '2full2',
+#    '5attract5', '7heavy7', 'cash', '24cause24', '7the7', "24game's24", '2centrifugal2', 
+
+#    '16mr16', '18fantastik18', '1long1', '25dough25', 'like', '18elastic18', 
+#    '9guard9', '32my32', '33life33', '34with34', '11twin11', 'glocks', "4that's4", '9made9', '5out5', 'of', '18plastic18',
+
+#     "5can't5", '9stand9', '27a27', '6brown6', '1nosing1', 'nigga', '18fake18', '4ass4', '28bastard28',
+#     '1admiring1', '37my37', '21style21', '3tour3', '4bus4', '14through14', '6manhattan6', 
+
+#     '1plotting1', '6plan6', '7the7', '5quickest5', 'my', "flow's", '7the7', '5sickest5',
+#      'my', '24hoes24', '10be10', '10the10', '5thickest5', 'my', 'dro', 'the', '5stickiest5', 
+
+#      '5street5', 'nigga', '5stamped5', '9and9', '9bonafide9', 
+#      '6when6', '33beef33', '22jump22', 'niggas', '17come17', 'get', '10me10', 'cause', '27they27', '25know25', '32i32', '9ride9',
+     
+#       '14true14', '7to7', 'the', '10ski10', '18mask18', '14new14', "13york's13", 'my', '6origin6',
+#      '27play27', '27a27', 'fake', '7gangsta7', 'like', 'a', '9old9', '11accordion11', 
+#      '1according1', 'to', '17him17', 'when', 'the', "24d's24", '5rushed5', '6in6', 
+#      '6complication6', '17from17', 'the', '3wire3', '7testimony7', '24was24', '6thin6',
+#       '9caused9', '24his24', '6man6', 'to', '25go25', '22up22', '34north34', 'the', '2ball2', '5hit5', '17em17', '6again6',
+#        '17lame17', '0rap0', 'snitch', 'nigga', '6even6', '9told9', '6on6', 'the', '6mexican6']

@@ -10,7 +10,7 @@ activate:
 	(source env/bin/activate)
 
 run:
-	(source env/bin/activate; gunicorn app:app)
+	(source env/bin/activate; python3 rap_analysis/app.py)
 
 env:    requirements.txt
 	(python3 -mvenv env; \
