@@ -79,7 +79,9 @@ def spotifyRequest():
 def give_data(): 
     return jsonify({})
 
-
+@app.route('/spotify')
+def spotify():
+    return render_template("spotify.html")
 
 @app.errorhandler(404)
 def page_not_found(e):
