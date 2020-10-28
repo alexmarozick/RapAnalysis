@@ -6,6 +6,9 @@ install: rebuild
 
 rebuild: env 
 
+activate: 
+	(source env/bin/activate)
+
 run:
 	(source env/bin/activate; gunicorn app:app)
 

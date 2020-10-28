@@ -1,0 +1,2 @@
+['rap', 'snitches,', 'telling', 'all', 'their', 'business', 'Sit', 'in', 'the', 'court', 'and', 'be', 'their', 'own', 'star', 'witness']
+['rap', 'snitches,', 'telling', 'all', '0their0', '1business1', 'Sit', '2in2', 'the', 'court', 'and', 'be', '4their4', '2own2', '0star0', '1witness1']
