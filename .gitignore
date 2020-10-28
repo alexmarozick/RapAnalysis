@@ -2,6 +2,9 @@
 rap_analysis/.vscode/
 rap_analysis/.pytest_cache/
 rap_analysis/__pycache__/
+rap_analysis/.flask_session/
+rap_analysis/.spotify_caches/
+rap_analysis/Prototypes/
 .vscode/
 .pytest_cache/
 __pycache__/

@@ -36,7 +36,7 @@
             <li class="nav-item">
                 <a href="#About" class="nav-link">About</a>
             </li>
-
+            
             <li class="nav-item">
                 <a href="/spotify" class="nav-link">MySpotify</a>
             </li>
@@ -62,13 +62,13 @@
 
     <h1 class="title" id="Home">Your Favorite Rapper</h1>
         <div class="btn-container">
-            <form method="POST" action="" enctype="multipart/form-data">
+            <form method="POST" action="/login-btn" enctype="multipart/form-data">
                 <!-- <label class="btn" id="upload-label">
                     <input type="file" name="gpx_file" id="originalBtn" required>
                     Upload File:
                     <span id="file-name">No file chosen</span>
                 </label> -->
-                <input class="btn" type="submit" name="Login to Spotify" value="Login to Spotify" id="submit-btn">
+                <input class="btn" type="submit" name={{display}} value="{{display}}" id="sign-btn">
                 <!-- <input class="btn" type="login" name="Login" value="Login" id="login-btn"> -->
             </form>
         </div>

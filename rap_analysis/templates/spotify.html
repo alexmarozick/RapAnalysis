@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+        <script src="https://kit.fontawesome.com/75ff20203d.js" crossorigin="anonymous"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Saira:wght@300;500&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="../static/style.css">
+
+        <!-- Javascript:  JQuery from a content distribution network (CDN) -->
+        <script
+        src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js">
+        </script>
+
+        <title>Your Favorite Rapper</title>
+    </head>
+
+
+<body>
+    <div class="nav-menu"> 
+        <div class="bar top"></div> <!--top bar of menu-->
+        <div class="bar"></div>     <!--mid bar of menu-->
+        <div class="bar bot"></div> <!--bottom bar of menu-->
+    </div>
+    <nav class="top-nav">
+        <ul class="nav-list">
+
+            <li class="nav-item">
+                <a href="/" class="nav-link">Home</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="#About" class="nav-link">About</a>
+            </li>
+            
+            <li class="nav-item">
+                <a href="#Home" class="nav-link">MySpotify</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="#Contact" class="nav-link">Contact</a>
+            </li>
+            <li class="nav-social"> 
+                <div class="socials">
+                    <a href="https://github.com/Abduarraheem/Reverse-Geocode" class="icon-link" target="_blank">
+                        <i class="fa fa-github" aria-hidden="true"></i>
+                    </a>
+                </div>
+            </li>
+
+        </ul>
+            <label class="switch">
+                <input type="checkbox" id="checkbox" />
+                <span class="slider"></span>
+            </label>
+    </nav>
+
+
+    <h1 class="title" id="Home">Your Favorite Rapper</h1>
+        <div class="btn-container">
+            <form method="POST" action="/login-btn" enctype="multipart/form-data">
+                <!-- <label class="btn" id="upload-label">
+                    <input type="file" name="gpx_file" id="originalBtn" required>
+                    Upload File:
+                    <span id="file-name">No file chosen</span>
+                </label> -->
+                <input class="btn" type="submit" name={{display}} value="{{display}}" id="sign-btn">
+                <!-- <input class="btn" type="login" name="Login" value="Login" id="login-btn"> -->
+            </form>
+        </div>
+        
+
+        <div class="output-box">
+            <div class="wrapper">
+               LYRICS HERE MAYBE
+            </div>
+        </div>
+
+
+        
+
+        <section  id="About">
+            <h1 class="header-section">About</h1>
+            <div class="about-text">
+             ABOUT THE PROJECT GOES HERE 
+            </div>
+        
+        </section>
+
+        
+        <br><br><br><br>
+    <script src="../static/main.js"></script>
+</body>
+
+</html>
