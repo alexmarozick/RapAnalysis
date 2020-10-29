@@ -11,6 +11,7 @@ rap_analysis/Prototypes/
 .vscode/
 .pytest_cache/
 __pycache__/
+rap_analysis/config.ini
 # Environments
 /env
 rap_analysis/*.env

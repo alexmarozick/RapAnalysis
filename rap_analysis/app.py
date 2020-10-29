@@ -68,6 +68,18 @@ def session_cache_path():
 @app.route('/')
 def index():
 
+
+    return render_template("index.html")
+
+
+#TODO basically put whatever is in the index function in here, leave this to me - Abduarraheem
+@app.route('/spotify')
+def spotify():
+    return render_template("spotify.html")
+
+
+@app.route('/spotify_login')
+def spotify_login():
     # global session_counter # used for debugging
     # If a new user joins give random id to the user.
     if not session.get('uuid'):
@@ -85,18 +97,7 @@ def index():
         # NOTE here we can get data from the Spotify API.
         spotify = spotipy.Spotify(auth_manager=sp_oauth)
         display = "User: " + spotify.me()["display_name"] + " (Sign Out)"
-    return render_template("index.html", display=display)
-
-
-#TODO basically put whatever is in the index function in here, leave this to me - Abduarraheem
-@app.route('/spotify')
-def spotify():
-    return render_template("spotify.html")
-
-
-@app.route('/spotify_login')
-def spotify_login():
-    return render_template("spotify_login.html")
+    return render_template("spotify_login.html", display=display)
 
 
 @app.route('/login-btn', methods=['GET', 'POST'])    
@@ -155,7 +156,7 @@ def spotifyRequest():
     logging.debug(f'Code: {auth_code} Token: {sp_token}')       # for debugging
     session["spotify-token"] = sp_token                 # store token into the sessio, NOTE this might not be needed anymore because of how we store the session into the cache
     logging.debug("Leaving spotifyRequest")                     # for debugging
-    return redirect("/")
+    return redirect("/spotify_login")
 
 
 @app.route('/sign_out')
@@ -181,14 +182,25 @@ def get_lyrics():
         artist_name = req.get("artist")
         logging.debug(song_name)                                        # for debugging
         logging.debug(artist_name)                                      # for debugging
+
+        # convert json file to dict
+        # with open("lyrics.json") as json_file: 
+        #     lyricsJSON = json.load(json_file)
+        # try:
+        #     lyricsJSON[artist_name]
+
         genius = lyricsgenius.Genius(GENIUS_ACCESS_TOKEN)     # NOTE get client access token here https://genius.com/api-clients
         # artist = genius.search_artist(artist_name,max_songs=3)
         # print(artist)
         song = genius.search_song(song_name, artist_name)
-        logging.debug(song.lyrics)                                      # for debugging
-        logging.debug("Finished POST get-lyrics")
-        logging.debug("Analyzing Lyrics")
+        if song:
+            logging.debug(song.lyrics)                                      # for debugging
+            logging.debug("Finished POST get-lyrics")
+            logging.debug("Analyzing Lyrics")
         # marked_lyrics = analyzeSong.mark_with_rhymes(song.lyrics)                       # for debugging
+        # except KeyError:
+        #      logging.debug("Couldn't find artist in json file")
+             
         return redirect('/')
 
 
