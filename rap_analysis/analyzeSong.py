@@ -13,7 +13,7 @@ import nltk
 import logging
 import time
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 phone_dictionary = nltk.corpus.cmudict.dict()
 
@@ -91,22 +91,22 @@ def mark_with_rhymes(lyrics : str, delims : dict) -> str:
     #split lyrics string by newline to create a list by line 
     #split each line by space to get a list of lists 
     #create copy to iterate through and remove already processed 
-    split_lyrics = []
-    d = '\n'
-    split_lyrics = lyrics.lower().split()
-    split_lyrics = [l.strip(",?\"'.") for l in split_lyrics]
-    logging.debug(split_lyrics)
+    # split_lyrics = []
+    # d = '\n'
+    # split_lyrics = lyrics.lower().split()
+    # split_lyrics = [l.strip(",?\"'.") for l in split_lyrics]
 
     # for line in lines: 
     #     split_lyrics.append(line.split())
     #make copy unique to remove repeated lines 
-    iter_copy = deepcopy(split_lyrics)
+    logging.debug(lyrics)
+    iter_copy = deepcopy(lyrics)
     iter_copy = list(set(iter_copy))
-    mark_copy = deepcopy(split_lyrics)
+    mark_copy = deepcopy(lyrics)
 
     found_rhymes = 0 
     prev_found = 0
-    for word in split_lyrics:
+    for word in lyrics:
         found = False
         # iter_seg = iter_copy[split_lyrics.index(word)-20:split_lyrics.index(word)+20]
         for cpyword in iter_copy:
@@ -197,15 +197,25 @@ def parse_lyrics(lyrics=None,cmd=False,args=None) -> dict:
 
         # split lyrics by "[]" to seperate verses and choruses
         pprint.pprint(lyrics.split('\n'))
-        split_newl = lyrics.split('\n')
+        split_newl = lyrics.lower().split('\n')
+        
         print(80 * "-")
         size = len(split_newl)
+        #get indicies of all instances of empty string (these are blank lines inbetween sections)
         idx_list = [idx + 1 for idx, val in enumerate(split_newl) if val == ''] 
+        #generate new list seperated by sections 
+        sections = [split_newl[i: j] for i, j in zip([0] + idx_list, idx_list + ([size] if idx_list[-1] != size else []))] 
+        
+        # remove duplicate choruses
+        
+        # pprint.pprint(sections)
 
-        res = [split_newl[i: j] for i, j in zip([0] + idx_list, idx_list + ([size] if idx_list[-1] != size else []))] 
-        pprint.pprint(res)
+        # call mark_with_rhymes on each verse/chorus
+        for section in sections:
+            section = [l.strip(",?\"'.") for l in section]
+            section = section.split()
+            print(mark_with_rhymes(section,delims))
 
-        # call mark_with_rhymes on each verse
         # append build the dict of hexvals and words one section at a time 
 
 
@@ -224,8 +234,6 @@ def parse_lyrics(lyrics=None,cmd=False,args=None) -> dict:
         # toc = time.perf_counter()     
 
         # logging.info(f"{toc - tic} seconds for 100 song, {len(marked)} words")
-
-        print(marked)
 
     
     # print(marked)
