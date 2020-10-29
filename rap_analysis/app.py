@@ -16,10 +16,11 @@ import time
 from spotipy.oauth2 import SpotifyOAuth
 import uuid
 import lyricsgenius
+import config
+import logging
+import analyzeSong
 
-
-
-
+logging.basicConfig(level=logging.DEBUG)
 class FileTypeException(HTTPException):   # this error is thrown when the file type is incorrect
     code = 400
     description = 'Error: File Type Incorrect!'
@@ -37,13 +38,13 @@ app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_FILE_DIR'] = './.flask_session/'
 Session(app)
 
-client_id = 'Insert spotify client id' # NOTE hey do this
-client_secret = 'Insert spotify client secret' # NOTE hey do this
+client_id = config.get('SPOTIPY_CLIENT_ID','api') # NOTE hey do this
+client_secret = config.get('SPOTIPY_CLIENT_SECRET','api') # NOTE hey do this
 token_url = 'https://accounts.spotify.com/api/token'
 
 # NOTE Make sure this is also the same in your Spotify app.
-REDIRECT_URI = "http://127.0.0.1:5000/spotifyRequest"
-
+REDIRECT_URI = config.get('SPOTIPY_REDIRECT_URI','uri')
+GENIUS_ACCESS_TOKEN = config.get('GENIUS_CLIENT_ACCESS_TOKEN','api')
 # All the cached spotify data will be in this folder
 # but will be deleted as soon as the user signsout/session ends.
 caches_folder = '.spotify_caches/'
@@ -57,10 +58,10 @@ def session_cache_path():
     Function that returns the session cached path (basically the cache folder).
     '''
 
-    print("Starting session_cache_path")        # for debugging
-    print(caches_folder)                        # for debugging
-    print(session.get('uuid'))                  # for debugging
-    print("Finished session_cache_path")        # for debugging
+    logging.debug("Starting session_cache_path")        # for debugging
+    logging.debug(caches_folder)                        # for debugging
+    logging.debug(session.get('uuid'))                  # for debugging
+    logging.debug("Finished session_cache_path")        # for debugging
     return caches_folder + session.get('uuid')
 
 
@@ -124,11 +125,11 @@ def spotifyLogin():
     '''
 
 
-    print("Entered spotifyLogin")                       # for debugging
+    logging.debug("Entered spotifyLogin")                       # for debugging
     sp_oauth = SpotifyOAuth(client_id=client_id, client_secret=client_secret, redirect_uri= REDIRECT_URI, scope="user-read-private", cache_path=session_cache_path(), show_dialog=True)
     auth_url = sp_oauth.get_authorize_url()
-    print(f'/spotifyLogin authorizeurl: {auth_url}')    # for debugging
-    print("Leaving spotifyLogin")                       # for debugging
+    logging.debug(f'/spotifyLogin authorizeurl: {auth_url}')    # for debugging
+    logging.debug("Leaving spotifyLogin")                       # for debugging
     return redirect(auth_url)
 
 
@@ -147,9 +148,9 @@ def spotifyRequest():
     # session.clear()
     auth_code = request.args.get('code')                # get the code from the url.
     sp_token = sp_oauth.get_access_token(auth_code)     # use that code to get a token
-    print(f'Code: {auth_code} Token: {sp_token}')       # for debugging
+    logging.debug(f'Code: {auth_code} Token: {sp_token}')       # for debugging
     session["spotify-token"] = sp_token                 # store token into the sessio, NOTE this might not be needed anymore because of how we store the session into the cache
-    print("Leaving spotifyRequest")                     # for debugging
+    logging.debug("Leaving spotifyRequest")                     # for debugging
     return redirect("/")
 
 
@@ -170,18 +171,20 @@ def sign_out():
 @app.route('/get-lyrics', methods=['POST'])
 def get_lyrics():
     if request.method == "POST":
-        print("Starting POST get-lyrics")                       # for debugging
+        logging.debug("Starting POST get-lyrics")                       # for debugging
         req = request.form
         song_name = req.get("song")
         artist_name = req.get("artist")
-        print(song_name)                                        # for debugging
-        print(artist_name)                                      # for debugging
-        genius = lyricsgenius.Genius('Client Access Token')     # NOTE get client access token here https://genius.com/api-clients
+        logging.debug(song_name)                                        # for debugging
+        logging.debug(artist_name)                                      # for debugging
+        genius = lyricsgenius.Genius(GENIUS_ACCESS_TOKEN)     # NOTE get client access token here https://genius.com/api-clients
         # artist = genius.search_artist(artist_name,max_songs=3)
         # print(artist)
         song = genius.search_song(song_name, artist_name)
-        print(song.lyrics)                                      # for debugging
-        print("Finished POST get-lyrics")                       # for debugging
+        logging.debug(song.lyrics)                                      # for debugging
+        logging.debug("Finished POST get-lyrics")
+        logging.debug("Analyzing Lyrics")
+        # marked_lyrics = analyzeSong.mark_with_rhymes(song.lyrics)                       # for debugging
         return redirect('/')
 
 

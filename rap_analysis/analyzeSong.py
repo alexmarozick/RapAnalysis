@@ -35,12 +35,14 @@ def phon_match(first_phon : list, second_phon : list,start : int, end: int,debug
     if debug:
         logging.debug(f"FIRST RANGE: {first_range}, SECOND RANGE: {second_range}")
 
+    # we only want to loop through the smallest range
     if len(first_range) > len(second_range):
         first_range, second_range = second_range, first_range
 
     hits = 0
     total = len(first_range)
-
+    #TODO: check if there is only one phoneneme in first_range, 
+    # if so we can take out the loop here
     for idx, phone in enumerate(first_range):
         other_phone = second_range[idx]
 
@@ -62,15 +64,16 @@ def word_similarity(first_word, second_word, start_phone=None, end_phone=None,de
     if not first_phones or not second_phones:
         return 0
 
-    #just use first pronounciation of the words
-
+    # If there is only one pronouciation of both words
     if len(first_phones) + len(second_phones) == 2:
         first_phones = first_phones[0]
         second_phones = second_phones[0] 
         return phon_match(first_phones, second_phones,start_phone,end_phone,debug=True)
     
     else:
+    # multiple pronouciations for one or both words
     #we want to find if any pronouciations result in a rhyme
+    # append all rhyme scores to list, if any of them > 0 its a rhyme
         scorelist = []
         for f_p in first_phones:
             for s_p in second_phones: 
@@ -80,8 +83,6 @@ def word_similarity(first_word, second_word, start_phone=None, end_phone=None,de
             return 1
         else: 
             return 0
-
-
 
 def mark_with_rhymes(lyrics : str, delims : dict) -> str: 
     """
@@ -107,7 +108,7 @@ def mark_with_rhymes(lyrics : str, delims : dict) -> str:
     prev_found = 0
     for word in split_lyrics:
         found = False
-        iter_seg = iter_copy[split_lyrics.index(word)-20:split_lyrics.index(word)+20]
+        # iter_seg = iter_copy[split_lyrics.index(word)-20:split_lyrics.index(word)+20]
         for cpyword in iter_copy:
     #       if word similarity(word, copyword) > 0 then its a rhyme
             if word != cpyword: 
@@ -157,6 +158,8 @@ def mark_with_rhymes(lyrics : str, delims : dict) -> str:
         
     return mark_copy
 
+
+
 # def format_as_lyrics(marked : list, lyrics: str):
 #     """
 #     reads a list and a string, formats the list like the string
@@ -181,10 +184,16 @@ def main():
              7:['$','$'],
              8:['*','*'],
              9:['^','^']}
+    print(sys.argv)
+    if len(sys.argv) > 2 : 
+        logging.basicConfig(level=logging.DEBUG)
+        lyrics = open(sys.argv[2],'r').read()
+
+    else:
+        lyrics = open(sys.argv[1],'r').read() 
 
 
-    lyrics = open(sys.argv[1],'r').read()
-
+    
 
     tic = time.perf_counter()
     marked = mark_with_rhymes(lyrics, delims)
