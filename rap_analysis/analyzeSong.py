@@ -13,7 +13,7 @@ import nltk
 import logging
 import time
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 phone_dictionary = nltk.corpus.cmudict.dict()
 
@@ -91,22 +91,22 @@ def mark_with_rhymes(lyrics : str, delims : dict) -> str:
     #split lyrics string by newline to create a list by line 
     #split each line by space to get a list of lists 
     #create copy to iterate through and remove already processed 
-    split_lyrics = []
-    d = '\n'
-    split_lyrics = lyrics.lower().split()
-    split_lyrics = [l.strip(",?\"'.") for l in split_lyrics]
-    logging.debug(split_lyrics)
+    # split_lyrics = []
+    # d = '\n'
+    # split_lyrics = lyrics.lower().split()
+    # split_lyrics = [l.strip(",?\"'.") for l in split_lyrics]
 
     # for line in lines: 
     #     split_lyrics.append(line.split())
     #make copy unique to remove repeated lines 
-    iter_copy = deepcopy(split_lyrics)
+    logging.debug(lyrics)
+    iter_copy = deepcopy(lyrics)
     iter_copy = list(set(iter_copy))
-    mark_copy = deepcopy(split_lyrics)
+    mark_copy = deepcopy(lyrics)
 
     found_rhymes = 0 
     prev_found = 0
-    for word in split_lyrics:
+    for word in lyrics:
         found = False
         # iter_seg = iter_copy[split_lyrics.index(word)-20:split_lyrics.index(word)+20]
         for cpyword in iter_copy:
@@ -169,7 +169,7 @@ def mark_with_rhymes(lyrics : str, delims : dict) -> str:
 #     for i in range
 
 
-def main():
+def parse_lyrics(lyrics=None,cmd=False,args=None) -> dict:
 
     # string of delimiters of which to place aro
     # und words when rhymes are found
@@ -184,35 +184,63 @@ def main():
              7:['$','$'],
              8:['*','*'],
              9:['^','^']}
-    print(sys.argv)
-    if len(sys.argv) > 2 : 
-        logging.basicConfig(level=logging.DEBUG)
-        lyrics = open(sys.argv[2],'r').read()
+    if cmd:
+        #this function was run from command line 
+        print(args)
+        if len(args) > 2 : 
+            logging.basicConfig(level=logging.DEBUG)
+            lyrics = open(args[2],'r').read()
 
-    else:
-        lyrics = open(sys.argv[1],'r').read() 
+        else:
+            lyrics = open(args[1],'r').read() 
 
+
+        # split lyrics by "[]" to seperate verses and choruses
+        pprint.pprint(lyrics.split('\n'))
+        split_newl = lyrics.lower().split('\n')
+        
+        print(80 * "-")
+        size = len(split_newl)
+        #get indicies of all instances of empty string (these are blank lines inbetween sections)
+        idx_list = [idx + 1 for idx, val in enumerate(split_newl) if val == ''] 
+        #generate new list seperated by sections 
+        sections = [split_newl[i: j] for i, j in zip([0] + idx_list, idx_list + ([size] if idx_list[-1] != size else []))] 
+        
+        # remove duplicate choruses
+        
+        # pprint.pprint(sections)
+
+        # call mark_with_rhymes on each verse/chorus
+        for section in sections:
+            section = [l.strip(",?\"'.") for l in section]
+            section = section.split()
+            print(mark_with_rhymes(section,delims))
+
+        # append build the dict of hexvals and words one section at a time 
+
+
+
+
+        # return dict of hexval : words that rhyme 
+
+        # tic = time.perf_counter()
+        # marked = mark_with_rhymes(lyrics, delims)
+        # toc = time.perf_counter()
+        # logging.info(f"{toc - tic} seconds for one song")
+
+        # tic = time.perf_counter()
+        # for i in range(100):
+        #     marked = mark_with_rhymes(lyrics, delims)
+        # toc = time.perf_counter()     
+
+        # logging.info(f"{toc - tic} seconds for 100 song, {len(marked)} words")
 
     
-
-    tic = time.perf_counter()
-    marked = mark_with_rhymes(lyrics, delims)
-    toc = time.perf_counter()
-    logging.info(f"{toc - tic} seconds for one song")
-
-    tic = time.perf_counter()
-    for i in range(100):
-        marked = mark_with_rhymes(lyrics, delims)
-    toc = time.perf_counter()     
-
-    logging.info(f"{toc - tic} seconds for 100 song, {len(marked)} words")
-
-    print(marked)
     # print(marked)
 
 
 if __name__ == "__main__":
-    main()
+    parse_lyrics(cmd=True,args=sys.argv)
 
 
 

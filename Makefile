@@ -4,7 +4,7 @@ default: rebuild
 
 install: rebuild
 
-rebuild: env 
+rebuild: clean env dict 
 
 activate: 
 	(source env/bin/activate)
@@ -12,6 +12,9 @@ activate:
 run:
 	(source env/bin/activate; python3 rap_analysis/app.py)
 
+dict: 
+	(python3 dlcmudict.py:)
+	
 env:    requirements.txt
 	(python3 -mvenv env; \
 	source ./env/bin/activate; \

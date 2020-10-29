@@ -94,11 +94,12 @@ def spotify_login():
                             scope="user-read-private", cache_path=session_cache_path(), show_dialog=True)
     
     display = "Login to Spotify"
-    if sp_oauth.get_cached_token(): # FIXME this causes a warning, easy fix, leave this to me - Abduarraheem
+    if sp_oauth.get_cached_token():
         # Authorization Code Flow Step 3 
         # NOTE here we can get data from the Spotify API.
         spotify = spotipy.Spotify(auth_manager=sp_oauth)
         display = "User: " + spotify.me()["display_name"] + " (Sign Out)"
+        return render_template("spotify.html", display=display)
     return render_template("spotify_login.html", display=display)
 
 
