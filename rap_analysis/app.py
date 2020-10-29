@@ -67,10 +67,12 @@ def session_cache_path():
 
 @app.route('/')
 def index():
-
-
     return render_template("index.html")
 
+
+@app.route('/about')
+def about():
+    return render_template("about.html")
 
 #TODO basically put whatever is in the index function in here, leave this to me - Abduarraheem
 @app.route('/spotify')
