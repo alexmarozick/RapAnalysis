@@ -71,9 +71,15 @@
                 <input class="btn" type="submit" name={{display}} value="{{display}}" id="sign-btn">
                 <!-- <input class="btn" type="login" name="Login" value="Login" id="login-btn"> -->
             </form>
+    
         </div>
-        
-
+        <form method="POST" action="/get-lyrics" enctype="multipart/form-data">
+            <label for="sname">Song name:</label><br>
+            <input class="song" type="text" name="song" id="song">
+            <label for="sartist">Artist name:</label><br>
+            <input class="artist" type="text" name="artist" id="artist">
+            <input class="btn" type="submit" name="Submit" value="Submit" id="submit-btn">
+        </form>
         <div class="output-box">
             <div class="wrapper">
                LYRICS HERE MAYBE

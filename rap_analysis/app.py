@@ -15,6 +15,7 @@ import spotipy
 import time
 from spotipy.oauth2 import SpotifyOAuth
 import uuid
+import lyricsgenius
 
 
 
@@ -36,8 +37,8 @@ app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_FILE_DIR'] = './.flask_session/'
 Session(app)
 
-client_id = 'insert client id here' # NOTE hey do this
-client_secret = 'insert client secret here' # NOTE hey do this
+client_id = 'Insert spotify client id' # NOTE hey do this
+client_secret = 'Insert spotify client secret' # NOTE hey do this
 token_url = 'https://accounts.spotify.com/api/token'
 
 # NOTE Make sure this is also the same in your Spotify app.
@@ -164,6 +165,25 @@ def sign_out():
     except OSError as e:
         print ("Error: %s - %s." % (e.filename, e.strerror))
     return redirect('/')
+
+
+@app.route('/get-lyrics', methods=['POST'])
+def get_lyrics():
+    if request.method == "POST":
+        print("Starting POST get-lyrics")                       # for debugging
+        req = request.form
+        song_name = req.get("song")
+        artist_name = req.get("artist")
+        print(song_name)                                        # for debugging
+        print(artist_name)                                      # for debugging
+        genius = lyricsgenius.Genius('Client Access Token')     # NOTE get client access token here https://genius.com/api-clients
+        # artist = genius.search_artist(artist_name,max_songs=3)
+        # print(artist)
+        song = genius.search_song(song_name, artist_name)
+        print(song.lyrics)                                      # for debugging
+        print("Finished POST get-lyrics")                       # for debugging
+        return redirect('/')
+
 
 @app.route('/unknown')
 def give_data(): 
