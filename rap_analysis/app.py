@@ -94,6 +94,10 @@ def spotify():
     return render_template("spotify.html")
 
 
+@app.route('/spotify_login')
+def spotify_login():
+    return render_template("spotify_login.html")
+
 
 @app.route('/login-btn', methods=['GET', 'POST'])    
 def login():
