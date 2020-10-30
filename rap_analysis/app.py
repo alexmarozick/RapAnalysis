@@ -75,9 +75,9 @@ def about():
     return render_template("about.html")
 
 #TODO basically put whatever is in the index function in here, leave this to me - Abduarraheem
-@app.route('/spotify')
-def spotify():
-    return render_template("spotify.html")
+# @app.route('/spotify')
+# def spotify():
+#     return render_template("spotify.html")
 
 
 @app.route('/spotify_login')
