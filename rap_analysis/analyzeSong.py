@@ -16,6 +16,8 @@ import itertools
 
 logging.basicConfig(level=logging.INFO)
 
+#TODO: Look at checking by syllable, if its not possible 
+# Then check last TWO phonemes for rhyme 
 phone_dictionary = nltk.corpus.cmudict.dict()
 
 def possible_phones(word):
@@ -101,8 +103,8 @@ def mark_with_rhymes(lyrics : str, delims : dict) -> str:
     #     split_lyrics.append(line.split())
     #make copy unique to remove repeated lines 
     logging.debug(lyrics)
-    iter_copy = deepcopy(lyrics)
-    iter_copy = list(set(iter_copy))
+    # iter_copy = deepcopy(lyrics)
+    # iter_copy = list(set(iter_copy))
     mark_copy = deepcopy(lyrics)
 
     found_rhymes = 0 
@@ -113,9 +115,9 @@ def mark_with_rhymes(lyrics : str, delims : dict) -> str:
     for idx, rhymer in enumerate(lyrics):
         found = False
         # iter_seg = iter_copy[split_lyrics.index(word)-20:split_lyrics.index(word)+20]
-        for rhymee in iter_copy[idx:]:
+        for rhymee in mark_copy[idx:]:
     #       if word similarity(word, copyword) > 0 then its a rhyme
-            if rhymer != rhymee and rhymer in mark_copy: 
+            if rhymee in lyrics:
                 # we are concerned with end rhymes for now, only want to check if the last phoneme in the word matches
                 # so start at the last phoneme of the shortest word (length of shortest - 1 OR 1 if its a 1 phoneme word)
                 rhymer_phon = possible_phones(rhymer)
@@ -125,7 +127,7 @@ def mark_with_rhymes(lyrics : str, delims : dict) -> str:
                     logging.debug(f"rhymer {rhymer} was not found in CMUDict")
                 elif rhymee_phon == []: 
                     logging.debug(f"cpyword {rhymee} was not found in CMUDict")
-                    iter_copy.remove(rhymee)
+                    # iter_copy.remove(rhymee)
                 else:
                     #shortest pronounciation of each word 
                     shortest_rhymer_phon = min(rhymer_phon, key=len)
@@ -138,7 +140,7 @@ def mark_with_rhymes(lyrics : str, delims : dict) -> str:
                     # if we have a 1 phoneneme word, we dont subtract off the end (last phoneme is the only phoneme)
                     nphones_in_shortest = 0 if (len(shortest_phon) - 1) == 0 else len(shortest_phon) - 1
                     
-                    if word_similarity(rhymer,rhymee, start_phone=nphones_in_shortest, debug=True) == 1:
+                    if word_similarity(rhymer,rhymee, start_phone=(nphones_in_shortest), debug=True) == 1:
                         found = True
                         #rhyme is between WORD in splitlyrics (original) and some other word (rhymee) in the iter_copy
                         #mark both words in rhyme pair with the same number 
@@ -146,7 +148,7 @@ def mark_with_rhymes(lyrics : str, delims : dict) -> str:
                         delimnated_rhymee = str(found_rhymes) + rhymee + str(found_rhymes)
                         # replace ALL INSTANCES of the rhymee with a delimnated version of it
                         rhymee_indicies = [i for i, x in enumerate(mark_copy) if x == rhymee]
-                        logging.info(f"matching {rhymer}, {rhymee} is in {rhymee_indicies}")
+                        logging.debug(f"matching {rhymer}, {rhymee} is in {rhymee_indicies}")
                         for i in rhymee_indicies:
                             mark_copy[i] = delimnated_rhymee
 
@@ -155,15 +157,15 @@ def mark_with_rhymes(lyrics : str, delims : dict) -> str:
                             mark_copy[idx] = delimnated_rhymer
 
                         else:
-                            logging.info(f"{rhymer, idx} alerady marked by another rhyme, rhymee: {rhymee}")
-                            logging.info(f"{rhymee_indicies} indicies")
+                            logging.debug(f"{rhymer, idx} alerady marked by another rhyme, rhymee: {rhymee}")
+                            logging.debug(f"{rhymee_indicies} indicies")
         
                             # if we dont find the word, its because its already been marked 
                             
 
                         logging.debug(f"word {delimnated_rhymer} rhymes with {delimnated_rhymee}")
                         #delete it so we save time
-                        iter_copy.remove(rhymee)
+                        # iter_copy.remove(rhymee)
                         numremoved+= 1
             # else:
             #     #if the word is a duplicate, check for all duplicates, count the duplicates arhymes
@@ -201,7 +203,7 @@ def mark_with_rhymes(lyrics : str, delims : dict) -> str:
 #     for i in range
 
 
-def parse_lyrics(lyrics=None,cmd=False,args=None) -> dict:
+def parse_lyrics(lyrics=None,cmd=False,args=None,genius=True) -> dict:
 
     # string of delimiters of which to place aro
     # und words when rhymes are found
@@ -241,35 +243,35 @@ def parse_lyrics(lyrics=None,cmd=False,args=None) -> dict:
         # remove duplicate choruses
         
         # pprint.pprint(sections)
-
-
         # call mark_with_rhymes on each verse/chorus
+        songlyrics = []
         for section in sections:
             words = []
             for l in section[1:]:
                 for word in l.split():
                     words.append(word.strip(",?\"'.()")) 
 
+            songlyrics.append(words)
 
-            print(mark_with_rhymes(words,delims))
+            # (mark_with_rhymes(words,delims))
 
         # append build the dict of hexvals and words one section at a time 
 
-
-
-
         # return dict of hexval : words that rhyme 
 
-        # tic = time.perf_counter()
-        # marked = mark_with_rhymes(lyrics, delims)
-        # toc = time.perf_counter()
-        # logging.info(f"{toc - tic} seconds for one song")
+        tic = time.perf_counter()
+        for item in  songlyrics:
+            marked = mark_with_rhymes(item, delims)
+        toc = time.perf_counter()
+        logging.info(f"{toc - tic} seconds for one song")
 
-        # tic = time.perf_counter()
-        # for i in range(100):
-        #     marked = mark_with_rhymes(lyrics, delims)
-        # toc = time.perf_counter()     
-
+        tic = time.perf_counter()
+        for i in range(100):
+            for item in  songlyrics:
+                marked = mark_with_rhymes(item, delims)
+        toc = time.perf_counter()     
+        logging.info(f"{toc - tic} seconds for 100 song")
+        logging.info(marked)
         # logging.info(f"{toc - tic} seconds for 100 song, {len(marked)} words")
 
     
