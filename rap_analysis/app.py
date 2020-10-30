@@ -74,11 +74,6 @@ def index():
 def about():
     return render_template("about.html")
 
-#TODO basically put whatever is in the index function in here, leave this to me - Abduarraheem
-# @app.route('/spotify')
-# def spotify():
-#     return render_template("spotify.html")
-
 
 @app.route('/spotify_login')
 def spotify_login():
@@ -93,6 +88,13 @@ def spotify_login():
     sp_oauth = SpotifyOAuth(client_id=client_id, client_secret=client_secret, redirect_uri=REDIRECT_URI, 
                             scope="user-read-private", cache_path=session_cache_path(), show_dialog=True)
     
+    # Authorization Code Flow Step 2
+    if request.args.get('code'):
+        auth_code = request.args.get('code')                        # get the code from the url.
+        sp_token = sp_oauth.get_access_token(auth_code)             # use that code to get a token
+        return redirect("/spotify_login")
+
+
     display = "Login to Spotify"
     if sp_oauth.get_cached_token():
         # Authorization Code Flow Step 3 
@@ -112,54 +114,14 @@ def login():
         
         # So if we have a token(which means we are logged in) 
         # and the login button is clicked then we need to sign out
-        # TODO change naming conenetions to make this less confusing - Abduarraheem
 
         if not sp_oauth.get_cached_token():
-            return redirect("/spotifyLogin")
+            # Authorization Code Flow Step 1
+            auth_url = sp_oauth.get_authorize_url()
+            return redirect(auth_url)
         return redirect("/sign_out")
+    return redirect("spotify_login")
 
-
-# Could put this in the login-btn route instead.
-# Authorization Code Flow Step 1
-@app.route("/spotifyLogin", methods=['GET', 'POST'])
-def spotifyLogin():
-    '''
-        User login to spotify for app authoriztion.
-        A GET request is sent to the /authorize endpoint of spotify,
-        after loggging the Spotify Accounts service presents details of the scopes for which access is being sought.
-        After they accept or decline the user is redirected to the given redirect_uri,
-        in this case our redirect_uri redirects to /spotifyRequest where
-        the token is gotten from.
-    '''
-
-
-    logging.debug("Entered spotifyLogin")                       # for debugging
-    sp_oauth = SpotifyOAuth(client_id=client_id, client_secret=client_secret, redirect_uri= REDIRECT_URI, scope="user-read-private", cache_path=session_cache_path(), show_dialog=True)
-    auth_url = sp_oauth.get_authorize_url()
-    logging.debug(f'/spotifyLogin authorizeurl: {auth_url}')    # for debugging
-    logging.debug("Leaving spotifyLogin")                       # for debugging
-    return redirect(auth_url)
-
-
-
-# Authorization Code Flow Step 2
-@app.route("/spotifyRequest")
-def spotifyRequest():
-    '''
-    Post request which returns the access and refresh token.
-    '''
-    print("Entered spotifyRequest")
-
-    sp_oauth = SpotifyOAuth(client_id=client_id, client_secret=client_secret, redirect_uri=REDIRECT_URI, 
-                            scope="user-read-private", cache_path=session_cache_path(), show_dialog=True)
-    
-    # session.clear()
-    auth_code = request.args.get('code')                # get the code from the url.
-    sp_token = sp_oauth.get_access_token(auth_code)     # use that code to get a token
-    logging.debug(f'Code: {auth_code} Token: {sp_token}')       # for debugging
-    session["spotify-token"] = sp_token                 # store token into the sessio, NOTE this might not be needed anymore because of how we store the session into the cache
-    logging.debug("Leaving spotifyRequest")                     # for debugging
-    return redirect("/spotify_login")
 
 
 @app.route('/sign_out')
