@@ -138,7 +138,7 @@ def sign_out():
     return redirect('/')
 
 
-@app.route('/get-lyrics', methods=['POST'])
+@app.route('/get-lyrics', methods=['GET', 'POST'])
 def get_lyrics():
     if request.method == "POST":
         logging.debug("Starting POST get-lyrics")                       # for debugging
@@ -155,9 +155,11 @@ def get_lyrics():
         #     lyricsJSON[artist_name]
 
         genius = lyricsgenius.Genius(GENIUS_ACCESS_TOKEN)     # NOTE get client access token here https://genius.com/api-clients
-        # artist = genius.search_artist(artist_name,max_songs=3)
-        # print(artist)
-        song = genius.search_song(song_name, artist_name)
+        artist = genius.search_artist(artist_name)
+        print(artist)
+        # song = genius.search_song(song_name, artist_name)
+        # songDict = song.to_dict()
+        # print(songDict)
         if song:
             logging.debug(song.lyrics)                                      # for debugging
             logging.debug("Finished POST get-lyrics")
@@ -166,8 +168,7 @@ def get_lyrics():
         # except KeyError:
         #      logging.debug("Couldn't find artist in json file")
              
-        return redirect('/')
-
+    return redirect('/')
 
 @app.route('/unknown')
 def give_data(): 
