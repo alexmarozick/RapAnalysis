@@ -1,31 +1,13 @@
 {
     "lyricsdb" : 
     {
-        "Artist": 
+        "Artist1": 
         {
-            "album1": 
-            {
-                "song1" : [0,"lyrics1"], 
-                "song2" : [1,"lyrics2"]
-            },
-            "album2" :
-            {
-                "song1" : [0,"lyrics1"], 
-                "song2" : [1,"lyrics2"]
-            }             
+            "song-name": ["lyrics", "album-name"]
         },
         "Artist2": 
         {
-            "album1": 
-            {
-                "song1" : [0,"lyrics1"], 
-                "song2" : [1,"lyrics2"]
-            },
-            "album2" :
-            {
-                "song1" : [0,"lyrics1"], 
-                "song2" : [1,"lyrics2"]
-            }                    
+            "song-name": ["lyrics", "album-name"]
         }
 
     }
