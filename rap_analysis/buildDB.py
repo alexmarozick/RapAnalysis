@@ -8,6 +8,7 @@ cluster = pymongo.MongoClient("mongodb+srv://rapAnalysisUser:fPuQRGR3aRh81BB3@ly
 db = cluster["LyricsDB"]
 col = db["testArtists"]
 
+file_name = "artist_names.txt"
 
 # Solution 1 using the song name it will find an artist
 # There are a lot of similarties in cases 1 and 2 where 
@@ -18,6 +19,7 @@ def get_lyrics(song_name : str, artist_name : str):
     Using the song name and the artist name, this function will add songs to their
     respective artist dictionary.
 
+    TODO Review for accessing artist from the db properly.
     There are a few cases to conisder which are the following:
     Case 1 the given Artist already exist in the dictionary:
         - If the given song isn't in the artist dictionary then we use the lyricsgenius api
@@ -139,6 +141,8 @@ def buildArtist(artist_name : str):
     '''
     Get all songs from the given artist.
     Then from the result we can build our database.
+    TODO should make all artist names lower case before putting them to the DB
+    or check if DB keys aren't case sensitive.
     '''
     genius = lyricsgenius.Genius(GENIUS_ACCESS_TOKEN)
     # Turn off status messages
@@ -153,13 +157,16 @@ def buildArtist(artist_name : str):
     # Exclude songs with these words in their title
     # genius.excluded_terms = ["(Remix)", "(Live)"]
 
+    # NOTE If you want to get all songs from an artist remove max_songs
     artist = genius.search_artist(artist_name, max_songs=5)
     songList = artist.songs
     song_dict = {}
     for song in songList:
         song_dict.update({song.title : [song.lyrics, song.album]})
+    artist_name = artist.name.strip('$.') # TODO replace $ to S, also check for other cases that mongodb doesn't like
+    print(artist_name)
     print(f'Song Dict{song_dict}\n\n')
-    artist_dict = {artist.name : song_dict}
+    artist_dict = {artist_name : song_dict}
     print(f'Artist Dict{artist_dict}')
-    # col.insert_one(artist_dict) # FIXME pymongo.errors.ServerSelectionTimeoutError
+    col.insert_one(artist_dict)
     
