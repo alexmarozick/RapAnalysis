@@ -16,11 +16,12 @@ import time
 from spotipy.oauth2 import SpotifyOAuth
 import uuid
 import lyricsgenius
-import config
 import logging
 import analyzeSong
+import datetime
+from buildDB import get_lyrics
 
-logging.basicConfig(level=logging.DEBUG)
+# logging.basicConfig(level=app.logger.debug)
 class FileTypeException(HTTPException):   # this error is thrown when the file type is incorrect
     code = 400
     description = 'Error: File Type Incorrect!'
@@ -58,10 +59,10 @@ def session_cache_path():
     Function that returns the session cached path (basically the cache folder).
     '''
 
-    logging.debug("Starting session_cache_path")        # for debugging
-    logging.debug(caches_folder)                        # for debugging
-    logging.debug(session.get('uuid'))                  # for debugging
-    logging.debug("Finished session_cache_path")        # for debugging
+    app.logger.debug("Starting session_cache_path")        # for debugging
+    app.logger.debug(caches_folder)                        # for debugging
+    app.logger.debug(session.get('uuid'))                  # for debugging
+    app.logger.debug("Finished session_cache_path")        # for debugging
     return caches_folder + session.get('uuid')
 
 
@@ -139,36 +140,17 @@ def sign_out():
 
 
 @app.route('/get-lyrics', methods=['GET', 'POST'])
-def get_lyrics():
+def get_input():
     if request.method == "POST":
-        logging.debug("Starting POST get-lyrics")                       # for debugging
+        app.logger.debug("Starting POST get-lyrics")                       # for debugging
         req = request.form
-        song_name = req.get("song")
-        artist_name = req.get("artist")
-        logging.debug(song_name)                                        # for debugging
-        logging.debug(artist_name)                                      # for debugging
-
-        # convert json file to dict
-        # with open("lyrics.json") as json_file: 
-        #     lyricsJSON = json.load(json_file)
-        # try:
-        #     lyricsJSON[artist_name]
-
-        genius = lyricsgenius.Genius(GENIUS_ACCESS_TOKEN)     # NOTE get client access token here https://genius.com/api-clients
-        artist = genius.search_artist(artist_name)
-        print(artist)
-        # song = genius.search_song(song_name, artist_name)
-        # songDict = song.to_dict()
-        # print(songDict)
-        if song:
-            logging.debug(song.lyrics)                                      # for debugging
-            logging.debug("Finished POST get-lyrics")
-            logging.debug("Analyzing Lyrics")
-        # marked_lyrics = analyzeSong.mark_with_rhymes(song.lyrics)                       # for debugging
-        # except KeyError:
-        #      logging.debug("Couldn't find artist in json file")
-             
+        song_name = req.get("song").lower() # maybe
+        artist_name = req.get("artist").lower()
+        app.logger.debug(song_name)                                        # for debugging
+        app.logger.debug(artist_name)                                      # for debugging
+        get_lyrics(song_name, artist_name)
     return redirect('/')
+
 
 @app.route('/unknown')
 def give_data(): 
