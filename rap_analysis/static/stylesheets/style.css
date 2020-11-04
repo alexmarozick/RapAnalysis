@@ -34,12 +34,21 @@
     --button-color-text: black;
 }
 
+main{
+    width: 90vh;
+    padding: 30px 20px;
+    margin: 0 auto;
+    min-height: calc(100vh - 48px - 129.73px);  /* at minimum, footer will be at bottom (viewport - size of navbar - size of footer) */
+}
+
 body{
     font-family: 'Open Sans', sans-serif;
-    padding: 0;
     background-color: var(--bg-color);
     transition: background 0.4s;
     color: var(--font-color);
+    position: relative;
+    padding-bottom: 129.73px;
+    min-height: 100vh;
 }
 
 p {
