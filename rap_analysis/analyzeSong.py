@@ -13,6 +13,7 @@ import nltk
 import logging
 import time
 import itertools
+import random
 
 logging.basicConfig(level=logging.INFO)
 
@@ -110,6 +111,9 @@ def mark_with_rhymes(lyrics : str, delims : dict) -> str:
     found_rhymes = 0 
     prev_found = 0
     numremoved = 0
+    colorlist = [0] * len(mark_copy)
+    logging.info(f"{colorlist},{mark_copy}")
+    rhymecolor = random.randint(0,0xFFFFFF)
     #"dead in the middle of little italy"
     # middle == rhymer, little == rhymee
     for idx, rhymer in enumerate(lyrics):
@@ -140,7 +144,7 @@ def mark_with_rhymes(lyrics : str, delims : dict) -> str:
                     # if we have a 1 phoneneme word, we dont subtract off the end (last phoneme is the only phoneme)
                     nphones_in_shortest = 0 if (len(shortest_phon) - 1) == 0 else len(shortest_phon) - 1
                     
-                    if word_similarity(rhymer,rhymee, start_phone=(nphones_in_shortest), debug=True) == 1:
+                    if word_similarity(rhymer,rhymee, start_phone=(nphones_in_shortest -1), debug=True) == 1:
                         found = True
                         #rhyme is between WORD in splitlyrics (original) and some other word (rhymee) in the iter_copy
                         #mark both words in rhyme pair with the same number 
@@ -151,18 +155,18 @@ def mark_with_rhymes(lyrics : str, delims : dict) -> str:
                         logging.debug(f"matching {rhymer}, {rhymee} is in {rhymee_indicies}")
                         for i in rhymee_indicies:
                             mark_copy[i] = delimnated_rhymee
-
+                            colorlist[i] = rhymecolor
 
                         if mark_copy[idx] == rhymer:
                             mark_copy[idx] = delimnated_rhymer
+                            colorlist[idx] = rhymecolor
 
                         else:
                             logging.debug(f"{rhymer, idx} alerady marked by another rhyme, rhymee: {rhymee}")
                             logging.debug(f"{rhymee_indicies} indicies")
         
                             # if we dont find the word, its because its already been marked 
-                            
-
+                
                         logging.debug(f"word {delimnated_rhymer} rhymes with {delimnated_rhymee}")
                         #delete it so we save time
                         # iter_copy.remove(rhymee)
@@ -189,8 +193,9 @@ def mark_with_rhymes(lyrics : str, delims : dict) -> str:
         if found: 
             # this word did not rhyme and has not been delimnated / appended
             found_rhymes += 1
+            rhymecolor = random.randint(0,0xFFFFFF)
         
-    return mark_copy
+    return colorlist, mark_copy
 
 
 
@@ -203,7 +208,7 @@ def mark_with_rhymes(lyrics : str, delims : dict) -> str:
 #     for i in range
 
 
-def parse_lyrics(lyrics=None,cmd=False,args=None,genius=True) -> dict:
+def parse_and_analyze_lyrics(lyrics=None,cmd=False,args=None,genius=True) -> dict:
 
     # string of delimiters of which to place aro
     # und words when rhymes are found
@@ -218,6 +223,10 @@ def parse_lyrics(lyrics=None,cmd=False,args=None,genius=True) -> dict:
              7:['$','$'],
              8:['*','*'],
              9:['^','^']}
+
+    colors_for_html = []
+    marked_lyrics = []
+    lyrics = ""
     if cmd:
         #this function was run from command line 
         print(args)
@@ -228,58 +237,66 @@ def parse_lyrics(lyrics=None,cmd=False,args=None,genius=True) -> dict:
         else:
             lyrics = open(args[1],'r').read() 
 
+    else: 
+        lyrics = args
 
-        # split lyrics by "[]" to seperate verses and choruses
-        pprint.pprint(lyrics.split('\n'))
-        split_newl = lyrics.lower().split('\n')
-        
-        print(80 * "-")
-        size = len(split_newl)
-        #get indicies of all instances of empty string (these are blank lines inbetween sections)
-        idx_list = [idx + 1 for idx, val in enumerate(split_newl) if val == ''] 
-        #generate new list seperated by sections 
-        sections = [split_newl[i: j] for i, j in zip([0] + idx_list, idx_list + ([size] if idx_list[-1] != size else []))] 
-        
-        # remove duplicate choruses
-        
-        # pprint.pprint(sections)
-        # call mark_with_rhymes on each verse/chorus
-        songlyrics = []
-        for section in sections:
-            words = []
-            for l in section[1:]:
-                for word in l.split():
-                    words.append(word.strip(",?\"'.()")) 
 
-            songlyrics.append(words)
+    # split lyrics by "[]" to seperate verses and choruses
+    pprint.pprint(lyrics.split('\n'))
+    split_newl = lyrics.lower().split('\n')
+    
+    print(80 * "-")
+    size = len(split_newl)
+    #get indicies of all instances of empty string (these are blank lines inbetween sections)
+    idx_list = [idx + 1 for idx, val in enumerate(split_newl) if val == ''] 
+    #generate new list seperated by sections 
+    sections = [split_newl[i: j] for i, j in zip([0] + idx_list, idx_list + ([size] if idx_list[-1] != size else []))] 
+    
+    # remove duplicate choruses
+    
+    # pprint.pprint(sections)
+    # call mark_with_rhymes on each verse/chorus
+    songlyrics = []
+    for section in sections:
+        words = []
+        for l in section[1:]:
+            for word in l.split():
+                words.append(word.strip(",?\"'.()")) 
+
+        songlyrics.append(words)
 
             # (mark_with_rhymes(words,delims))
 
         # append build the dict of hexvals and words one section at a time 
 
         # return dict of hexval : words that rhyme 
-
+       
         tic = time.perf_counter()
-        for item in  songlyrics:
-            marked = mark_with_rhymes(item, delims)
+        for item in songlyrics:
+            colorlist, marked = mark_with_rhymes(item, delims)
+            colors_for_html.append(colorlist)
+            marked_lyrics.append(marked)
+            logging.info(marked)
         toc = time.perf_counter()
         logging.info(f"{toc - tic} seconds for one song")
+        logging.info(colors_for_html)
 
-        tic = time.perf_counter()
-        for i in range(100):
-            for item in  songlyrics:
-                marked = mark_with_rhymes(item, delims)
-        toc = time.perf_counter()     
-        logging.info(f"{toc - tic} seconds for 100 song")
-        logging.info(marked)
+        # tic = time.perf_counter()
+        # for i in range(100):
+        #     for item in  songlyrics:
+        #         marked = mark_with_rhymes(item, delims)
+        # toc = time.perf_counter()     
+        # logging.info(f"{toc - tic} seconds for 100 song")
+        # logging.info(marked)
         # logging.info(f"{toc - tic} seconds for 100 song, {len(marked)} words")
 
-    
+
     # print(marked)
+    return colors_for_html,marked_lyrics
 
 
 if __name__ == "__main__":
-    parse_lyrics(cmd=True,args=sys.argv)
+    parse_and_analyze_lyrics(cmd=True,args=sys.argv)
 
 
 
