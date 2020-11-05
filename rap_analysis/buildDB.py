@@ -2,7 +2,25 @@ import lyricsgenius
 import config
 import json
 import pymongo
+import sys
+import os
+import spotipy
+from pprint import pprint as pp
+from spotipy.oauth2 import SpotifyClientCredentials
+from requests.exceptions import HTTPError, Timeout
+import time 
+
 GENIUS_ACCESS_TOKEN = config.get('GENIUS_CLIENT_ACCESS_TOKEN','api')
+# NOTE Make sure this is also the same in your Spotify app.
+REDIRECT_URI = config.get('SPOTIPY_REDIRECT_URI','uri')
+
+client_id = config.get('SPOTIPY_CLIENT_ID','api') # NOTE hey do this
+client_secret = config.get('SPOTIPY_CLIENT_SECRET','api') # NOTE hey do this
+token_url = 'https://accounts.spotify.com/api/token'
+
+
+spotify = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=client_id, client_secret=client_secret))
+
 
 cluster = pymongo.MongoClient("mongodb+srv://rapAnalysisUser:fPuQRGR3aRh81BB3@lyricsstorage.9tro8.mongodb.net/LyricsStorage?retryWrites=true&w=majority")
 db = cluster["LyricsDB"]
@@ -106,28 +124,50 @@ def get_lyrics(song_name : str, artist_name : str):
 
 
 # Solution 2
-def solution2(song_name : str, artist_name : str):
+def buildSongBySong(song_list : list, artist_name : str,builtdict : dict):
     '''
     Given song and artist name go use lyricsgenius api to get
     the song, then check if it exists in the dict, if not then add it
     else generate results 
     '''
-    with open("db.json") as json_file: 
-        lyricsJSON = json.load(json_file)
+    # with open("db.json") as json_file: 
+    #     lyricsJSON = json.load(json_file)
 
     genius = lyricsgenius.Genius(GENIUS_ACCESS_TOKEN)
-    song = genius.search_song(song_name, artist_name)
-    # add a check here to see if we found a song
-    artist_name = song.artist.lower()
-    song_name = song.title.lower()
-    album_name = song.albumn
-    if not artist_name in lyricsJSON:
-        song_dict = {song_name : [song.lyrics, album_name]}
-        artist_dict = {artist_name : song_dict}
-        lyricsJSON.update(artist_dict)
-    elif not song_name in lyricsJSON[artist_name]:
-        song_dict = {song_name : [song.lyrics, album_name]}
-        lyricsJSON.update(artist_dict)
+    numadded = 0
+    try: 
+        for idx, song in enumerate(song_list):
+            genius_song = genius.search_song(song, artist_name)
+            # add a check here to see if we found a song
+            if genius_song is None:
+                print("Skipping")
+                continue
+            genius_artist_name = genius_song.artist.lower()
+            song_name = genius_song.title.lower().replace('.', "").replace("$",'s')
+            album_name = genius_song.album
+            numadded = idx
+            # col.update with $addToSet 
+            builtdict.update({song_name: [genius_song.lyrics,album_name]})
+
+        #when we have gone through all the songs, add the whole artist dict to the collection
+
+    except Timeout:
+        # if we get timed out, pick up where we left off by recursively calling on the
+        # songs that we have not yet processed, carry over the dict to the final call
+        # i think this is tail recursion
+        print("Sleeping after a Timeout for 60sec")
+        sleep(60)
+        return buildSongBySong(song_list[numadded], artist_name,builtdict)
+
+    return builtdict
+    
+    # if not artist_name in lyricsJSON:
+    #     song_dict = {song_name : [song.lyrics, album_name]}
+    #     artist_dict = {artist_name : song_dict}
+    #     lyricsJSON.update(artist_dict)
+    # elif not song_name in lyricsJSON[artist_name]:
+    #     song_dict = {song_name : [song.lyrics, album_name]}
+    #     lyricsJSON.update(artist_dict)
     # generate result here.
 
 # Solution 3
@@ -155,18 +195,90 @@ def buildArtist(artist_name : str):
     # genius.skip_non_songs = False
 
     # Exclude songs with these words in their title
-    # genius.excluded_terms = ["(Remix)", "(Live)"]
+    
+
+    genius.excluded_terms = ["(Remix)", "(Live)"]
 
     # NOTE If you want to get all songs from an artist remove max_songs
-    artist = genius.search_artist(artist_name, max_songs=5)
+    try: 
+        artist = genius.search_artist(artist_name)
+    except: TimeoutError
     songList = artist.songs
     song_dict = {}
     for song in songList:
         song_dict.update({song.title : [song.lyrics, song.album]})
-    artist_name = artist.name.strip('$.') # TODO replace $ to S, also check for other cases that mongodb doesn't like
+    artist_name = artist.name.replace('.', "").replace("$","s") # TODO replace $ to S, also check for other cases that mongodb doesn't like
     print(artist_name)
     print(f'Song Dict{song_dict}\n\n')
     artist_dict = {artist_name : song_dict}
     print(f'Artist Dict{artist_dict}')
     col.insert_one(artist_dict)
     
+
+
+def searchForSongs(artist : str) -> list:
+    '''
+    Takes an artist and returns all song names made by that artist using spotify API 
+    '''
+    offset = 0
+    song_list = []
+    while True:
+        try:
+            results = spotify.search(q='artist:' + artist,limit=50, offset=offset, type='track')
+            #do search for 50 tracks
+            # if len(result[tracknames] == 0)
+            if len(results['tracks']['items']) == 0:
+                #stop when no songs are returned with the given offset
+                break
+            else: 
+                for item in results['tracks']['items']:
+                    song_list.append(item['name'].replace('.', "").replace("$",'s'))
+                offset+= 50
+        except spotipy.exceptions.SpotifyException:
+            print("Reached End of Query")
+            break
+
+    return song_list
+
+def main():
+    '''
+    Juno -- 
+    Made a main so we can call artist list from a file that we open and read 
+    '''
+    song_list = []
+    with open(sys.argv[1], 'r') as f:
+        artist_list = f.read().split('\n')
+        print(artist_list) 
+        artist_list.remove('')
+        for artist in artist_list:
+            print(f"getting songs for {artist}")
+            song_list = searchForSongs(artist)
+            song_list = list(set(song_list))
+            print(f"getting lrics for {len(song_list)} songs")
+            song_dict = buildSongBySong(song_list, artist,{})
+            print(song_dict)
+            print("placing into mongodb")
+            col[artist.lower().replace('.', "").replace("$",'s')].insert_one(song_dict)
+
+
+
+    print(song_list)
+        # for item in song_list:
+        #     buildArtist(item)
+
+                    #offset +50 
+            # if len(artist) > 1:
+            #     results = spotify.search(q='artist:' + artist, type='track',limit=50)
+            #     restracks = [item for item in results['tracks']['items']]
+            #     # resfiltered [item in for item in restracks if item['artists']
+            #     for item in restracks:
+            #         del item['available_markets']
+            #         del item['album']['available_markets']
+            #         pp(item)
+            #         print(80 * '-')
+            #pp(tracknames)
+            #buildArtist(artist)
+
+
+if __name__ == "__main__":
+    main()
