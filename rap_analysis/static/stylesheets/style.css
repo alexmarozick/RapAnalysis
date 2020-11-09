@@ -242,8 +242,13 @@ form {
   margin-bottom: 1rem;
 }
 
+#sname{
+    padding-right: 0.5rem;
+}
+
 #sartist{
-    padding-left:1rem;
+    padding-left:1.5rem;
+    padding-right:0.5rem;
 }
 
 .btn {
@@ -269,7 +274,7 @@ label.btn input[type="file"] {
 }
 .output-box {
   margin: auto;
-  width: 60%;
+  width: 100%;
   background-color: #292b2e;
   height: 360px;
   padding: 10px;
