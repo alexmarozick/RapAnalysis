@@ -142,14 +142,33 @@ def sign_out():
 
 @app.route('/get-lyrics', methods=['GET', 'POST'])
 def get_input():
-    if request.method == "POST":
+    
+    if request.method == "GET":
+        app.logger.debug("Starting GET get-lyrics")                       # for debugging
+        # request.args.get(key, default, type)
+        # default is what is returned if the requested data doesn't exist so we can add that in if needed or for error checking
+        song_name = request.args.get('song', type=str)
+        artist_name = request.args.get('artist', type=str)
+        print(song_name)
+        print(artist_name)
+        song_name = song_name.lower()
+        artist_name = artist_name.lower()
+        app.logger.debug(song_name)                                        # for debugging
+        app.logger.debug(artist_name)                                      # for debugging        
+        # TODO whatever is returned by get_lyrics, we have to return it in the format below so we can access it in the html page and display it
+
+        return jsonify(result=get_lyrics(song_name, artist_name))
+        
+    elif request.method == "POST":
         app.logger.debug("Starting POST get-lyrics")                       # for debugging
         req = request.form
         song_name = req.get("song").lower() # maybe
         artist_name = req.get("artist").lower()
+
         app.logger.debug(song_name)                                        # for debugging
         app.logger.debug(artist_name)                                      # for debugging
         get_lyrics(song_name, artist_name)
+
     return redirect('/')
 
 
