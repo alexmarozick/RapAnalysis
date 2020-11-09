@@ -80,9 +80,33 @@
             <input class="artist" type="text" name="artist" id="artist">
             <input class="btn" type="submit" name="Submit" value="Submit" id="submit-btn">
         </form>
+
+        <!-- ajax for submit button-->
+        <script type=text/javascript>
+            $(function() {
+                $('#submit-btn').click(function(){
+                  $.ajax({
+                    url: '/get-lyrics',
+                    data:{
+                      song: $('#song').val(),
+                      artist: $('#artist').val()
+                    },
+                    dataType: 'JSON',
+                    type: 'GET',
+                    // below is what is returned.. lyrics should be within data
+                    success: function(data){
+                        $("#result").html(data.result); <!--TODO put the keyname of the computer lyrics into the result text box -->
+                    }
+                    });
+                });
+            });
+        </script>
+        <!-- end of ajax -->
+
         <div class="output-box">
             <div class="wrapper">
-               LYRICS HERE MAYBE
+               Lyrics should be here after the submit button if you inserted a valid song name and artist name
+               <span id="result">?</span>  
             </div>
         </div>
     </main>
