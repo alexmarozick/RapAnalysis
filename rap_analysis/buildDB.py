@@ -142,31 +142,41 @@ def buildSongBySong(song_list : list, artist_name : str,builtdict : dict):
         genius.excluded_terms = ["(Remix)", "(Live)", "(Remastered)", "Cover", "Remaster", "Remix", "Listening Log", "Release Calendar"]
         for idx, song in enumerate(song_list):
             try:
-                genius_song = genius.search_song(song, artist_name)
+                print(f"searching for {song}")
+                genius_songs = genius.search_songs(song)
+                pp(genius_songs)
+                #for song in songs 
+                    # if artits match 
                 # add a check here to see if we found the exact song we are looking for
                 # weve gotten wrong results before that are tracklists and release charts 
                 # or just the wrong song
-                if genius_song is None:
+                if genius_songs is None:
                     #make sure we returned a result before extracting info from it
                     print("Not Found, Skipping...")
                     continue
-                song_name = genius_song.title.lower().replace('.', "").replace("$",'s').strip(" ")
-                genius_artist_name = genius_song.artist.lower()
-                if song.lower().strip(" ") in song_name and artist_name.lower() in genius_artist_name:
-                    #genius has found the right song, analyze it and add it to the db
-                    album_name = genius_song.album
-                    numadded = idx
+                found = False
+                for gsong in genius_songs['hits']:
+                    print(f"Artist: {gsong['result']['primary_artist']['name']} Song: {gsong['result']['title']}")
+                    song_name = gsong.title.lower().replace('.', "").replace("$",'s').strip(" ")
+                    genius_artist_name = gsong.artist.lower()
+                    #if song.lower().strip(" ") in song_name and artist_name.lower() in genius_artist_name:
+                    if artist_name.lower() in genius_artist_name:
+                        found = True
+                         #genius has found the right song, analyze it and add it to the db                    
+                        album_name = genius_song.album
+                        numadded = idx
                     # col.update with $addToSet 
-                    colors, marked = analyzeSong.parse_and_analyze_lyrics(cmd=False,args=genius_song.lyrics)
+                        colors, marked = analyzeSong.parse_and_analyze_lyrics(cmd=False,args=genius_song.lyrics)
                     # analyze song now returns none if the parsing fails 
-                    if colors is not None:
-                        builtdict.update({song_name: [genius_song.lyrics,album_name,colors]})
-                else: 
-                    print(f"'{song.lower()}' is not in  '{song_name}'")
-                    print("OR")
-                    print(f"'{artist_name.lower()}' is not in '{genius_artist_name}'")
+                        if colors is not None:
+                            builtdict.update({song_name: [genius_song.lyrics,album_name,colors]})
+                if not found: 
+                    # print(f"'{song.lower()}' is not in  '{song_name}'")
+                    # print("OR")
+                    # print(f"'{artist_name.lower()}' is not in '{genius_artist_name}'")
+                    print(f"{gsong} by {artist_name} was not found :( ")
                     continue
-                
+
             except Timeout:
                 print("Sleeping after a Timeout for 60sec")
                 sleep(60)
