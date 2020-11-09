@@ -7,7 +7,9 @@ import configparser
 import logging
 
 
-CONFIG_FILE = 'rap_analysis/config.ini'
+CONFIG_FILE1 = 'rap_analysis/config.ini'
+CONFIG_FILE2 = 'config.ini'
+config_files = [CONFIG_FILE1,CONFIG_FILE2]
 
 typedict = {'api': 'APIKEYS', 'uri': 'REDIRECT_URI'}
 
@@ -17,11 +19,11 @@ config_dict = {}
 
 config = configparser.ConfigParser()
 have_file = False 
-
-if os.path.exists(CONFIG_FILE):
-    logging.info(f"Found a config file, loading from {CONFIG_FILE}... ")
-    have_file = True
-    config.read(CONFIG_FILE)
+for item in config_files:
+    if os.path.exists(item):
+        logging.info(f"Found a config file, loading from {item}... ")
+        have_file = True
+        config.read(item)
 
 
 def get(key : str,keytype : str):

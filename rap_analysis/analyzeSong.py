@@ -163,7 +163,7 @@ def mark_with_rhymes(lyrics : str, delims : dict) -> str:
 
                         else:
                             logging.debug(f"{rhymer, idx} alerady marked by another rhyme, rhymee: {rhymee}")
-                            logging.debug(f"{rhymee_indicies} indicies")
+                            logging.debug(f"{rhymee_indicies}   indicies")
         
                             # if we dont find the word, its because its already been marked 
                 
@@ -250,8 +250,11 @@ def parse_and_analyze_lyrics(lyrics=None,cmd=False,args=None,genius=True) -> dic
     #get indicies of all instances of empty string (these are blank lines inbetween sections)
     idx_list = [idx + 1 for idx, val in enumerate(split_newl) if val == ''] 
     #generate new list seperated by sections 
-    sections = [split_newl[i: j] for i, j in zip([0] + idx_list, idx_list + ([size] if idx_list[-1] != size else []))] 
-    
+    try:
+        sections = [split_newl[i: j] for i, j in zip([0] + idx_list, idx_list + ([size] if idx_list[-1] != size else []))] 
+    except IndexError:
+        print("Invalid Lyrics")
+        return None, None
     # remove duplicate choruses
     
     # pprint.pprint(sections)

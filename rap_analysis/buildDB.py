@@ -9,6 +9,7 @@ from pprint import pprint as pp
 from spotipy.oauth2 import SpotifyClientCredentials
 from requests.exceptions import HTTPError, Timeout
 import time 
+import analyzeSong
 
 GENIUS_ACCESS_TOKEN = config.get('GENIUS_CLIENT_ACCESS_TOKEN','api')
 # NOTE Make sure this is also the same in your Spotify app.
@@ -78,6 +79,7 @@ def get_lyrics(song_name : str, artist_name : str):
     if artist_name in lyricsJSON:
         print("here")
         # if the song isn't in the dict
+        #TODO: Update the document for an artist using mongodb to add a song 
         if not song_name in lyricsJSON[artist_name]:
             song = genius.search_song(song_name, artist_name)
             song_name = song.title.lower()
@@ -136,19 +138,49 @@ def buildSongBySong(song_list : list, artist_name : str,builtdict : dict):
     genius = lyricsgenius.Genius(GENIUS_ACCESS_TOKEN)
     numadded = 0
     try: 
+        genius = lyricsgenius.Genius(GENIUS_ACCESS_TOKEN)
+        genius.excluded_terms = ["(Remix)", "(Live)", "(Remastered)", "Cover", "Remaster", "Remix", "Listening Log", "Release Calendar"]
         for idx, song in enumerate(song_list):
-            genius_song = genius.search_song(song, artist_name)
-            # add a check here to see if we found a song
-            if genius_song is None:
-                print("Skipping")
-                continue
-            genius_artist_name = genius_song.artist.lower()
-            song_name = genius_song.title.lower().replace('.', "").replace("$",'s')
-            album_name = genius_song.album
-            numadded = idx
-            # col.update with $addToSet 
-            builtdict.update({song_name: [genius_song.lyrics,album_name]})
+            try:
+                genius_song = genius.search_song(song, artist_name)
+                # add a check here to see if we found the exact song we are looking for
+                # weve gotten wrong results before that are tracklists and release charts 
+                # or just the wrong song
+                if genius_song is None:
+                    #make sure we returned a result before extracting info from it
+                    print("Not Found, Skipping...")
+                    continue
+                song_name = genius_song.title.lower().replace('.', "").replace("$",'s').strip(" ")
+                genius_artist_name = genius_song.artist.lower()
+                if song.lower().strip(" ") in song_name and artist_name.lower() in genius_artist_name:
+                    #genius has found the right song, analyze it and add it to the db
+                    album_name = genius_song.album
+                    numadded = idx
+                    # col.update with $addToSet 
+                    colors, marked = analyzeSong.parse_and_analyze_lyrics(cmd=False,args=genius_song.lyrics)
+                    # analyze song now returns none if the parsing fails 
+                    if colors is not None:
+                        builtdict.update({song_name: [genius_song.lyrics,album_name,colors]})
+                else: 
+                    print(f"'{song.lower()}' is not in  '{song_name}'")
+                    print("OR")
+                    print(f"'{artist_name.lower()}' is not in '{genius_artist_name}'")
+                    continue
+                
+            except Timeout:
+                print("Sleeping after a Timeout for 60sec")
+                sleep(60)
+                return buildSongBySong(song_list[numadded], artist_name,builtdict)
 
+
+            # elif song.lower() not in song_name:
+            #     print(f"'{song.lower()}' is not in  '{song_name}'")
+            #     print("Skipping")
+            # elif artist_name.lower() not in genius_artist_name:
+            #     print(f"'{artist_name.lower()}' is not in '{genius_artist_name}'")
+            #     print("Skipping")
+            #     continue
+            # else:
         #when we have gone through all the songs, add the whole artist dict to the collection
 
     except Timeout:
@@ -197,7 +229,7 @@ def buildArtist(artist_name : str):
     # Exclude songs with these words in their title
     
 
-    genius.excluded_terms = ["(Remix)", "(Live)"]
+    
 
     # NOTE If you want to get all songs from an artist remove max_songs
     try: 
@@ -232,7 +264,13 @@ def searchForSongs(artist : str) -> list:
                 break
             else: 
                 for item in results['tracks']['items']:
-                    song_list.append(item['name'].replace('.', "").replace("$",'s'))
+                    #take out everything in parethesese
+                    trackname = item['name'].replace('.', "").replace("$",'s').strip(" ")
+                    lparen = trackname.find('(')
+                    if lparen != -1:
+                        song_list.append(trackname[:lparen])
+                    else: 
+                        song_list.append(trackname)
                 offset+= 50
         except spotipy.exceptions.SpotifyException:
             print("Reached End of Query")
