@@ -61,25 +61,16 @@
 
     <main>
         <h1 class="title" id="Home">Rap Lyric Analysis</h1>
-        <!-- <div class="btn-container"> -->
-            <!-- <form method="POST" action="/login-btn" enctype="multipart/form-data"> -->
-                <!-- <label class="btn" id="upload-label">
-                    <input type="file" name="gpx_file" id="originalBtn" required>
-                    Upload File:
-                    <span id="file-name">No file chosen</span>
-                </label> -->
-                <!-- <input class="btn" type="submit" name={{display}} value="{{display}}" id="sign-btn"> -->
-                <!-- <input class="btn" type="login" name="Login" value="Login" id="login-btn"> -->
-            <!-- </form> -->
-    
-        <!-- </div> -->
+        <br>
+
         <form method="POST" action="/get-lyrics" enctype="multipart/form-data">
             <label for="sname">Song name:</label><br>
-            <input class="song" type="text" name="song" id="song">
-            <label for="sartist">Artist name:</label><br>
-            <input class="artist" type="text" name="artist" id="artist">
+            <input class="song" type="text" name="song" id="song" placeholder="Type song name here">
+            <label for="sartist" id="sartist">Artist name:</label><br>
+            <input class="artist" type="text" name="artist" id="artist" placeholder="Type artist name here">
             <input class="btn" type="submit" name="Submit" value="Submit" id="submit-btn">
         </form>
+        <br>
 
         <!-- ajax for submit button-->
         <script type=text/javascript>
