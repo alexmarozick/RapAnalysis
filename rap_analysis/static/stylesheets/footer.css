@@ -21,7 +21,7 @@
     background-color: #212329;
     color: #fff;
     display: flex; /* now everything is side by side*/
-    justify-content: center; /* centering things */
+    justify-content: space-evenly; /* centering things */
     flex-wrap: wrap;
     margin: 0 auto;
 }
