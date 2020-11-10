@@ -288,6 +288,9 @@
     justify-content: center;
     min-height: calc(100vh - 48px);
 }
+.wrapper{
+    padding: 10px;
+}
   
   .fa-linkedin-square {
     overflow: hidden;
