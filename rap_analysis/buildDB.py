@@ -126,7 +126,7 @@ def get_lyrics(song_name : str, artist_name : str):
 
 
 # Solution 2
-def buildSongBySong(song_list : list, artist_name : str,builtdict : dict):
+def buildSongBySong(song_list : "list[(song,album)]", artist_name : str,builtlist : list):
     '''
     Given song and artist name go use lyricsgenius api to get
     the song, then check if it exists in the dict, if not then add it
@@ -135,16 +135,24 @@ def buildSongBySong(song_list : list, artist_name : str,builtdict : dict):
     # with open("db.json") as json_file: 
     #     lyricsJSON = json.load(json_file)
 
+    #create a collection for the artist 
+
+
     genius = lyricsgenius.Genius(GENIUS_ACCESS_TOKEN)
     numadded = 0
     try: 
         genius = lyricsgenius.Genius(GENIUS_ACCESS_TOKEN)
         genius.excluded_terms = ["(Remix)", "(Live)", "(Remastered)", "Cover", "Remaster", "Remix", "Listening Log", "Release Calendar"]
-        for idx, song in enumerate(song_list):
+        genius.skip_non_songs = True
+        for idx, entry in enumerate(song_list):
             try:
+                song = entry[0].lower().replace('.', "").replace("$",'s').strip(" ")
+                album = entry[1]
                 print(f"searching for {song}")
                 genius_songs = genius.search_songs(song)
-                pp(genius_songs)
+                lyrics = ""
+
+                # pp(genius_songs)
                 #for song in songs 
                     # if artits match 
                 # add a check here to see if we found the exact song we are looking for
@@ -157,30 +165,42 @@ def buildSongBySong(song_list : list, artist_name : str,builtdict : dict):
                 found = False
                 for gsong in genius_songs['hits']:
                     print(f"Artist: {gsong['result']['primary_artist']['name']} Song: {gsong['result']['title']}")
-                    song_name = gsong.title.lower().replace('.', "").replace("$",'s').strip(" ")
-                    genius_artist_name = gsong.artist.lower()
-                    #if song.lower().strip(" ") in song_name and artist_name.lower() in genius_artist_name:
+                    song_name = gsong['result']['title'].lower().replace('.', "").replace("$",'s').strip(" ")
+                    genius_artist_name = gsong['result']['primary_artist']['name'].lower()
+                    gid = gsong['result']['id']
+                    
                     if artist_name.lower() in genius_artist_name:
+                        lyrics = genius.lyrics(gid)
                         found = True
                          #genius has found the right song, analyze it and add it to the db                    
-                        album_name = genius_song.album
-                        numadded = idx
-                    # col.update with $addToSet 
-                        colors, marked = analyzeSong.parse_and_analyze_lyrics(cmd=False,args=genius_song.lyrics)
-                    # analyze song now returns none if the parsing fails 
-                        if colors is not None:
-                            builtdict.update({song_name: [genius_song.lyrics,album_name,colors]})
+                        # album_name = genius_song.album
                 if not found: 
                     # print(f"'{song.lower()}' is not in  '{song_name}'")
                     # print("OR")
                     # print(f"'{artist_name.lower()}' is not in '{genius_artist_name}'")
-                    print(f"{gsong} by {artist_name} was not found :( ")
-                    continue
+                    print(f"{gsong} by {artist_name} was not found, trying again with artist")
+                    genius_songs = genius.search_song(song,artist_name)
+                    if song.lower().strip(" ") in song_name and artist_name.lower() in genius_artist_name:
+                        found = True
+                        lyrics = song.lyrics
+
+                if found:
+                    numadded = idx
+                    # col.update with $addToSet 
+                    colors, marked = analyzeSong.parse_and_analyze_lyrics(cmd=False,args=lyrics)
+                    # analyze song now returns none if the parsing fails 
+                    if colors is not None:
+                        builtlist.append({song: [lyrics,album,colors]})                   
+
+                else: 
+                    print("Both Methods failed, moving on :( ...")
+
+
 
             except Timeout:
                 print("Sleeping after a Timeout for 60sec")
                 sleep(60)
-                return buildSongBySong(song_list[numadded], artist_name,builtdict)
+                return buildSongBySong(song_list[numadded], artist_name,builtlist)
 
 
             # elif song.lower() not in song_name:
@@ -199,9 +219,9 @@ def buildSongBySong(song_list : list, artist_name : str,builtdict : dict):
         # i think this is tail recursion
         print("Sleeping after a Timeout for 60sec")
         sleep(60)
-        return buildSongBySong(song_list[numadded], artist_name,builtdict)
+        return buildSongBySong(song_list[numadded], artist_name,builtlist)
 
-    return builtdict
+    return builtlist
     
     # if not artist_name in lyricsJSON:
     #     song_dict = {song_name : [song.lyrics, album_name]}
@@ -276,11 +296,16 @@ def searchForSongs(artist : str) -> list:
                 for item in results['tracks']['items']:
                     #take out everything in parethesese
                     trackname = item['name'].replace('.', "").replace("$",'s').strip(" ")
+                    track = ""
+                    album = item['album']['name']
                     lparen = trackname.find('(')
                     if lparen != -1:
-                        song_list.append(trackname[:lparen])
+                        track = trackname[:lparen].strip(" ")
+                        song_list.append((trackname[:lparen].strip(" "),album))
                     else: 
-                        song_list.append(trackname)
+                        track = trackname
+                    if track not in [e[0] for e in song_list]:
+                        song_list.append((track,album))
                 offset+= 50
         except spotipy.exceptions.SpotifyException:
             print("Reached End of Query")
@@ -297,16 +322,16 @@ def main():
     with open(sys.argv[1], 'r') as f:
         artist_list = f.read().split('\n')
         print(artist_list) 
-        artist_list.remove('')
+        #artist_list.remove('')
         for artist in artist_list:
             print(f"getting songs for {artist}")
             song_list = searchForSongs(artist)
             song_list = list(set(song_list))
             print(f"getting lrics for {len(song_list)} songs")
-            song_dict = buildSongBySong(song_list, artist,{})
-            print(song_dict)
+            entry_list = buildSongBySong(song_list, artist,[])
+            print(entry_list)
             print("placing into mongodb")
-            col[artist.lower().replace('.', "").replace("$",'s')].insert_one(song_dict)
+            db[artist.lower().replace('.', "").replace("$",'s')].insert_many(entry_list)
 
 
 
