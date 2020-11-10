@@ -1,0 +1,368 @@
+:root {
+    --primary-color: #302ae6;
+    --secondary-color: #536390;
+    --font-color: #232835;
+    --link-font-color: rgb(137, 137, 141);
+    --bg-color: #1db954;
+    --button-color: rgb(41, 41, 43);
+    --button-color: #232835;
+    --button-color-hover: #39435c;
+    --button-color-text: white;
+  }
+  /* 
+    #ADDFAD moss green  
+    #1DB954 Spotify green
+  */
+  
+  * {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+  }
+  
+  [data-mode="dark"] {
+    --font-color: #1db954;
+    --link-font-color: #e1e1ff;
+    --bg-color: #232835;
+    --heading-color: #818cab;
+    --button-color: #1db954;
+    --button-color-hover: #addfad;
+    --button-color-text: black;
+  }
+  
+  main {
+    width: 90vh;
+    padding: 48px 0px 20px 0px;
+    margin: 0 auto;
+    min-height: calc(
+      100vh
+    ); /* at minimum, footer will be at bottom (viewport - size of navbar(48px)- size of footer(- 129.73px) */
+  }
+  
+  body {
+    font-family: "Open Sans", sans-serif;
+    background-color: var(--bg-color);
+    transition: background 0.4s;
+    color: var(--font-color);
+    position: relative;
+    padding-bottom: 129.73px;
+    min-height: 100vh;
+  }
+  
+  /* scroll bar on right */
+  body::-webkit-scrollbar {
+    width: 1rem;
+  }
+  body::-webkit-scrollbar-track {
+    background: rgb(15, 15, 15);
+  }
+  body::-webkit-scrollbar-thumb {
+    background: #2e2e2e;
+    border-radius: 19px;
+  }
+  /* end of scroll bar on right */
+  
+  a {
+    text-decoration: none;
+    color: var(--font-color);
+  }
+  
+  /*Start of Navbar and its content*/
+  .top-nav {
+    width: 100%; /*Use 100% of the body width*/
+    position: fixed; /*Position of the nav bar will be fixed*/
+    height: 3rem; /*Height of the nav bar*/
+    background-color: rgb(15, 15, 15);
+    overflow: hidden;
+    z-index: 2;
+  }
+  
+  .nav-list {
+    list-style: none;
+    display: flex;
+    height: 100%; /*Use 100% of the height of the nav bar*/
+    justify-content: space-evenly; /*Align the flex items at the evenly of the container*/
+  }
+  
+  /*Navbar links properties*/
+  .nav-link {
+    font-family: "Saira", sans-serif;
+    text-decoration: none;
+    filter: grayscale(100%) opacity(5);
+  }
+  
+  /*Navbar link color*/
+  a.nav-link {
+    color: var(--link-font-color);
+  }
+  
+  /*when the link in the nav bar is clicked on*/
+  .nav-link:active {
+    color: white;
+  }
+  
+  /*properties for the social icons*/
+  .socials i {
+    padding: 6px;
+    margin: 2px, 1px;
+    font-size: 2rem;
+    position: relative;
+  }
+  
+  /*properties for the github icon*/
+  .fa-github {
+    overflow: hidden;
+    background-size: 100% 200%;
+    background-image: linear-gradient(
+      to top,
+      rgb(69, 38, 247) 5%,
+      rgb(102, 187, 212),
+      white 50%
+    );
+    /* color: #fff; */
+    -webkit-background-clip: text; /*Makes it so that it only colors the icon and not the container*/
+    -webkit-text-fill-color: transparent;
+    transition: background-position 0.3s ease-in-out, color 0.2s ease-in-out;
+  }
+  
+  /*properties for the github icon when hovered over, make color transition*/
+  .fa-github:hover,
+  .fa-github:focus {
+    -webkit-background-clip: text; /*already have it above so could be removed*/
+    -webkit-text-fill-color: transparent;
+    background-position: 0 100%;
+  }
+  
+  /* Switch properites*/
+  .switch {
+    position: fixed;
+    width: 60px;
+    height: 24px;
+    display: flex;
+    top: 10px;
+    right: 0.4rem;
+  }
+  
+  /* Hide default HTML checkbox */
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  /*Set up slider box*/
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgb(146, 215, 243);
+    -webkit-transition: 0.4s;
+    transition: 0.4s;
+    border-radius: 34px;
+  }
+  
+  /*Set up slider circle that is inside the box*/
+  .slider:before {
+    position: absolute;
+    content: ""; /*Creates some conetent so we can have a cirlce*/
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    top: 2px;
+    bottom: 4px;
+    background-color: rgb(245, 189, 35);
+    -webkit-transition: 0.4s;
+    transition: 0.4s;
+    border-radius: 34px; /*Set the raidus of the content to be 1 so we get something like a circle*/
+  }
+  
+  /*Make the silder circle move when clicked on the slider*/
+  input:checked + .slider:before {
+    -webkit-transform: translateX(34px);
+    -ms-transform: translateX(34px);
+    transform: translateX(34px);
+    background-color: rgb(255, 255, 255);
+  }
+  
+  /*Set background of the slider after being clicked*/
+  input:checked + .slider {
+    background-color: #454647;
+  }
+  /*End of nav bar contents*/
+
+  
+.sub_title{
+    text-align: center;
+    padding-bottom: 0.5rem;
+}
+
+#left_side{
+    position: left;
+    width: 66%;
+}
+
+/* used in the "Analyze Your Spotify" title */
+  .title {
+    padding-top: 50px;
+    text-align: center;
+    font-size: 50px;
+  }
+  
+  /* used for the sign out button*/
+  .btn-container {
+    padding: 0.7rem 3rem;
+    width: 100%;
+  }
+  form {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    font-family: "Saira", sans-serif;
+    font-size: 16px;
+  }
+  .btn {
+    margin: 0 10px;
+    cursor: pointer;
+    font-family: "Saira", sans-serif;
+    padding: 0.7rem 3rem;
+    font-size: 16px;
+    background-color: var(--button-color);
+    border-radius: 1rem;
+    border: none;
+    color: var(--button-color-text);
+  }
+  .btn:hover,
+  .upload-btn:focus {
+    background-color: var(--button-color-hover);
+  }
+  label.btn input[type="file"] {
+    position: absolute;
+    z-index: -1;
+    opacity: 0; /* make transparent */
+  }
+/* end of sign out button */
+
+#playlist_and_artist_container{
+    justify-content: space-evenly;
+}
+
+
+
+
+#right_side{
+    position: right;
+    width: 34%;
+}
+
+  .output-box {
+    margin: auto;
+    width: 100%;
+    background-color: #292b2e;
+    height: 360px;
+    padding: 10px;
+    border: 10px solid #191d20;
+    color: #1db954;
+    font: 16px/26px;
+    overflow: auto;
+    border-radius: 1rem;
+    justify-content: center;
+  }
+  
+  .fa-linkedin-square {
+    overflow: hidden;
+    background-size: 100% 200%;
+    background-image: linear-gradient(
+      to top,
+      #0073b1 50%,
+      #0073b1,
+      rgb(255, 255, 255) 50%
+    );
+    /* color: #fff; */
+    -webkit-background-clip: text; /*Makes it so that it only colors the icon and not the container*/
+    -webkit-text-fill-color: transparent;
+    transition: background-position 0.3s ease-in-out, color 0.2s ease-in-out;
+  }
+  .fa-linkedin-square:hover,
+  .fa-linkedin-square:focus {
+    background-position: 0 100%;
+  }
+  
+  .email-link {
+    color: rgb(26, 115, 248);
+  }
+  .email-link:hover {
+    border-bottom: 0.1em solid rgb(54, 127, 238);
+    transition: all 100ms cubic-bezier(0, 1, 1, 1);
+  }
+  
+  
+  /*Mobile view*/
+  @media only screen and (max-width: 800px) {
+    /*Nav menu*/
+    .nav-menu {
+      position: fixed;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between; /*Space between each bar*/
+      cursor: pointer; /*When the cursor hovers over it will be a pointer*/
+      z-index: 1500;
+      flex-flow: column;
+  
+      top: 0.5rem;
+      left: 0.8rem;
+      width: 2.4rem;
+      height: 2rem; /* Height of each bar similar as the justify-content*/
+    }
+  
+    /* some properties for the 3 bar lines*/
+    .bar {
+      background: linear-gradient(
+        to left,
+        rgb(213, 214, 221),
+        rgb(168, 171, 173)
+      );
+      width: 100%; /*Use 100% of the width set in .nav-menu*/
+      height: 4px;
+    }
+  
+    .nav-list {
+      top: -100%;
+      position: fixed;
+      height: 100%;
+      width: 100%;
+      background-color: rgb(15, 15, 15);
+      pointer-events: none;
+      flex-direction: column;
+      transition: all 700ms cubic-bezier(0, 1, 1, 1);
+      align-items: center;
+    }
+  
+    .nav-list.open {
+      top: 0;
+      transition: all 700ms cubic-bezier(0, 1, 1, 1);
+      pointer-events: all;
+    }
+  
+    .nav-link:hover {
+      border-bottom: 0.1em solid rgb(194, 183, 183);
+      transition: all 500ms cubic-bezier(0, 1, 1, 1);
+    }
+  }
+  
+  @media only screen and (min-width: 801px) {
+    .nav-link {
+      padding: 0.7rem 3rem;
+      display: flex;
+      flex-direction: row;
+    }
+  
+    /*hovering over a link in the navbar*/
+    .nav-link:hover {
+      background: linear-gradient(to top, rgb(20, 20, 20), rgb(39, 39, 39));
+    }
+  }
+  
