@@ -20,7 +20,7 @@ import logging
 import analyzeSong
 import datetime
 from buildDB import get_lyrics
-# from analyzeSpotify import analyze_spotify
+from spotifyData import spotify_data
 # logging.basicConfig(level=app.logger.debug)
 class FileTypeException(HTTPException):   # this error is thrown when the file type is incorrect
     code = 400
@@ -38,7 +38,7 @@ app.secret_key = secret_key
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_FILE_DIR'] = './.flask_session/'
 Session(app)
-scope = "user-read-private playlist-modify-private playlist-modify-public playlist-read-private user-follow-read"
+scope = "user-read-private playlist-modify-private playlist-modify-public playlist-read-private user-follow-read user-read-recently-played"
 client_id = config.get('SPOTIPY_CLIENT_ID','api') # NOTE hey do this
 client_secret = config.get('SPOTIPY_CLIENT_SECRET','api') # NOTE hey do this
 token_url = 'https://accounts.spotify.com/api/token'
@@ -102,7 +102,7 @@ def spotify_login():
         # NOTE here we can get data from the Spotify API.
         spotify = spotipy.Spotify(auth_manager=sp_oauth)
         display = "User: " + spotify.me()["display_name"] + " (Sign Out)"
-        analyze_spotify(spotify)
+        spotify_data(spotify)
         return render_template("spotify.html", display=display)
     return render_template("spotify_login.html", display=display)
 
