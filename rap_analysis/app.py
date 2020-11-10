@@ -20,7 +20,7 @@ import logging
 import analyzeSong
 import datetime
 from buildDB import get_lyrics
-
+from spotifyData import spotify_data
 # logging.basicConfig(level=app.logger.debug)
 class FileTypeException(HTTPException):   # this error is thrown when the file type is incorrect
     code = 400
@@ -38,7 +38,7 @@ app.secret_key = secret_key
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_FILE_DIR'] = './.flask_session/'
 Session(app)
-
+scope = "user-read-private playlist-modify-private playlist-modify-public playlist-read-private user-follow-read user-read-recently-played"
 client_id = config.get('SPOTIPY_CLIENT_ID','api') # NOTE hey do this
 client_secret = config.get('SPOTIPY_CLIENT_SECRET','api') # NOTE hey do this
 token_url = 'https://accounts.spotify.com/api/token'
@@ -87,7 +87,7 @@ def spotify_login():
 
 
     sp_oauth = SpotifyOAuth(client_id=client_id, client_secret=client_secret, redirect_uri=REDIRECT_URI, 
-                            scope="user-read-private", cache_path=session_cache_path(), show_dialog=True)
+                            scope=scope, cache_path=session_cache_path(), show_dialog=True)
     
     # Authorization Code Flow Step 2
     if request.args.get('code'):
@@ -102,6 +102,7 @@ def spotify_login():
         # NOTE here we can get data from the Spotify API.
         spotify = spotipy.Spotify(auth_manager=sp_oauth)
         display = "User: " + spotify.me()["display_name"] + " (Sign Out)"
+        spotify_data(spotify)
         return render_template("spotify.html", display=display)
     return render_template("spotify_login.html", display=display)
 
@@ -111,7 +112,7 @@ def login():
     if request.method == 'POST':
         
         sp_oauth = SpotifyOAuth(client_id=client_id, client_secret=client_secret, redirect_uri=REDIRECT_URI, 
-                                scope="user-read-private", cache_path=session_cache_path(), show_dialog=True)
+                                scope=scope, cache_path=session_cache_path(), show_dialog=True)
         
         # So if we have a token(which means we are logged in) 
         # and the login button is clicked then we need to sign out
