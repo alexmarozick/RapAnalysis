@@ -32,7 +32,7 @@
   }
   
   main {
-    width: 90vh;
+    width: 100%;
     padding: 48px 0px 20px 0px;
     margin: 0 auto;
     min-height: calc(
@@ -194,17 +194,6 @@
   }
   /*End of nav bar contents*/
 
-  
-.sub_title{
-    text-align: center;
-    padding-bottom: 0.5rem;
-}
-
-#left_side{
-    position: left;
-    width: 66%;
-}
-
 /* used in the "Analyze Your Spotify" title */
   .title {
     padding-top: 50px;
@@ -214,8 +203,7 @@
   
   /* used for the sign out button*/
   .btn-container {
-    padding: 0.7rem 3rem;
-    width: 100%;
+    padding-bottom: .5rem;
   }
   form {
     display: flex;
@@ -246,31 +234,60 @@
   }
 /* end of sign out button */
 
-#playlist_and_artist_container{
-    justify-content: space-evenly;
+
+#left_side{
+    width: 67%;
+    float:left;
+    min-height: 100vh;
 }
-
-
-
+#playlist_and_artist_container{
+   width: 100%;
+   margin: 0 auto;
+   min-height: 70vh;
+}
+#playlist{
+    width: 45%;
+    float: left;
+    padding-top: 15px;
+    padding-left: 20px;
+    min-height: 70vh;
+}
+#spacing{
+    width:10%;
+    float: left;
+    padding-top: 15px;
+    padding-left: 20px;
+    min-height: 70vh;
+}
+#artist{
+    width: 45%;
+    float: left;
+    padding-top: 15px;
+    padding-left: 20px;
+    min-height: 70vh;
+}
+.sub_title{
+    text-align: center;
+    padding-bottom: 0.5rem;
+}
 
 #right_side{
-    position: right;
-    width: 34%;
+    width: 33%;
+    float: left;
+    min-height: calc(100vh -48px);
 }
-
-  .output-box {
+.output-box {
     margin: auto;
     width: 100%;
     background-color: #292b2e;
-    height: 360px;
-    padding: 10px;
     border: 10px solid #191d20;
     color: #1db954;
     font: 16px/26px;
-    overflow: auto;
-    border-radius: 1rem;
+    overflow: auto; /* adds a scroll bar whenever necessary */
+    border-radius: 1rem;  /* the rounded corner effect */
     justify-content: center;
-  }
+    min-height: calc(100vh - 48px);
+}
   
   .fa-linkedin-square {
     overflow: hidden;
