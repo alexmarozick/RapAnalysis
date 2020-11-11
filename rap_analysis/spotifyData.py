@@ -56,21 +56,21 @@ def get_playlist(spotify):
     '''
     Format of dict returned.
     {
-        "playlist1-name" : 
-            ["playlist id", [
-                {"song1-name" : 
-                    ["song-id", 
-                        {"artist1-name" : "artist1-id", "artist2-name" : "artist2-id"},...,
+        "playlist1-id" : 
+            ["playlist1-name", [
+                {"song1-id" : 
+                    ["song2-name", 
+                        {"artist1-id" : "artist1-name", "artist2-id" : "artist2-name"},...,
                     ]
                 },
-                {"song2-name" : 
-                    ["song-id", 
-                        {"artist1-name" : "artist1-id", "artist2-name" : "artist2-id"},...,
+                {"song2-id" : 
+                    ["song2-name", 
+                        {"artist1-id" : "artist1-name", "artist2-id" : "artist2-id"},...,
                     ],
                 },...
             ]
             ]
-            "playlist2-name" : ...
+            "playlist2-id" : ...
     }
     '''
     print("Get playlists")
