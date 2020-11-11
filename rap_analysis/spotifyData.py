@@ -87,9 +87,9 @@ def get_playlist(spotify):
             track_id = track["track"]["id"]
             track_artists  = {}
             for artist in track["track"]["artists"]:
-                track_artists.update({artist["name"] : artist["id"]})
-            track_list.append({track_name : [track_id, track_artists]})
-        playlists_dict.update({followed_playlists[i]["name"] : [followed_playlists[i]["id"], track_list]})
+                track_artists.update({artist["id"] : artist["name"]})
+            track_list.append({track_id : [track_name, track_artists]})
+        playlists_dict.update({followed_playlists[i]["id"] : [followed_playlists[i]["name"], track_list]})
     
     print('\n')
     pp(playlists_dict)
