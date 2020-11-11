@@ -78,21 +78,32 @@ def get_playlist(spotify):
     # pp(playlists)
     # playlist_counter = 0
     playlists_dict = {}
+    
+    # li = []
     while playlists:
         followed_playlists = playlists["items"]
         for i in range (len(followed_playlists)):
-            playlist_counter += 1
-            playlist_tracks = spotify.playlist_tracks(followed_playlists[i]["id"], fields="items")
-            track_list = []
-            for track in playlist_tracks["items"]:
-                if track["track"]:
-                    track_name = track["track"]["name"]
-                    track_id = track["track"]["id"]
-                    track_artists  = {}
-                    for artist in track["track"]["artists"]:
-                        track_artists.update({artist["id"] : artist["name"]})
-                    track_list.append({track_id : [track_name, track_artists]})
-
+            # playlist_counter += 1
+            playlist_tracks = spotify.playlist_tracks(followed_playlists[i]["id"])
+            # pp(playlist_tracks)
+            # playlist_track_counter = 0
+            while playlist_tracks:
+                # playlist_track_counter += 1
+                track_list = []
+                for track in playlist_tracks["items"]:
+                    if track["track"]:
+                        track_name = track["track"]["name"]
+                        track_id = track["track"]["id"]
+                        track_artists  = {}
+                        for artist in track["track"]["artists"]:
+                            track_artists.update({artist["id"] : artist["name"]})
+                        track_list.append({track_id : [track_name, track_artists]})
+                
+                if playlist_tracks['next']:
+                    playlist_tracks = spotify.next(playlist_tracks)
+                else:
+                    playlist_tracks = None
+            # li.append(playlist_track_counter)
             playlists_dict.update({followed_playlists[i]["id"] : [followed_playlists[i]["name"], track_list]})
         if playlists['next']:
             playlists = spotify.next(playlists)
@@ -106,6 +117,8 @@ def get_playlist(spotify):
     # print(playlist_counter)
     # playlist_tracks
     # print(len(playlists_dict))
+    # pp(li)
+    # print(len(li))
     return playlists_dict
 
 
