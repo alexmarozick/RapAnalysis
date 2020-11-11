@@ -75,26 +75,37 @@ def get_playlist(spotify):
     '''
     print("Get playlists")
     playlists = spotify.current_user_playlists()
-    pp(playlists)
-    followed_playlists = playlists["items"]
+    # pp(playlists)
+    # playlist_counter = 0
     playlists_dict = {}
-    for i in range (len(followed_playlists)):
-        playlist_tracks = spotify.playlist_tracks(followed_playlists[i]["id"], fields="items")
-        # error check here
-        track_list = []
-        for track in playlist_tracks["items"]:
-            track_name = track["track"]["name"]
-            track_id = track["track"]["id"]
-            track_artists  = {}
-            for artist in track["track"]["artists"]:
-                track_artists.update({artist["id"] : artist["name"]})
-            track_list.append({track_id : [track_name, track_artists]})
-        playlists_dict.update({followed_playlists[i]["id"] : [followed_playlists[i]["name"], track_list]})
+    while playlists:
+        followed_playlists = playlists["items"]
+        for i in range (len(followed_playlists)):
+            playlist_counter += 1
+            playlist_tracks = spotify.playlist_tracks(followed_playlists[i]["id"], fields="items")
+            track_list = []
+            for track in playlist_tracks["items"]:
+                if track["track"]:
+                    track_name = track["track"]["name"]
+                    track_id = track["track"]["id"]
+                    track_artists  = {}
+                    for artist in track["track"]["artists"]:
+                        track_artists.update({artist["id"] : artist["name"]})
+                    track_list.append({track_id : [track_name, track_artists]})
+
+            playlists_dict.update({followed_playlists[i]["id"] : [followed_playlists[i]["name"], track_list]})
+        if playlists['next']:
+            playlists = spotify.next(playlists)
+        else:
+            playlists = None
+        
     
-    print('\n')
-    pp(playlists_dict)
+    print('')
     print("\ninfo on playlist")
+    # pp(playlists_dict)
+    # print(playlist_counter)
     # playlist_tracks
+    # print(len(playlists_dict))
     return playlists_dict
 
 
