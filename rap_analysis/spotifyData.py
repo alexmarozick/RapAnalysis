@@ -3,7 +3,8 @@ from spotipy.oauth2 import SpotifyOAuth
 import logging
 from pprint import pprint as pp
 
-genres = ['hip hop', 'pop rap', 'rap', 'chicago rap', 'melodic rap', 'canadian hip hop', 'canadian pop', 'toronto rap']
+# genres = ['hip hop', 'pop rap', 'rap', 'chicago rap', 'melodic rap', 'canadian hip hop', 'canadian pop', 'toronto rap']
+genres = ['hip hop', 'rap', 'pop']
 
 def spotify_data(spotify):
     '''
@@ -14,135 +15,135 @@ def spotify_data(spotify):
     - Recent listen as hip hop genre.
     - Followed artists.
     '''
-    # get_followed_artist(spotify)
-    get_playlist(spotify)
-    # get_recent_plays(spotify)
+    artists_data = get_followed_artist(spotify)
+    playlist_data = get_playlists(spotify)
+    recent_plays_data = get_recent_plays(spotify)
+    return {"artists" : artists_data, "playlists" : playlist_data, "recent_plays" : recent_plays_data}
 
 
 def get_followed_artist(spotify):
     '''
     Returns a dictionary of artists in the follwoing format:
-        {"Artist1 name" : ['Spotify artist id', [genre list]],
-        "Artist2 name" : ['Spotify artist id', [genre list]],
+        {" Spotify artist id" : ['Artist1 name', [genre list]],
+        "Spotify artist id" : ['Artist2 name', [genre list]],
         ...
         }
     '''
-    print("Followed artists")
-    user_followed = spotify.current_user_followed_artists()
-    pp(user_followed)
-    if not user_followed:
-        # display this to the user
-        print("No followed artists.")
-        return
-    pp(user_followed["artists"])
-    followed_artists = user_followed['artists']["items"] # a list the conatins info about the followed artists
-    print('\n')
+    print("Get followed artists")
     artist_dict = {} # will contain all the extracted info from the artists
-    for i in range (len(followed_artists)):
-        if checkGenre(followed_artists[i]["genres"]):
-            artist_dict.update({followed_artists[i]["name"] : [followed_artists[i]["id"], followed_artists[i]["genres"]]})
-    print("Artist Dict")
-    pp(artist_dict)
-    print('\n')
+    all_artists = {}
+    user_followed = spotify.current_user_followed_artists()
+    while user_followed:
+        followed_artists = user_followed['artists']["items"] # a list the conatins info about the followed artists
+        for artist in followed_artists:
+            if checkGenre(artist["genres"]):
+                artist_dict.update({artist["id"] : [artist["name"], artist["genres"]]})
+            all_artists.update(({artist["id"] : [artist["name"], artist["genres"]]}))
+        # pp(artist_dict)
+        if user_followed['artists']['next']:
+            user_followed = spotify.next(user_followed['artists'])
+        else:
+            user_followed = None
+
+    # NOTE for debugging   
+    # print("Gotten Artists")
+    # print(f'{len(artist_dict)}')
+    # pp(artist_dict)
+    # diff = {}
+    # print(f'{len(all_artists)}')
+    # print("All artists")
+    # pp(all_artists)
+    # for key in all_artists:
+    #     if key not in artist_dict:
+    #         diff.update({key : all_artists[key]})
+    # print("Difference")
+    # print(f'{len(diff)}')
+    # print(diff)
+
     return artist_dict
 
 def checkGenre(genre_list):
     for genre in genre_list:
-        if genre in genres:
+        if genres[0] in genre or genres[1] in genre or genres[2] in genre:
             return True
     return False
 
-def get_playlist(spotify):
+
+def get_playlists(spotify):
     '''
+    Returns user playlist.
     Format of dict returned.
     {
-        "playlist1-id" : 
-            ["playlist1-name", [
-                {"song1-id" : 
-                    ["song2-name", 
-                        {"artist1-id" : "artist1-name", "artist2-id" : "artist2-name"},...,
-                    ]
-                },
-                {"song2-id" : 
-                    ["song2-name", 
-                        {"artist1-id" : "artist1-name", "artist2-id" : "artist2-id"},...,
-                    ],
-                },...
-            ]
-            ]
-            "playlist2-id" : ...
+        "playlist1-id" : "playlist1-name", "playlist2-id" : "playlist2-name",... 
     }
     '''
     print("Get playlists")
-    playlists = spotify.current_user_playlists()
-    # pp(playlists)
-    # playlist_counter = 0
-    playlists_dict = {}
-    
-    # li = []
+    playlists = spotify.current_user_playlists() # spotify api call that gives at max 50 playlists
+    playlists_dict = {}    
     while playlists:
         followed_playlists = playlists["items"]
-        for i in range (len(followed_playlists)):
-            # playlist_counter += 1
-            playlist_tracks = spotify.playlist_tracks(followed_playlists[i]["id"])
-            # pp(playlist_tracks)
-            # playlist_track_counter = 0
-            while playlist_tracks:
-                # playlist_track_counter += 1
-                track_list = []
-                for track in playlist_tracks["items"]:
-                    if track["track"]:
-                        track_name = track["track"]["name"]
-                        track_id = track["track"]["id"]
-                        track_artists  = {}
-                        for artist in track["track"]["artists"]:
-                            track_artists.update({artist["id"] : artist["name"]})
-                        track_list.append({track_id : [track_name, track_artists]})
-                
-                if playlist_tracks['next']:
-                    playlist_tracks = spotify.next(playlist_tracks)
-                else:
-                    playlist_tracks = None
-            # li.append(playlist_track_counter)
-            playlists_dict.update({followed_playlists[i]["id"] : [followed_playlists[i]["name"], track_list]})
-        if playlists['next']:
+        for playlist in followed_playlists: # looping through all playlists got from the spotify api call
+            # inserts playlist id and playlist name to dicitonary.
+            playlists_dict.update({playlist["id"] : playlist["name"]})
+        if playlists['next']: # check if there is another playlist next
             playlists = spotify.next(playlists)
         else:
             playlists = None
-        
-    
-    print('')
-    print("\ninfo on playlist")
-    # pp(playlists_dict)
-    # print(playlist_counter)
-    # playlist_tracks
-    # print(len(playlists_dict))
-    # pp(li)
-    # print(len(li))
     return playlists_dict
 
+def get_songs_from_playlist(spotify, playlist_id):
+    '''
+    Takes in a play list id and returns info on the songs of the playlist
+    Format of dict returned.
+    {"song1-id" : 
+            ["song2-name", 
+                {"artist1-id" : "artist1-name", "artist2-id" : "artist2-name"},...,
+            ]
+        },
+    '''
 
-def get_recent_plays(spotify, num_songs=10):
+    playlist_tracks = spotify.playlist_tracks(playlist_id)
+    track_list = []
+    while playlist_tracks:
+        for track in playlist_tracks["items"]:
+            if track["track"]:
+                track_name = track["track"]["name"]
+                track_id = track["track"]["id"]
+                track_artists  = {}
+                for artist in track["track"]["artists"]:
+                    track_artists.update({artist["id"] : artist["name"]})
+                track_list.append({track_id : [track_name, track_artists]})
+        
+        if playlist_tracks['next']:
+            playlist_tracks = spotify.next(playlist_tracks)
+        else:
+            playlist_tracks = None
+    return track_list
+
+
+def get_recent_plays(spotify, num_songs=1):
+    '''
+    TODO make more test cases and do more error handling,
+    also don't forget to change some stuff with the num_songs.
+    Dict returned format:
+    {song-id : [song-name, {
+        artist-id : artist-name,...}
+        ]
+    , ...}
+    '''
+
+    recent_dict = {}
     print("Get Recent plays")
-    pp(spotify.current_user_recently_played(limit=num_songs))
-    print('\n')
-
-# current_user_recently_played(limit=50, after=None, before=None)
-# Get the current user’s recently played tracks
-
-#current_user_saved_albums(limit=20, offset=0)
-# Gets a list of the albums saved in the current authorized user’s “Your Music” library 
-# current_user_top_artists(limit=20, offset=0, time_range='medium_term')
-# Get the current user’s top artists
-
-# could create a playlist for the user
-# user_playlist_create(user, name, public=True, collaborative=False, description='')
-# Creates a playlist for a user
-
-# user_playlists(user, limit=50, offset=0)
-# Gets playlists of a user
-# current_user_followed_artists(limit=20, after=None)
-# Gets a list of the artists followed by the current authorized user
+    recent_plays = spotify.current_user_recently_played(limit=num_songs)
+    recents = recent_plays["items"]
+    
+    for song in recents:
+        artists_dict = {}
+        artist_list = song["track"]["artists"]
+        for artist in artist_list:
+            artists_dict.update({artist["id"] : artist["name"]})
+        recent_dict.update({song["track"]["id"] : [song["track"]["name"], artists_dict]})
+    return recent_dict
 
 
 
