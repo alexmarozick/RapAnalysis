@@ -20,7 +20,7 @@ import logging
 import analyzeSong
 import datetime
 from buildDB import get_lyrics
-from spotifyData import spotify_data
+import spotifyData
 # logging.basicConfig(level=app.logger.debug)
 class FileTypeException(HTTPException):   # this error is thrown when the file type is incorrect
     code = 400
@@ -102,7 +102,7 @@ def spotify_login():
         # NOTE here we can get data from the Spotify API.
         spotify = spotipy.Spotify(auth_manager=sp_oauth)
         display = "User: " + spotify.me()["display_name"] + " (Sign Out)"
-        spotify_data(spotify)
+        spotify_data = spotifyData.spotify_data(spotify)
         return render_template("spotify.html", display=display)
     return render_template("spotify_login.html", display=display)
 
