@@ -203,7 +203,8 @@ input:checked + .slider {
 
 /* used for the sign out button*/
 .btn-container {
-  padding-bottom: 0.5rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
 }
 form {
   display: flex;
@@ -283,7 +284,7 @@ label.btn input[type="file"] {
   color: #1db954;
   font: 16px/26px;
   overflow: auto; /* adds a scroll bar whenever necessary */
-  border-radius: 1rem; /* the rounded corner effect */
+  /* border-radius: 1rem; the rounded corner effect */
   justify-content: center;
   min-height: calc(100vh - 48px);
 }

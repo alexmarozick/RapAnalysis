@@ -193,6 +193,80 @@ input:checked +.slider{
 }
 
 /* ------------------------------------------------------------------------------------*/
+main {
+  width: 100%;
+  padding: 55px 0px 20px 0px;
+  margin: 0 auto;
+  /* min-height: calc(
+    100vh
+  ); at minimum, footer will be at bottom (viewport - size of navbar(48px)- size of footer(- 129.73px) */
+}
+
+/* #title{
+  text-align: center;
+  width: 100%;
+  padding-top: 5rem;
+} */
+
+#left-side{
+  min-height: 80vh;
+  width: 40%;
+  float: left;
+
+}
+
+/* Slideshow */
+* {box-sizing: border-box;}
+body {font-family: Verdana, sans-serif;}
+.mySlides {display: none;}
+img {vertical-align: middle;}
+
+/* Slideshow container */
+.slideshow-container {
+  padding-top: 10vh;
+  /* padding-left: 75px; */
+  min-width: 100%;
+  position: left;
+  max-height:100%;
+  text-align: center;
+  /* margin: auto; */
+}
+
+/* Caption text */
+.text {
+  color: #f2f2f2;
+  font-size: 15px;
+  padding: 8px 12px;
+  /* position: absolute; */
+  /* bottom: 8px; */
+  /* width: 100%; */
+  text-align: center;
+}
+
+#spacing{
+  min-height: 80vh;
+  width: 10%;
+  float: left;
+
+}
+.spacing-ends{
+  min-height: 80vh;
+  width: 5%;
+  float: left;
+}
+
+#right-side{
+  /* padding-top: 10%; */
+  min-height: 80vh;
+  width: 40%;
+  float: left;
+}
+
+#sub-title{
+  padding-top: 5rem;
+  text-align: center;
+  width: 100%;
+}
 
 /* Login button */
 .btn-container{
@@ -230,39 +304,8 @@ form{
   font-family: 'Saira', sans-serif;
   font-size: 16px;
 }
-
-/* ------------------------------------------------------------------------------------*/
-
-/* Slideshow */
-* {box-sizing: border-box;}
-body {font-family: Verdana, sans-serif;}
-.mySlides {display: none;}
-img {vertical-align: middle;}
-
-/* Slideshow container */
-.slideshow-container {
-  padding-top: 50px;
-  padding-left: 75px;
-  max-width: 500px;
-  position: left;
-  max-height:400px;
-  text-align: center;
-  /* margin: auto; */
-}
-
-/* Caption text */
-.text {
-  color: #f2f2f2;
-  font-size: 15px;
-  padding: 8px 12px;
-  /* position: absolute; */
-  /* bottom: 8px; */
-  /* width: 100%; */
-  text-align: center;
-}
-
 /* Number text (1/3 etc) */
-.numbertext {
+/* .numbertext {
   color: #f2f2f2;
   font-size: 12px;
   padding: 8px 12px;
@@ -270,7 +313,6 @@ img {vertical-align: middle;}
   top: 0;
 }
 
-/* The dots/bullets/indicators */
 .dot {
   height: 15px;
   width: 15px;
@@ -280,9 +322,9 @@ img {vertical-align: middle;}
   display: inline-block;
   transition: background-color 0.6s ease;
   padding-top: 10px;
-  /* padding-left: 25px; */
+  padding-left: 25px;
   position: left;
-}
+} */
 
 .active {
   background-color: #717171;
