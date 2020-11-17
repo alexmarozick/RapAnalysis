@@ -128,13 +128,9 @@ def login():
 
 @app.route('/sign_out')
 def sign_out():
-
-    # Remove the cached path when a user signs out and also clear the session
-    os.remove(session_cache_path())
-    
-    # session.clear() # NOTE this causes a bug where the session id will be removed.
     try:
         os.remove(session_cache_path())
+        session.clear()
     except OSError as e:
         print ("Error: %s - %s." % (e.filename, e.strerror))
     return redirect('/')

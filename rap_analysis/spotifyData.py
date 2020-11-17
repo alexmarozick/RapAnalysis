@@ -4,7 +4,7 @@ import logging
 from pprint import pprint as pp
 
 # genres = ['hip hop', 'pop rap', 'rap', 'chicago rap', 'melodic rap', 'canadian hip hop', 'canadian pop', 'toronto rap']
-genres = ['hip hop', 'rap', 'pop']
+genres = ['hiphop', 'hip hop', 'rap', 'pop']
 
 def spotify_data(spotify):
     '''
@@ -89,35 +89,67 @@ def get_playlists(spotify):
             playlists = spotify.next(playlists)
         else:
             playlists = None
+    # get_songs_from_playlist(spotify, list(playlists_dict.keys())[0] ) # for testing purposes 
     return playlists_dict
 
 def get_songs_from_playlist(spotify, playlist_id):
     '''
     Takes in a play list id and returns info on the songs of the playlist
     Format of dict returned.
-    {"song1-id" : 
+    If we get multiple artists from one song it would look like this
+    [{"song1-id" : 
             ["song2-name", 
                 {"artist1-id" : "artist1-name", "artist2-id" : "artist2-name"},...,
             ]
-        },
+        },]
+    if we get one artist per song then it would look like the following:
+        [{"song1-id" : 
+            ["song2-name", 
+                {"artist1-id" : "artist1-name"},...,
+            ]
+        },]
     '''
 
     playlist_tracks = spotify.playlist_tracks(playlist_id)
     track_list = []
+    all_tracksInfo = [] # same trakc_list expect that it will contail all the track extracted info including info from artists that aren't in the hiphop/rap genre
+    song_artist = {} # used just if we want to get the song name and the artist without any ids
     while playlist_tracks:
         for track in playlist_tracks["items"]:
             if track["track"]:
-                track_name = track["track"]["name"]
-                track_id = track["track"]["id"]
-                track_artists  = {}
-                for artist in track["track"]["artists"]:
-                    track_artists.update({artist["id"] : artist["name"]})
-                track_list.append({track_id : [track_name, track_artists]})
+                # pp(track["track"])
+                track_artist = {} # dict that contains artist id as the key and the value is the artist name
+                all_artist = {} # same as track_artist execpt that this will also contain artists that don't fall in the hiphop/artist genre NOTE used for debugging
+
+                track_id = track["track"]["id"]                                 # get song id
+                track_name = track["track"]["name"]                             # get song name
+                artist = track["track"]["artists"][0]                           # get the first artist from the list of artist which is most likely the primary artist.
+                artist_id = artist["id"]
+                artist_name = artist["name"]
+                sp_artist = spotify.artist(artist_id)                           # get  artist info given the id
+                # pp(sp_artist)                                                 # for debugging
+                genre_list = sp_artist["genres"]                                # list of genres that the artist has
+                if checkGenre(genre_list):                                      # check if the artist is a hiphop, rap or pop artist
+                    track_artist.update({artist_id : artist_name})              # if so add the artist to the list of 
+                    track_list.append({track_id : [track_name, track_artist]})  
+                    song_artist.update({track_name : artist_name}) 
+                
+                all_artist.update({artist_id : artist_name})
+                all_tracksInfo.append({track_id : [track_name, all_artist]})
+                # below gets all artists of a song
+                # track_artists  = {}
+                # for artist in track["track"]["artists"]:
+                #     track_artists.update({artist["id"] : artist["name"]})
+                # track_list.append({track_id : [track_name, track_artists]})
         
         if playlist_tracks['next']:
             playlist_tracks = spotify.next(playlist_tracks)
         else:
             playlist_tracks = None
+    # pp(track_list)
+    # print(len(song_artist))
+    # print(len(track_list))
+    # pp(song_artist)
     return track_list
 
 
