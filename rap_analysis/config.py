@@ -11,7 +11,7 @@ CONFIG_FILE1 = 'rap_analysis/config.ini'
 CONFIG_FILE2 = 'config.ini'
 config_files = [CONFIG_FILE1,CONFIG_FILE2]
 
-typedict = {'api': 'APIKEYS', 'uri': 'REDIRECT_URI'}
+typedict = {'api': 'APIKEYS', 'uri': 'REDIRECT_URI', "MONGODB" : "MONGODB"}
 
 config_key = ['Spotify','Genius']
 

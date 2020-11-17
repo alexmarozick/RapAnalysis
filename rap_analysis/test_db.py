@@ -24,3 +24,33 @@ class TestDatabase(unittest.TestCase):
         a = "kush & corinthians (his pain)" 
         b = "kush & corinthians"
         assert b in a
+
+
+    def 
+
+
+
+#%%
+l = [{'SONG1': ['lyrics','numbers', 'album']},
+    {'$ong2': ['lyrics','numbers', 'album']},
+    {'so....ng3 ': ['lyrics','numbers', 'album']}]
+artist = "TESTBOI"
+db = {}
+formatted_entry_list = []
+songs = [list(d.keys())[0] for d in l]
+lsts = []
+print([d.keys() for d in l])
+print(songs)
+for i,d in enumerate(l): 
+        d[songs[i].replace('.', "").replace("$",'s').strip(" ")] = d.pop(songs[i]) 
+#     print(s)
+#     lsts.append(l[idx][s]) 
+
+# for i in range(len(l)):
+#     print(songs[i], lsts[i])
+#     formatted_entry_list.append({songs[i].replace('.', "").replace("$",'s').strip(" ") : lsts[i]})
+
+    #formatted_entry_list[ {song.replace('.', "").replace("$",'s').strip(" ") : l}  item.keys() for item in entry_list]    
+db[artist.lower().replace('.', "").replace("$",'s')] = l
+print(db)
+# %%
