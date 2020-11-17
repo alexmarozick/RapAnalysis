@@ -30,9 +30,9 @@ def getsongdata(songdict :dict ) -> dict:
     res = []
     for item in songdict:
         artist = item['artist'].lower().replace("$","s").replace(".", "")
-        result = db[artist].find({ "song": item['song']  })
-        for doc in result:  
-            res.append(doc)
+        query_result = db[artist].find({ "song": item['song']  })
+        docs = [doc for doc in query_result]
+        res.append(docs)
     pp(res)
     return res
 
