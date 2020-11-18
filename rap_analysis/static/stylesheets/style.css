@@ -40,21 +40,21 @@ main {
   ); /* at minimum, footer will be at bottom (viewport - size of navbar - size of footer) */
 }
 
-#input_container{
+#input_container {
   width: 80%;
 }
 
-#L{
+#L {
   float: left;
   width: 40%;
   padding: 0.7rem 3rem;
 }
-#M{
+#M {
   float: left;
   width: 40%;
   padding: 0.7rem 3rem;
 }
-#R{
+#R {
   float: left;
   width: 20%;
   /* padding: 0.7rem 3rem; */
@@ -264,12 +264,12 @@ form {
   margin-bottom: 1rem;
 }
 
-#sname{
-    padding-right: 0.5rem;
+#sname {
+  padding-right: 0.5rem;
 }
 
-#sartist{
-    padding-right:0.5rem;
+#sartist {
+  padding-right: 0.5rem;
 }
 
 .btn {
