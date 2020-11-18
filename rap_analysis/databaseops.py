@@ -19,7 +19,7 @@ def searchfor():
     pass
 
 
-def getsongdata(songdict :dict ) -> dict:
+def getsongdata(songdict :dict ) -> list:
     '''
     Gets the lyrics of a dict of artists and their songs  
     songdict : {"song" : SONGNAME, "artist"}
@@ -30,7 +30,8 @@ def getsongdata(songdict :dict ) -> dict:
     res = []
     for item in songdict:
         artist = item['artist'].lower().replace("$","s").replace(".", "")
-        query_result = db[artist].find({ "song": item['song']  })
+        # query_result = db[artist].find({ "song": item['song']  })
+        query_result = db[artist].find({"$text" :{"$search" : item['song'], "$caseSensitive" : False}}) 
         docs = [doc for doc in query_result]
         res.append(docs)
     pp(res)
@@ -52,7 +53,7 @@ def songs_in_db():
 
 
 def main():
-    getlyrics([{'artist': 'Future', 'song': 'Mask Off'}])
+    getsongdata([{'artist': 'RZA', 'song': 'tragedy'}])
 
 if __name__ == "__main__":
     main()
