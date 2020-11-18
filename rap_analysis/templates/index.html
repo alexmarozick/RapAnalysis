@@ -62,16 +62,22 @@
     <main>
         <h1 class="title" id="Home">Rap Lyric Analysis</h1>
         <br>
+        <div id="input_container"> 
+            <div id="L"> 
+                <label for="sname" id="sname">Song name:</label><br>
+                <input class="song" type="text" name="song" id="song" placeholder="Type song name here">
+            </div>
+            <div id="M">
+                <label for="sartist" id="sartist">Artist name:</label><br>
+                <input class="artist" type="text" name="artist" id="artist" placeholder="Type artist name here">
+            </div>
+            <div id="R">
+                <br>
+                <input class="btn" type="submit" name="Submit" value="Submit" id="submit-btn">
+            </div>
+        </div>
 
-        <!-- <form method="GET" action="/get-lyrics" enctype="multipart/form-data"> -->
-            <label for="sname" id="sname">Song name:</label><br>
-            <input class="song" type="text" name="song" id="song" placeholder="Type song name here">
-            <label for="sartist" id="sartist">Artist name:</label><br>
-            <input class="artist" type="text" name="artist" id="artist" placeholder="Type artist name here">
-            <input class="btn" type="submit" name="Submit" value="Submit" id="submit-btn">
-        <!-- </form> -->
         <br>
-
         <!-- ajax for submit button-->
         <script type=text/javascript>
             $(function() {
@@ -117,7 +123,7 @@
         <div class="output-box">
             <div class="wrapper">
                <!-- Lyrics should be here after the submit button if you inserted a valid song name and artist name -->
-               <p id="result">?</p>  
+               <p id="result">Submit a song to see the analyzed lyrics!</p>  
             </div>
         </div>
     </main>

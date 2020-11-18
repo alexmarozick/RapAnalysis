@@ -32,12 +32,33 @@
 }
 
 main {
-  width: 90vh;
+  width: 70%;
   padding: 30px 20px;
   margin: 0 auto;
   min-height: calc(
     100vh - 48px - 129.73px
   ); /* at minimum, footer will be at bottom (viewport - size of navbar - size of footer) */
+}
+
+#input_container{
+  width: 80%;
+}
+
+#L{
+  float: left;
+  width: 40%;
+  padding: 0.7rem 3rem;
+}
+#M{
+  float: left;
+  width: 40%;
+  padding: 0.7rem 3rem;
+}
+#R{
+  float: left;
+  width: 20%;
+  /* padding: 0.7rem 3rem; */
+  /* vertical-align: middle; */
 }
 
 body {
@@ -207,8 +228,9 @@ input:checked + .slider {
 }
 
 .btn-container {
-  padding: 0.7rem 3rem;
+  /* padding: 0.7rem 3rem; */
   width: 100%;
+  /* padding: 50%; */
 }
 
 form {
@@ -226,7 +248,7 @@ form {
   outline: none;
   border: none;
   /* padding: top right bottom left */
-  padding: 0rem 1rem 0rem 0.5rem;
+  /* padding: 0rem 1rem 0rem 0.5rem; */
   font-size: 1rem;
   margin-bottom: 1rem;
 }
@@ -237,7 +259,7 @@ form {
   border-radius: 4px;
   outline: none;
   border: none;
-  padding-left: 0.5rem;
+  /* padding-left: 0.5rem; */
   font-size: 1rem;
   margin-bottom: 1rem;
 }
@@ -247,7 +269,6 @@ form {
 }
 
 #sartist{
-    padding-left:1.5rem;
     padding-right:0.5rem;
 }
 
