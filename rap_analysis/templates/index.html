@@ -104,7 +104,9 @@
                 // result of what flask returns which is contained in data.
                 // data will be a json 
                 // console.log(data)
-                        $('#result').text(data.result);
+                        // $('#result').text(data.result);
+                        document.getElementById("result").innerHTML = data.result;
+
                     });
 
                 });

@@ -141,10 +141,6 @@ def sign_out():
 @app.route('/get-lyrics')
 def get_input():
     
-# if request.method == "GET":
-#     app.logger.debug("Starting GET get-lyrics")                       # for debugging
-#     request.args.get(key, default, type)
-    # default is what is returned if the requested data doesn't exist so we can add that in if needed or for error checking
     song_name = request.args.get('songid')
     artist_name = request.args.get('artistid')
     print(song_name)
