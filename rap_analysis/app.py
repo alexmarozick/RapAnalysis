@@ -21,6 +21,8 @@ import analyzeSong
 import datetime
 from buildDB import get_lyrics
 import spotifyData
+import databaseops as dbops
+
 # logging.basicConfig(level=app.logger.debug)
 class FileTypeException(HTTPException):   # this error is thrown when the file type is incorrect
     code = 400
@@ -136,41 +138,60 @@ def sign_out():
     return redirect('/')
 
 
-@app.route('/get-lyrics', methods=['GET', 'POST'])
+@app.route('/get-lyrics')
 def get_input():
     
-    if request.method == "GET":
-        app.logger.debug("Starting GET get-lyrics")                       # for debugging
-        # request.args.get(key, default, type)
-        # default is what is returned if the requested data doesn't exist so we can add that in if needed or for error checking
-        song_name = request.args.get('song', type=str)
-        artist_name = request.args.get('artist', type=str)
-        print(song_name)
-        print(artist_name)
-        song_name = song_name.lower()
-        artist_name = artist_name.lower()
-        app.logger.debug(song_name)                                        # for debugging
-        app.logger.debug(artist_name)                                      # for debugging        
-        # TODO whatever is returned by get_lyrics, we have to return it in the format below so we can access it in the html page and display it
-        #search mongodb database for the lyrics/colors/stats of song by artist 
-        #if atrist, calc averages
-            # for song in songs:
-                # total num rhymes 
+# if request.method == "GET":
+#     app.logger.debug("Starting GET get-lyrics")                       # for debugging
+#     request.args.get(key, default, type)
+    # default is what is returned if the requested data doesn't exist so we can add that in if needed or for error checking
+    song_name = request.args.get('songid')
+    artist_name = request.args.get('artistid')
+    print(song_name)
+    print(artist_name)
+    # song_name = song_name.lower()
+    # artist_name = artist_name.lower()
+    app.logger.debug(song_name)                                        # for debugging
+    app.logger.debug(artist_name)                                      # for debugging        
+    # TODO whatever is returned by get_lyrics, we have to return it in the format below so we can access it in the html page and display it
+    #search mongodb database for the lyrics/colors/stats of song by artist 
+    #if atrist, calc averages
+        # for song in songs:
+            # total num rhymes 
 
-        #avg = num rhymes / num words
-        return jsonify(result=get_lyrics(song_name, artist_name))
-        
-    elif request.method == "POST":
-        app.logger.debug("Starting POST get-lyrics")                       # for debugging
-        req = request.form
-        song_name = req.get("song").lower() # maybe
-        artist_name = req.get("artist").lower()
+    #avg = num rhymes / num words
 
-        app.logger.debug(song_name)                                        # for debugging
-        app.logger.debug(artist_name)                                      # for debugging
-        get_lyrics(song_name, artist_name)
 
-    return redirect('/')
+    # pass in a dictionary to display and highlight in form {"song": song_name, "artist" : artist_name}
+    songdata = dbops.getsongdata([{'song': song_name, 'artist': artist_name}])
+
+    for item in songdata[0]:   
+        proc_lyrics = item['lyrics']  # string
+        proc_colors = item['colors']  # list of lists
+    
+    # split the lyrics into a list of lists
+    split_newl = proc_lyrics.split('\n')
+    size = len(split_newl)
+    #get indicies of all instances of empty string (these are blank lines inbetween sections)
+    idx_list = [idx + 1 for idx, val in enumerate(split_newl) if val == ''] 
+    #generate new list seperated by sections 
+    sections = [split_newl[i: j] for i, j in zip([0] + idx_list, idx_list + ([size] if idx_list[-1] != size else []))] 
+
+    # generate the highlighted string
+    highlighted = ""
+    for i in range(len(sections)):
+        for j in range(len(sections[i])):
+            if proc_colors[i][j] != 0:
+                highlighted += '<mark style=\"background: #' + str(proc_colors[i][j]) + ';\">' + sections[i][j] + "</mark>"
+            else: 
+                highlighted += sections[i][j]
+    # lyricstext.innerHTML = highlighted
+    # document.getElementById("result").innerHTML = highlighted;
+
+    print("\n\n Highlighting done")
+    # print(highlighted)
+    
+    return jsonify(result=highlighted)
 
 
 @app.route('/unknown')
@@ -186,7 +207,6 @@ def page_not_found(e):
 @app.errorhandler(403)
 def page_forbidden(e):
     return render_template("403.html"), 403
-
 
 
 if __name__ == "__main__":
