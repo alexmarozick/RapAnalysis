@@ -19,7 +19,7 @@ def searchfor():
     pass
 
 
-def getsongdata(songdict :dict ) -> list:
+def getsongdata(songdict :list) -> list:
     '''
     Gets the lyrics of a dict of artists and their songs  
     songdict : {"song" : SONGNAME, "artist"}
@@ -29,9 +29,14 @@ def getsongdata(songdict :dict ) -> list:
     db = cluster['Lyrics_Actual']
     res = []
     for item in songdict:
-        artist = item['artist'].lower().replace("$","s").replace(".", "")
-        # query_result = db[artist].find({ "song": item['song']  })
-        query_result = db[artist].find({"$text" :{"$search" : item['song'], "$caseSensitive" : False}}) 
+        if type(item['artist']) == list: # NOTE the way I am doing these checks could probably be done better also something else to consider is what if no artist is given - Abduarraheem
+            for a in artists:
+                artist = a.lower().replace("$","s").replace(".", "")
+                # query_result = db[artist].find({ "song": item['song']  })
+                query_result = db[artist].find({"$text" :{"$search" : item['song'], "$caseSensitive" : False}}) 
+        else:
+            artist = item['artist'].lower().replace("$","s").replace(".", "")
+            query_result = db[artist].find({"$text" :{"$search" : item['song'], "$caseSensitive" : False}}) 
         docs = [doc for doc in query_result]
         res.append(docs)
     # pp(res)

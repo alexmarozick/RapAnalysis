@@ -4,22 +4,23 @@ Juno Mayer, Alex Marozick and Abduarraheem Elfandi
 
 from flask import Flask, render_template, url_for, request, redirect, abort, flash, jsonify, session, make_response
 from flask_session import Session
-import os
+from pprint import pprint as pp
 from werkzeug.utils import secure_filename
 from werkzeug.exceptions import HTTPException, default_exceptions, Aborter
+from spotipy.oauth2 import SpotifyOAuth
+from buildDB import get_lyrics
+import os
 import pprint
 import requests
 import json
 import config
 import spotipy
 import time
-from spotipy.oauth2 import SpotifyOAuth
 import uuid
 import lyricsgenius
 import logging
 import analyzeSong
 import datetime
-from buildDB import get_lyrics
 import spotifyData
 import databaseops as dbops
 
@@ -77,6 +78,28 @@ def index():
 def about():
     return render_template("about.html")
 
+@app.route('/_analyzeSpotify')
+def analyzeSpotify():
+    print(request.args)
+    analyzeType = request.args.get('type')
+    # print(playlist)
+    sp_oauth = SpotifyOAuth(client_id=client_id, client_secret=client_secret, redirect_uri=REDIRECT_URI, 
+                            scope=scope, cache_path=session_cache_path(), show_dialog=True)
+    spotify = spotipy.Spotify(auth_manager=sp_oauth)
+    songs = []
+    if analyzeType == 'playlist':
+        playlistID = request.args.get('playlistID')
+        songs = dbops.getsongdata(spotifyData.get_songs_from_playlist(spotify, playlistID))
+    elif analyzeType == 'recent':
+        recent_num = int(request.args.get('recent_num'))
+        # print(recent_num)
+        # dbops.getsongdata(spotifyData.get_recent_plays(spotify, recent_num))
+        songs = dbops.getsongdata(spotifyData.get_recent_plays(spotify, recent_num))
+    return jsonify(result=songs)
+
+
+
+
 
 @app.route('/spotify_login')
 def spotify_login():
@@ -105,7 +128,8 @@ def spotify_login():
         spotify = spotipy.Spotify(auth_manager=sp_oauth)
         display = "User: " + spotify.me()["display_name"] + " (Sign Out)"
         spotify_data = spotifyData.spotify_data(spotify)
-        return render_template("spotify.html", display=display)
+        pp(spotify_data)
+        return render_template("spotify.html", display=display, artists=spotify_data["artists"], playlists=spotify_data["playlists"])
     return render_template("spotify_login.html", display=display)
 
 
