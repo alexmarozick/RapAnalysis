@@ -253,7 +253,7 @@ def highlight_words(lyrics : str, colorlist : list):
     skip = False
     for idx, word in enumerate(lyrics):
 
-    
+    #try:
         if word != '\n':
             color = hex(colorlist[coloritr])
             print(color)
@@ -279,12 +279,12 @@ def highlight_words(lyrics : str, colorlist : list):
             app.logger.debug(f'FOUND NEWLINE at {idx}')        
 
 
-    
+    #except:
         # app.logger.debug(f"OVERFLOW at word {idx} out of {len(lyrics)}-- here's whats left") 
         # app.logger.debug(lyrics[idx:])
         return jsonify(result=highlighted)
-        
-    # if not skip
+    
+# if not skip
     return jsonify(result=highlighted)
 
 
