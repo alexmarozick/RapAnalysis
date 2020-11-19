@@ -23,6 +23,7 @@ import analyzeSong
 import datetime
 import spotifyData
 import databaseops as dbops
+import colorsys
 
 # logging.basicConfig(level=app.logger.debug)
 class FileTypeException(HTTPException):   # this error is thrown when the file type is incorrect
@@ -45,6 +46,8 @@ scope = "user-read-private playlist-modify-private playlist-modify-public playli
 client_id = config.get('SPOTIPY_CLIENT_ID','api') # NOTE hey do this
 client_secret = config.get('SPOTIPY_CLIENT_SECRET','api') # NOTE hey do this
 token_url = 'https://accounts.spotify.com/api/token'
+
+
 
 # NOTE Make sure this is also the same in your Spotify app.
 REDIRECT_URI = config.get('SPOTIPY_REDIRECT_URI','uri')
@@ -210,13 +213,25 @@ def get_input():
     print(proc_colors)
     # split the lyrics into a list of lists
     split_newl = proc_lyrics.replace('\n', '\n ').split(' ')
+    lyrics_nosection = []
+    for word in split_newl: 
+        if '[' in word: 
+            skip = True
+        if ']' in word: 
+            skip = False
+            continue
+
+        if not skip:
+            lyrics_nosection.append(word)
+
+    print(lyrics_nosection)
     # split_newl = [word for word in split_newl if '[' not in word and ']' not in word]
     # split_newl =  [word for word in split_newl if word is not '']
     colorlist = []
     for l in proc_colors:
         for color in l: 
             colorlist.append(color)
-    print(len(split_newl))
+    print(len(lyrics_nosection))
     print(len(colorlist))
     size = len(split_newl)
 
@@ -225,44 +240,51 @@ def get_input():
         # skip = true 
     # if ']' in word 
         # skip = false
-    return highlight_words(split_newl,colorlist)
+    return highlight_words(lyrics_nosection,colorlist)
 
 
 def highlight_words(lyrics : str, colorlist : list):
     """
     Applies a list of colors to a list of lyrics 
     """
+    print(lyrics)
     highlighted = ""
     coloritr = 0
+    skip = False
     for idx, word in enumerate(lyrics):
-        if '[' in word: 
-            skip = True
 
-        if ']' in word: 
-            skip = False
-            continue
-        try:
-            if not skip or word == '\n' or word == '"':
-                highlightword = '<mark style=\"background: #' + str(hex(colorlist[coloritr]))[2:] + ';\">' + word + "</mark> "
-                if '\n' in word:
-                    highlightword += '<br>'
-                    word.replace('\n','<br>')
-                if colorlist[coloritr] != 0:
-                    highlighted += highlightword
-                else: 
-                    highlighted += word + " "
-                coloritr +=1
+    
+        if word != '\n':
+            color = hex(colorlist[coloritr])
+            print(color)
+            print(str(color))
+            print(st)
+
+            # hls = colorsys.rgb_to_hls(, hex(color[2:3]), hex(color[4:5]))
+            # print(hls)
+
+            highlightword = '<mark style=\"background: #' + color + ';\">' + word + "</mark> "
+            if '\n' in word:
+                highlightword += '<br>'
+                word.replace('\n','<br>')
+
+            if colorlist[coloritr] != 0:
+                highlighted += highlightword
             
+            else: 
+                highlighted += word + " "
+            coloritr +=1 
+        else: 
+            highlighted += '<br>'  
+            app.logger.debug(f'FOUND NEWLINE at {idx}')        
 
 
-        except:
-            print(f"OVERFLOW at word {idx} out of {len(lyrics)}-- here's whats left") 
-            print(lyrics[idx:])
-            print(highlighted)
-            return jsonify(result=highlighted)
+    
+        # app.logger.debug(f"OVERFLOW at word {idx} out of {len(lyrics)}-- here's whats left") 
+        # app.logger.debug(lyrics[idx:])
+        return jsonify(result=highlighted)
         
     # if not skip
-    print(split_newl)
     return jsonify(result=highlighted)
 
 

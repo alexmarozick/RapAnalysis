@@ -117,6 +117,8 @@ def mark_with_rhymes(lyrics : str, delims : dict) -> str:
     #"dead in the middle of little italy"
     # middle == rhymer, little == rhymee
     for idx, rhymer in enumerate(lyrics):
+        if '[' in rhymer or ']' in rhymer:
+            print(rhymer)
         found = False
         # iter_seg = iter_copy[split_lyrics.index(word)-20:split_lyrics.index(word)+20]
         for rhymee in mark_copy[idx:]:
@@ -280,6 +282,7 @@ def parse_and_analyze_lyrics(lyrics=None,cmd=False,args=None,genius=True) -> dic
     for item in songlyrics:
         if item != []:
             colorlist, marked = mark_with_rhymes(item, delims)
+            print(f"COLORLIST: {len(colorlist)}MARKED {len(item)} ")
             colors_for_html.append(colorlist)
             marked_lyrics.append(marked)
             logging.debug(marked)
