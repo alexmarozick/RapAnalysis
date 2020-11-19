@@ -34,7 +34,7 @@ def getsongdata(songdict :dict ) -> list:
         query_result = db[artist].find({"$text" :{"$search" : item['song'], "$caseSensitive" : False}}) 
         docs = [doc for doc in query_result]
         res.append(docs)
-    pp(res)
+    # pp(res)
     return res
 
 

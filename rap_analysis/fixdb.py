@@ -5,8 +5,10 @@ import functools
 import pymongo
 from bson.objectid import ObjectId
 from pprint import pprint as pp
+import analyzeSong
 
 mongoconnect = config.get("DBNAME", "MONGODB")
+cluster = pymongo.mongo_client(mongoconnect)
 db = cluster["Lyrics_Actual"]
 
 colnames = db.list_collection_names()
@@ -39,7 +41,6 @@ for col in colnames:
             collection.insert_one(newdoc)
             print(f".", end="")
     print(f"processed {i} songs ")
-    print(80 * "-")
 
 
 # %%
@@ -47,3 +48,33 @@ for col in colnames:
     collection = db[col]
     collection.create_index([('song', pymongo.TEXT)], name='search_index', default_language='english')
     print("creatd index for {col}")
+
+
+# %%
+import config
+import pymongo
+import analyzeSong
+from bson.objectid import ObjectId
+mongoconnect = config.get("DBNAME", "MONGODB")
+cluster = pymongo.MongoClient("mongodb+srv://rapAnalysisUser:fPuQRGR3aRh81BB3@lyricsstorage.9tro8.mongodb.net/LyricsStorage?retryWrites=true&w=majority")
+db = cluster["Lyrics_Actual"]
+
+#MADE IT FROM NAS TO THE GAME 
+
+colnames = db.list_collection_names()
+
+for col in colnames:
+    collection = db[col]
+    print(f"Fixing {col}")
+    for doc in collection.find():
+        try:
+            lyrics = doc['lyrics']
+            colors, marked = analyzeSong.parse_and_analyze_lyrics(cmd=False,args=lyrics)
+            collection.update_one({"song" : doc['song']},{"$set" : {"colors" : colors}} )
+            print(r".", end=r"")
+        except KeyError:
+            collection.delete_one({"_id" : ObjectId(doc['_id'])})
+            print("Invalid song deleted")
+        print("")
+
+# %%

@@ -296,11 +296,11 @@ label.btn input[type="file"] {
 .output-box {
   margin: auto;
   width: 100%;
-  background-color: #292b2e;
+  background-color: #ffffff;
   height: 360px;
   padding: 10px;
   border: 10px solid #191d20;
-  color: #1db954;
+  color: #000000;
   font: 16px/26px;
   overflow: auto;
   border-radius: 1rem;

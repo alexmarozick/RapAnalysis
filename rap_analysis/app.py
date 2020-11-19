@@ -157,37 +157,135 @@ def get_input():
 
     #avg = num rhymes / num words
 
-
+    proc_lyrics = []
+    proc_colors = []
+    highlighted = ""
     # pass in a dictionary to display and highlight in form {"song": song_name, "artist" : artist_name}
     songdata = dbops.getsongdata([{'song': song_name, 'artist': artist_name}])
+    for item in songdata:
+        for i in item:
+             if song_name.lower() in i['song'].lower():
+                proc_lyrics = i['lyrics']  # string
+                proc_colors = i['colors']  # list of lists
 
-    for item in songdata[0]:   
-        proc_lyrics = item['lyrics']  # string
-        proc_colors = item['colors']  # list of lists
-    
+
+        # if song_name.lower() in item[0]['song'].lower():
+        #     print(item['song'])
+    # proc_lyrics = songdata[0]['lyrics']  # string
+    # proc_colors = songdata[0][0]['colors']  # list of lists
+    print(proc_lyrics)
+    print(proc_colors)
     # split the lyrics into a list of lists
-    split_newl = proc_lyrics.split('\n')
-    size = len(split_newl)
-    #get indicies of all instances of empty string (these are blank lines inbetween sections)
-    idx_list = [idx + 1 for idx, val in enumerate(split_newl) if val == ''] 
-    #generate new list seperated by sections 
-    sections = [split_newl[i: j] for i, j in zip([0] + idx_list, idx_list + ([size] if idx_list[-1] != size else []))] 
+    split_newl = proc_lyrics.replace('\n', '\n ').split(' ')
+    # split_newl = [word for word in split_newl if '[' not in word and ']' not in word]
+    # split_newl =  [word for word in split_newl if word is not '']
+    colorlist = []
+    for l in proc_colors:
+        for color in l: 
+            colorlist.append(color)
+    print(len(split_newl))
+    print(len(colorlist))
 
-    # generate the highlighted string
-    highlighted = ""
-    for i in range(len(sections)):
-        for j in range(len(sections[i])):
-            if proc_colors[i][j] != 0:
-                highlighted += '<mark style=\"background: #' + str(proc_colors[i][j]) + ';\">' + sections[i][j] + "</mark>"
-            else: 
-                highlighted += sections[i][j]
+    size = len(split_newl)
+
+    #skip = false 
+    # if '[' in word 
+        # skip = true 
+    # if ']' in word 
+        # skip = false
+    coloritr = 0
+    for idx, word in enumerate(split_newl):
+        if '[' in word: 
+            skip = True
+
+        if ']' in word: 
+            skip = False
+            continue
+        try:
+            if not skip or word == '\n' or word == '"':
+                highlightword = '<mark style=\"background: #' + str(hex(colorlist[coloritr]))[2:] + ';\">' + word + "</mark> "
+                if '\n' in word:
+                    highlightword += '<br>'
+                    word.replace('\n','<br>')
+                if colorlist[coloritr] != 0:
+                    highlighted += highlightword
+                else: 
+                    highlighted += word + " "
+                coloritr +=1
+            
+
+
+        except:
+            print(f"OVERFLOW at word {idx} out of {len(split_newl)}-- here's whats left") 
+            print(split_newl[idx:])
+            print(highlighted)
+            return jsonify(result=highlighted)
+        
+    # if not skip
+    print(split_newl)
+    return jsonify(result=highlighted)
+    #get indicies of all instances of empty string (these are blank lines inbetween sections)
+    # idx_list = [idx + 1 for idx, val in enumerate(split_newl) if '[' in val ] 
+    # #generate new list seperated by sections 
+    # sections = [split_newl[i: j] for i, j in zip([0] + idx_list, idx_list + ([size] if idx_list[-1] != size else []))] 
+    
+    # for idx, section in enumerate(sections):
+    #     words = []
+    #     for line in section:
+    #         for word in line.split(" "):
+    #             if len(line.split(" ")) == 1 and '[' in word:
+    #                 continue
+    #             else:
+    #                 words.append(word)
+    #     print(words)
+    #     print(len(words))
+    #     print(proc_colors[idx])
+    #     print(len(proc_colors[idx]))
+    # # sections : [section][line][word]
+    # # proc_colors : [section][word]
+    # # generate the highlighted string
+
+    # # AAAAA AAA AAAAAA AAAA 
+    # # BBBBB BBBB BBBB BB 
+    # # CCCC CC CCCCC 
+
+    # highlighted = ""
+    # print(f"number of sections in proc colors {len(proc_colors)}")
+    # print(f"num sections {len(sections)}")
+    # # print(proc_colors)
+    # empties = 0
+    # for idx, section in enumerate(sections): 
+    # #for section in range(len(sections)):
+    #     coloritr = 0
+    #     print(f"number of colors in section {len(proc_colors[idx])}")
+    #     for line in section:
+    #     #for line in range(len(sections[section])):
+    #         for word in line.split():
+    #         #for word in range(len(sections[section][line])):
+    #             try:
+    #                 if proc_colors[idx][coloritr] != 0:
+    #                     highlighted += '<mark style=\"background: #' + str(proc_colors[idx][coloritr]) + ';\">' + word + "</mark> "
+    #                 else: 
+    #                     highlighted += word + " "
+
+    #                 if coloritr < len(proc_colors[idx]) - 1:
+    #                     coloritr += 1
+    #             except:
+    #                 print(f"stopped in section {idx}")
+    #                 print(section)
+    #                 print(line)
+    #                 print(word)
+    #                 return jsonify(result=highlighted)
+
+    #         highlighted += '\n'
+                
     # lyricstext.innerHTML = highlighted
     # document.getElementById("result").innerHTML = highlighted;
 
-    print("\n\n Highlighting done")
+    # print("\n\n Highlighting done")
     # print(highlighted)
     
-    return jsonify(result=highlighted)
+ 
 
 
 @app.route('/unknown')
@@ -207,3 +305,10 @@ def page_forbidden(e):
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+
+
+#dont color brackets -- skip if they have []
+# this shouldnt create an offset 
+
+# place newlines after bracket 
