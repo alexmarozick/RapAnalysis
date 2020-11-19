@@ -307,6 +307,12 @@ label.btn input[type="file"] {
   justify-content: center;
 }
 
+#text-submit-btn-container{
+  width: 100%;
+  justify-content: center;
+  text-align: center;
+}
+
 .fa-linkedin-square {
   overflow: hidden;
   background-size: 100% 200%;
