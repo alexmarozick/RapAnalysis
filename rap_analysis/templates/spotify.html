@@ -16,6 +16,7 @@
 
         <!-- Javascript:  JQuery from a content distribution network (CDN) -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src=../static/JSscripts/spotifyData.js></script>
     </head>
 
 
@@ -66,29 +67,40 @@
                         </form>
                     </div>
                 </div>
-                <div id="playlist_and_artist_container">
-                    <div id="playlist">
+                <div class="playlist_and_artist_container">
+                    <div class="playlist">
                         <h3 class="sub_title">Playlists</h3>   <!-- want title -->
-
+                        <iframe id="playlistWidget" src="" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+                        <br>
+                        <label for="playlist">Choose a playlist to analyze:</label>
+                        <select id="droplistP"  onload="playlist()" onchange="playlist()">
+                            {% for id in playlists %}
+                            <option name={{playlists[id]}} value="{{id}}">{{playlists[id]}}</option>
+                            {% endfor %}
+                        </select>
+                        <a href=#><button class="btn" id=analyzeP>Analyze playlist</button></a>
                         <!-- want dropdown menu -->
                         <!-- want widget embedding -->
                         <!-- want analyze button -->
-
+                        
                     </div>
-                    <div id="spacing"></div>
-                    <div id="artist">
-                        <h3 class="sub_title">Artists</h3>   <!-- want title -->
+                    <div class="spacing"></div>
+                    <div class="recent">
+                        <h3 class="sub_title">Recent Plays</h3>   <!-- want title -->
+                        <label for="recent">Number of Recent Plays:</label>
+                        <input class="recent" type="text" name="recent" id="recent" placeholder="Type the number of recent plays name here">
+                        <a href=#><button id=analyzeR>Analyze Recent Plays</button></a>
                         <!-- want dropdown menu -->
                         <!-- want widget embedding -->
                         <!-- want analyze button -->
                     </div>
                 </div>
-                <div id="recent_container">
+                <!-- <div id="recent_container">
                     <div id="recents">
-                        <!-- want recent dropdown ???-->
-                        <!-- not really sure what else yet-->
+                        want recent dropdown ???
+                        not really sure what else yet
                     </div>
-                </div>
+                </div> -->
 
             </div>
             <div id="right_side"> <!--right side will be 1/3 of the page-->
@@ -144,5 +156,9 @@
 
         <!-- this main.js script needs to stay here -->
         <script src="../static/JSscripts/main.js"></script>
+        <script>
+            playlist()
+            recent_plays()
+        </script>
     </body>
 </html>
