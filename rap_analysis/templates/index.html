@@ -121,7 +121,7 @@
         <!-- end of ajax -->
 
         <div class="output-box">
-            <input class="wrapper"  placeholder="placeholder test">
+            <input class="wrapper"  placeholder="placeholder test" id="output">
                <!-- Lyrics should be here after the submit button if you inserted a valid song name and artist name -->
                <p id="result">Submit a song to see the analyzed lyrics!</p>  
             </input>
@@ -133,7 +133,7 @@
             $(function() {
                 $('#text-submit-btn').click(function(){
                     $.getJSON('/user-lyrics',{
-                        textboxid: $('#result').val(),
+                        textboxid: $('#output').val(),
                     },
                     function(data){
                         document.getElementById("result").innerHTML = data.result;

@@ -161,12 +161,21 @@ def sign_out():
         print ("Error: %s - %s." % (e.filename, e.strerror))
     return redirect('/')
 
+@app.route('/user-lyrics')
+def analyze_user_lyrics():
+    print("GOT INTO USER LYRICS")
+    lyrics = request.args.get('textboxid')
+    print(lyrics)
+    return jsonify(result=lyrics)
+
+
 
 @app.route('/get-lyrics')
 def get_input():
     
     song_name = request.args.get('songid')
     artist_name = request.args.get('artistid')
+
     print(song_name)
     print(artist_name)
     # song_name = song_name.lower()
@@ -209,7 +218,6 @@ def get_input():
             colorlist.append(color)
     print(len(split_newl))
     print(len(colorlist))
-
     size = len(split_newl)
 
     #skip = false 
@@ -217,8 +225,16 @@ def get_input():
         # skip = true 
     # if ']' in word 
         # skip = false
+    return highlight_words(split_newl,colorlist)
+
+
+def highlight_words(lyrics : str, colorlist : list):
+    """
+    Applies a list of colors to a list of lyrics 
+    """
+    highlighted = ""
     coloritr = 0
-    for idx, word in enumerate(split_newl):
+    for idx, word in enumerate(lyrics):
         if '[' in word: 
             skip = True
 
@@ -240,14 +256,17 @@ def get_input():
 
 
         except:
-            print(f"OVERFLOW at word {idx} out of {len(split_newl)}-- here's whats left") 
-            print(split_newl[idx:])
+            print(f"OVERFLOW at word {idx} out of {len(lyrics)}-- here's whats left") 
+            print(lyrics[idx:])
             print(highlighted)
             return jsonify(result=highlighted)
         
     # if not skip
     print(split_newl)
     return jsonify(result=highlighted)
+
+
+
     #get indicies of all instances of empty string (these are blank lines inbetween sections)
     # idx_list = [idx + 1 for idx, val in enumerate(split_newl) if '[' in val ] 
     # #generate new list seperated by sections 
