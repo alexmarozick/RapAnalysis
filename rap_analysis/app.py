@@ -181,11 +181,9 @@ def get_input():
 
     print(song_name)
     print(artist_name)
-    # song_name = song_name.lower()
-    # artist_name = artist_name.lower()
-    app.logger.debug(song_name)                                        # for debugging
-    app.logger.debug(artist_name)                                      # for debugging        
-    # TODO whatever is returned by get_lyrics, we have to return it in the format below so we can access it in the html page and display it
+
+    app.logger.debug(song_name)                                       
+    app.logger.debug(artist_name)                                            
     #search mongodb database for the lyrics/colors/stats of song by artist 
     #if atrist, calc averages
         # for song in songs:
@@ -193,26 +191,34 @@ def get_input():
 
     #avg = num rhymes / num words
 
-    proc_lyrics = []
-    proc_colors = []
-    highlighted = ""
     # pass in a dictionary to display and highlight in form {"song": song_name, "artist" : artist_name}
     songdata = dbops.getsongdata([{'song': song_name, 'artist': artist_name}])
+    lyrics, colors = parse_songdata(artist_name,song_name,songdata)
+
+
+    return highlight_words(lyrics,colors)
+
+
+def parse_songdata(artist_name : str,song_name : str, songdata : list) -> (list, list):
+    '''
+    Pareses a songdata query from the DB and returns a list of lyrics and colors to be 
+    applied 
+    '''
+
+    proc_lyrics = []
+    proc_colors = []
     for item in songdata:
         for i in item:
-             if song_name.lower() in i['song'].lower():
+            if song_name.lower() in i['song'].lower():
                 proc_lyrics = i['lyrics']  # string
                 proc_colors = i['colors']  # list of lists
 
+    app.logger.debug(proc_lyrics)
+    app.logger.debug(proc_colors)
 
-        # if song_name.lower() in item[0]['song'].lower():
-        #     print(item['song'])
-    # proc_lyrics = songdata[0]['lyrics']  # string
-    # proc_colors = songdata[0][0]['colors']  # list of lists
-    print(proc_lyrics)
-    print(proc_colors)
     # split the lyrics into a list of lists
     split_newl = proc_lyrics.replace('\n', '\n ').split(' ')
+    #take section headers out of lyrics
     lyrics_nosection = []
     for word in split_newl: 
         if '[' in word: 
@@ -224,23 +230,18 @@ def get_input():
         if not skip:
             lyrics_nosection.append(word)
 
-    print(lyrics_nosection)
-    # split_newl = [word for word in split_newl if '[' not in word and ']' not in word]
-    # split_newl =  [word for word in split_newl if word is not '']
+    # app.logger.debug(lyrics_nosection)
+
+    #flatten colorlist from [list[lyrics]] to [lyrics]
     colorlist = []
     for l in proc_colors:
         for color in l: 
             colorlist.append(color)
+    #these should be roughly the same
     print(len(lyrics_nosection))
     print(len(colorlist))
-    size = len(split_newl)
 
-    #skip = false 
-    # if '[' in word 
-        # skip = true 
-    # if ']' in word 
-        # skip = false
-    return highlight_words(lyrics_nosection,colorlist)
+    return lyrics_nosection, colorlist
 
 
 def highlight_words(lyrics : str, colorlist : list):
@@ -253,45 +254,54 @@ def highlight_words(lyrics : str, colorlist : list):
     skip = False
     for idx, word in enumerate(lyrics):
 
-    #try:
-        if word != '\n':
-            color = hex(colorlist[coloritr])  # the hex is in form 0x123456
-            print(color)
-            color = str(color)  #hex in form str "0x123456"
-            color = color[2:] #hex is in the form str "123456"
-            # print(color[:2])
-            # # print(int(color[:2]))
-            # print(int('0xab', 16))
-
-            # print(hex(int('0x' + color[:2], 16)))
-            R = int('0x' + color[:2], 16)/255  #round to the nearest 25 out of the 255 options 
-            G = int('0x' + color[2:4], 16)/255 # idk
-            B = int('0x' + color[4:], 16)/255  # limit range so we get low saturated colors (more transparent)
-
-
-            hls = colorsys.rgb_to_hls(R, G, B)
-            print(hls)
-
-            highlightword = '<mark style=\"background: #' + color + ';\">' + word + "</mark> "
-            if '\n' in word:
-                highlightword += '<br>'
-                word.replace('\n','<br>')
-
-            if colorlist[coloritr] != 0:
-                highlighted += highlightword
+        try:
+            if word != '\n':
+                print(colorlist[coloritr])
             
+                if colorlist[coloritr] != 0:
+                    color = hex(colorlist[coloritr])  # the hex is in form 0x123456
+                    color = str(color)  #hex in form str "0x123456"
+                    color = color[2:] #hex is in the form str "123456"
+                    while len(color) < 6:
+                        color= '0' + color
+                    # print(color[:2])
+                    # # print(int(color[:2]))
+                    # print(int('0xab', 16))
+
+                    # print(hex(int('0x' + color[:2], 16)))
+                    print(color)
+                    R = int('0x' + color[:2], 16)/255   
+                    G = int('0x' + color[2:4], 16)/255
+                    B = int('0x' + color[4:], 16)/255  
+
+
+
+                    hue,sat,light = colorsys.rgb_to_hls(R, G, B)
+                    sat = '100%'
+                    light = '50%'
+                    hue = (hue * 360)
+
+                    highlightword = f'<mark style=\"background: hsl({hue},100% ,70% );\">{word}</mark> '
+                
+                    if '\n' in word:
+                        highlightword += '<br>'
+
+                    highlighted += highlightword
+                
+                else: 
+                    highlighted += word.replace('\n','<br>') if '\n' in word else f"{word} "
+                    
+                coloritr +=1 
+
             else: 
-                highlighted += word + " "
-            coloritr +=1 
-        else: 
-            highlighted += '<br>'  
-            app.logger.debug(f'FOUND NEWLINE at {idx}')        
+                highlighted += '<br>'  
+                app.logger.debug(f'FOUND NEWLINE at {idx}')        
 
 
-    #except:
-        # app.logger.debug(f"OVERFLOW at word {idx} out of {len(lyrics)}-- here's whats left") 
-        # app.logger.debug(lyrics[idx:])
-        return jsonify(result=highlighted)
+        except IndexError:
+            app.logger.debug(f"OVERFLOW at word {idx} out of {len(lyrics)}-- here's whats left") 
+            app.logger.debug(lyrics[idx:])
+            return jsonify(result=highlighted)
     
 # if not skip
     return jsonify(result=highlighted)

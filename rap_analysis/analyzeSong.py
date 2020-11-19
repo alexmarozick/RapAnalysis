@@ -250,29 +250,32 @@ def parse_and_analyze_lyrics(lyrics=None,cmd=False,args=None,genius=True) -> dic
     #print(80 * "-")
     size = len(split_newl)
     #get indicies of all instances of empty string (these are blank lines inbetween sections)
-    idx_list = [idx + 1 for idx, val in enumerate(split_newl) if val == ''] 
-    #generate new list seperated by sections 
-    try:
-        sections = [split_newl[i: j] for i, j in zip([0] + idx_list, idx_list + ([size] if idx_list[-1] != size else []))] 
-    except IndexError:
-        print("Invalid Lyrics")
-        return None, None
+    songlyrics = []
+    if genius:
+        idx_list = [idx + 1 for idx, val in enumerate(split_newl) if val == ''] 
+        #generate new list seperated by sections 
+        try:
+            sections = [split_newl[i: j] for i, j in zip([0] + idx_list, idx_list + ([size] if idx_list[-1] != size else []))] 
+        except IndexError:
+            print("Invalid Lyrics")
+            return None, None
     # remove duplicate choruses
     
     # pprint.pprint(sections)
     # call mark_with_rhymes on each verse/chorus
-    songlyrics = []
-    # print("THIS MANY SECTIONS IN THE SONG")
-    # print(len(sections))
-    for section in sections:
-        words = []
-        for l in section[1:]:
-            for word in l.split():
-                words.append(word.strip(",?\"'.()")) 
-
-        songlyrics.append(words)
-
         
+        # print("THIS MANY SECTIONS IN THE SONG")
+        # print(len(sections))
+        for section in sections:
+            words = []
+            for l in section[1:]:
+                for word in l.split():
+                    words.append(word.strip(",?\"'.()")) 
+
+            songlyrics.append(words)
+
+    else:
+        songlyrics = split_newl
             # (mark_with_rhymes(words,delims))
 
         # append build the dict of hexvals and words one section at a time 
