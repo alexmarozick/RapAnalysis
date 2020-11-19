@@ -240,26 +240,29 @@ label.btn input[type="file"] {
   float: left;
   min-height: 100vh;
 }
-#playlist_and_artist_container {
+.playlist_and_recents_container {
   width: 100%;
   margin: 0 auto;
   min-height: 70vh;
 }
-#playlist {
+.playlist {
   width: 45%;
   float: left;
   padding-top: 15px;
   padding-left: 20px;
   min-height: 70vh;
 }
-#spacing {
+#droplistP{
+  width: 100%
+}
+.spacing {
   width: 10%;
   float: left;
   padding-top: 15px;
   padding-left: 20px;
   min-height: 70vh;
 }
-#artist {
+.recents {
   width: 45%;
   float: left;
   padding-top: 15px;
