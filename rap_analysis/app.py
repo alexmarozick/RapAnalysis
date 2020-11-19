@@ -255,13 +255,22 @@ def highlight_words(lyrics : str, colorlist : list):
 
     #try:
         if word != '\n':
-            color = hex(colorlist[coloritr])
+            color = hex(colorlist[coloritr])  # the hex is in form 0x123456
             print(color)
-            print(str(color))
-            print(st)
+            color = str(color)  #hex in form str "0x123456"
+            color = color[2:] #hex is in the form str "123456"
+            # print(color[:2])
+            # # print(int(color[:2]))
+            # print(int('0xab', 16))
 
-            # hls = colorsys.rgb_to_hls(, hex(color[2:3]), hex(color[4:5]))
-            # print(hls)
+            # print(hex(int('0x' + color[:2], 16)))
+            R = int('0x' + color[:2], 16)/255  #round to the nearest 25 out of the 255 options 
+            G = int('0x' + color[2:4], 16)/255 # idk
+            B = int('0x' + color[4:], 16)/255  # limit range so we get low saturated colors (more transparent)
+
+
+            hls = colorsys.rgb_to_hls(R, G, B)
+            print(hls)
 
             highlightword = '<mark style=\"background: #' + color + ';\">' + word + "</mark> "
             if '\n' in word:
