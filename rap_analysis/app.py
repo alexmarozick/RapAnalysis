@@ -89,15 +89,29 @@ def analyzeSpotify():
     sp_oauth = SpotifyOAuth(client_id=client_id, client_secret=client_secret, redirect_uri=REDIRECT_URI, 
                             scope=scope, cache_path=session_cache_path(), show_dialog=True)
     spotify = spotipy.Spotify(auth_manager=sp_oauth)
-    songs = []
+
     if analyzeType == 'playlist':
         playlistID = request.args.get('playlistID')
-        songs = dbops.getsongdata(spotifyData.get_songs_from_playlist(spotify, playlistID))
+        songs_artists = spotifyData.get_songs_from_playlist(spotify, playlistID)
+        songdata = dbops.getsongdata()
     elif analyzeType == 'recent':
         recent_num = int(request.args.get('recent_num'))
         # print(recent_num)
         # dbops.getsongdata(spotifyData.get_recent_plays(spotify, recent_num))
-        songs = dbops.getsongdata(spotifyData.get_recent_plays(spotify, recent_num))
+        songs_artists = spotifyData.get_recent_plays(spotify, recent_num)
+        songdata = dbops.getsongdata()
+    
+    songs = []
+    # songnames = [songname['song'] for songname in songs_artists]
+    # print(songnames)
+    # for i, song in enumerate(songdata):
+    #     print(song['song'])
+    #     if song['song'] in songnames: # TODO here is where the check if the correct song name was gotten from songdata
+    #         song.pop('_id')
+    #         lyrics, colors = parse_songdata("",song['song'], songdata) # NOTE I think parse_songdata should only take in songdata, also shold ONLY take in the correct song
+    #         highlighted = highlight_words(lyrics, colors)
+    #         songs.append('song' : song['song'], 'index' : i, 'highlight' : highlighted})
+    # pp(songs)
     return jsonify(result=songs)
 
 
