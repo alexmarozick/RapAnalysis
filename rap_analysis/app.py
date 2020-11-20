@@ -164,14 +164,14 @@ def sign_out():
         print ("Error: %s - %s." % (e.filename, e.strerror))
     return redirect('/')
 
-@app.route('/user-lyrics')
-def analyze_user_lyrics():
-    print("GOT INTO USER LYRICS")
-    lyrics = request.args.get('textboxid')
-    print(lyrics)
-    marked,colors = analyzeSong.parse_and_analyze_lyrics(args=lyrics, genius=False)
-    highlighted = highlight_words(lyrics,colors)
-    return jsonify(result=highlighted)
+# @app.route('/user-lyrics')
+# def analyze_user_lyrics():
+#     print("GOT INTO USER LYRICS")
+#     lyrics = request.args.get('textboxid')
+#     if lyrics is None:
+#         print('lyrics is none')
+#     print(lyrics)
+#     return jsonify(result=lyrics)
 
 
 
@@ -186,23 +186,17 @@ def get_input():
 
     app.logger.debug(song_name)                                       
     app.logger.debug(artist_name)                                            
-    #search mongodb database for the lyrics/colors/stats of song by artist 
-    #if atrist, calc averages
-        # for song in songs:
-            # total num rhymes 
-
-    #avg = num rhymes / num words
 
     # pass in a dictionary to display and highlight in form {"song": song_name, "artist" : artist_name}
 
     songdata = dbops.getsongdata([{'song': song_name, 'artist': artist_name}])
-    if songdata == []:
+    if songdata == [[]]:
         return jsonify(result="Could not Find Song")
+    
     app.logger.debug(f"Result from query: \n {songdata}")
     lyrics, colors = parse_songdata(artist_name,song_name,songdata)
-
-
-    return highlight_words(lyrics,colors)
+    highlighted = highlight_words(lyrics,colors)
+    return jsonify(result = highlighted)
 
 
 def parse_songdata(artist_name : str,song_name : str, songdata : list) -> (list, list):
@@ -243,7 +237,7 @@ def parse_songdata(artist_name : str,song_name : str, songdata : list) -> (list,
     for l in proc_colors:
         for color in l: 
             colorlist.append(color)
-    #these should be roughly the same
+    # these should be roughly the same
     print(len(lyrics_nosection))
     print(len(colorlist))
 
@@ -327,10 +321,10 @@ def highlight_words(lyrics : str, colorlist : list):
         except IndexError:
             app.logger.debug(f"OVERFLOW at word {idx} out of {len(lyrics)}-- here's whats left") 
             app.logger.debug(lyrics[idx:])
-            return jsonify(result=highlighted)
+            return highlighted
     
 # if not skip
-    return jsonify(result=highlighted)
+    return highlighted
 
 
 
