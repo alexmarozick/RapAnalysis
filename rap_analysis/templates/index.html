@@ -78,65 +78,47 @@
         </div>
 
         <br>
-        <!-- ajax for submit button-->
+        <!-- submit button for searches into the db-->
         <script type=text/javascript>
             $(function() {
                 $('#submit-btn').click(function(){
-                //   $.ajax({
-                //     url: '/get-lyrics',
-                //     data:{
-                //       song: $('#song').val(),
-                //       artist: $('#artist').val()
-                //     },
-                //     dataType: 'JSON',
-                //     type: 'GET',
-                //     // below is what is returned.. lyrics should be within data
-                //     success: function(data){
-                //         // $("#result").html(data.result['output']); <!--TODO put the keyname of the computer lyrics into the result text box -->
-                //         console.log(data.result);
-                //         // document.getElementById("result").innerHTML = data.result;
-                //         $('#result').attr("src", data.result);
-                //     }
-                //     });
+
                     $.getJSON('/get-lyrics',{
-                // everything here to sends data to flask and to access the data in flask you would do
-                // request.args.get("<key>") where you replace <key> with the name of the key for example
-                // to get this data: playlistID: $('#droplistP').val() 
-                // you would do request.args.get("playlistID") in flask
                         songid: $('#song').val(),
                         artistid: $('#artist').val()
                     },
                     function(data){
-                // result of what flask returns which is contained in data.
-                // data will be a json 
-                // console.log(data)
-                        // $('#result').text(data.result);
-                        document.getElementById("result").innerHTML = data.result;
-
+                        // document.getElementById("result").innerHTML = data.result;
+                        document.getElementById("textarea").innerHTML = data.result;
                     });
-
                 });
             });
         </script>
         <!-- end of ajax -->
 
         <div class="output-box">
-            <input class="wrapper"  placeholder="placeholder test" id="output">
-               <!-- Lyrics should be here after the submit button if you inserted a valid song name and artist name -->
-               <p id="result">Submit a song to see the analyzed lyrics!</p>  
-            </input>
+            <!-- text area class was wrapper -->
+            <div class="wrapper" id="textarea" contenteditable="true" placeholder="Submit a song or type your own lyrics to have them analyzed!">
+                <!-- <p id="result"></p>   -->
+
+            </div>
+
         </div>
+
+        <!-- The following container and script are for user entered lyrics being submitted -->
         <div id="text-submit-btn-container">
             <input class="btn" type="submit" name="TextSubmitName" value="TextSubmitValue" id="text-submit-btn">
         </div>
+
+
         <script type=text/javascript>
             $(function() {
                 $('#text-submit-btn').click(function(){
                     $.getJSON('/user-lyrics',{
-                        textboxid: $('#output').val(),
+                        textboxid: $('#textarea').val(),
                     },
                     function(data){
-                        document.getElementById("result").innerHTML = data.result;
+                        document.getElementById("textarea").innerHTML = data.result;
                     });
                 });
             });
