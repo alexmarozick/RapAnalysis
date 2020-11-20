@@ -190,8 +190,8 @@ def get_input():
     # pass in a dictionary to display and highlight in form {"song": song_name, "artist" : artist_name}
     songdata = dbops.getsongdata([{'song': song_name, 'artist': artist_name}])
     lyrics, colors = parse_songdata(artist_name,song_name,songdata)
-
-    return highlight_words(lyrics,colors)
+    highlighted = highlight_words(lyrics,colors)
+    return jsonify(result = highlighted)
 
 
 def parse_songdata(artist_name : str,song_name : str, songdata : list) -> (list, list):
@@ -296,10 +296,10 @@ def highlight_words(lyrics : str, colorlist : list):
         except IndexError:
             app.logger.debug(f"OVERFLOW at word {idx} out of {len(lyrics)}-- here's whats left") 
             app.logger.debug(lyrics[idx:])
-            return jsonify(result=highlighted)
+            return highlighted
     
 # if not skip
-    return jsonify(result=highlighted)
+    return highlighted
 
 
 
