@@ -89,6 +89,9 @@
                     },
                     function(data){
                         // document.getElementById("result").innerHTML = data.result;
+                        if(data.result == "") {
+                            alert("Can't input empty box!")
+                        }
                         document.getElementById("textarea").innerHTML = data.result;
                     });
                 });

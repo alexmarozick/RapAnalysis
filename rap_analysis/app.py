@@ -181,6 +181,11 @@ def get_input():
     song_name = request.args.get('songid')
     artist_name = request.args.get('artistid')
 
+    error = ''
+    if (song_name == '' or artist_name == ''):
+        print("User submitted an empty string: returning to throw error message")
+        return jsonify(result = error)
+    
     print(song_name)
     print(artist_name)
 
