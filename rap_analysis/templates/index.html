@@ -98,19 +98,17 @@
 
         <div class="output-box">
             <!-- text area class was wrapper -->
-            <div class="wrapper" id="textarea" contenteditable="true" placeholder="Submit a song or type your own lyrics to have them analyzed!">
-                <!-- <p id="result"></p>   -->
-
+            <div class="wrapper" id="textarea">
+                <p id="result" placeholder="result placeholder"> </p>  
             </div>
 
         </div>
 
         <!-- The following container and script are for user entered lyrics being submitted -->
-        <div id="text-submit-btn-container">
+        <!-- <div id="text-submit-btn-container">
             <input class="btn" type="submit" name="TextSubmitName" value="TextSubmitValue" id="text-submit-btn">
-        </div>
-
-
+        </div> -->
+<!-- 
         <script type=text/javascript>
             $(function() {
                 $('#text-submit-btn').click(function(){
@@ -118,11 +116,11 @@
                         textboxid: $('#textarea').val(),
                     },
                     function(data){
-                        document.getElementById("textarea").innerHTML = data.result;
+                        document.getElementById("result").innerHTML = data.result;
                     });
                 });
             });
-        </script>
+        </script> -->
 
     </main>
 

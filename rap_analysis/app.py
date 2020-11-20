@@ -164,12 +164,14 @@ def sign_out():
         print ("Error: %s - %s." % (e.filename, e.strerror))
     return redirect('/')
 
-@app.route('/user-lyrics')
-def analyze_user_lyrics():
-    print("GOT INTO USER LYRICS")
-    lyrics = request.args.get('textboxid')
-    print(lyrics)
-    return jsonify(result=lyrics)
+# @app.route('/user-lyrics')
+# def analyze_user_lyrics():
+#     print("GOT INTO USER LYRICS")
+#     lyrics = request.args.get('textboxid')
+#     if lyrics is None:
+#         print('lyrics is none')
+#     print(lyrics)
+#     return jsonify(result=lyrics)
 
 
 
@@ -184,17 +186,10 @@ def get_input():
 
     app.logger.debug(song_name)                                       
     app.logger.debug(artist_name)                                            
-    #search mongodb database for the lyrics/colors/stats of song by artist 
-    #if atrist, calc averages
-        # for song in songs:
-            # total num rhymes 
-
-    #avg = num rhymes / num words
 
     # pass in a dictionary to display and highlight in form {"song": song_name, "artist" : artist_name}
     songdata = dbops.getsongdata([{'song': song_name, 'artist': artist_name}])
     lyrics, colors = parse_songdata(artist_name,song_name,songdata)
-
 
     return highlight_words(lyrics,colors)
 
@@ -237,7 +232,7 @@ def parse_songdata(artist_name : str,song_name : str, songdata : list) -> (list,
     for l in proc_colors:
         for color in l: 
             colorlist.append(color)
-    #these should be roughly the same
+    # these should be roughly the same
     print(len(lyrics_nosection))
     print(len(colorlist))
 
