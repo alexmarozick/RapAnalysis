@@ -27,18 +27,36 @@ def getsongdata(songdict :list) -> list:
     COLORS is a list of lists. Each sublist corresponds to a section of the song (deliminated by something like [Intro] or [Chorus])
     '''
     db = cluster['Lyrics_Actual']
+    dbArtists = db.list_collection_names()
     res = []
     for item in songdict:
         if type(item['artist']) == list: # NOTE the way I am doing these checks could probably be done better also something else to consider is what if no artist is given - Abduarraheem
-            for a in artists:
+            for a in item['artist']:
                 artist = a.lower().replace("$","s").replace(".", "")
                 # query_result = db[artist].find({ "song": item['song']  })
-                query_result = db[artist].find({"$text" :{"$search" : item['song'], "$caseSensitive" : False}}) 
+                if artist in dbArtists:
+                    query_result = db[artist].find({"$text" :{"$search" : item['song'], "$caseSensitive" : False}})
+                   
+                    # print(item['song'])
+                    # break because one of the artists was in the data base, 
+                    # NOTE then since we can't be 100% sure that this artist 
+                    # has the song we are looking for we would need to go 
+                    # to the next artist in the list to check if the artist has the song given.
+                    break  
+                else:
+                    print(f"Error Artist {artist} not in the Data Base")
+
         else:
             artist = item['artist'].lower().replace("$","s").replace(".", "")
-            query_result = db[artist].find({"$text" :{"$search" : item['song'], "$caseSensitive" : False}}) 
-        docs = [doc for doc in query_result]
-        res.append(docs)
+            if artist in dbArtists:
+                query_result = db[artist].find({"$text" :{"$search" : item['song'], "$caseSensitive" : False}}) 
+            else:
+                print(f"Error Artist {artist} not in the Data Base")
+        try:
+            docs = [doc for doc in query_result]
+            res.append(docs)
+        except (UnboundLocalError, TypeError): # if the artist wasn't in the db, go the next song.
+            continue
     # pp(res)
     return res
 
