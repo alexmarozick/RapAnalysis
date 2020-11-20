@@ -114,6 +114,7 @@ def mark_with_rhymes(lyrics : str, delims : dict) -> str:
     colorlist = [0] * len(mark_copy)
     # logging.info(f"{colorlist},{mark_copy}")
     rhymecolor = random.randint(0,0xFFFFFF)
+
     #"dead in the middle of little italy"
     # middle == rhymer, little == rhymee
     for idx, rhymer in enumerate(lyrics):
@@ -121,7 +122,7 @@ def mark_with_rhymes(lyrics : str, delims : dict) -> str:
             print(rhymer)
         found = False
         # iter_seg = iter_copy[split_lyrics.index(word)-20:split_lyrics.index(word)+20]
-        for rhymee in mark_copy[idx:]:
+        for rhymee in mark_copy[idx+1:]:
     #       if word similarity(word, copyword) > 0 then its a rhyme
             if rhymee in lyrics:
                 # we are concerned with end rhymes for now, only want to check if the last phoneme in the word matches
@@ -145,9 +146,10 @@ def mark_with_rhymes(lyrics : str, delims : dict) -> str:
                     logging.debug(f"{len(shortest_phon)} phonemes in {shortest_phon}")
                     # if we have a 1 phoneneme word, we dont subtract off the end (last phoneme is the only phoneme)
                     nphones_in_shortest = 0 if (len(shortest_phon) - 1) == 0 else len(shortest_phon) - 1
-                    
+                    #also do string literal comparison  
                     if word_similarity(rhymer,rhymee, start_phone=(nphones_in_shortest -1), debug=True) == 1:
                         found = True
+                        #print(f"{rhymer} rhymes with {rhymee}")
                         #rhyme is between WORD in splitlyrics (original) and some other word (rhymee) in the iter_copy
                         #mark both words in rhyme pair with the same number 
                         delimnated_rhymer = str(found_rhymes) + rhymer + str(found_rhymes)
@@ -157,11 +159,11 @@ def mark_with_rhymes(lyrics : str, delims : dict) -> str:
                         logging.debug(f"matching {rhymer}, {rhymee} is in {rhymee_indicies}")
                         for i in rhymee_indicies:
                             mark_copy[i] = delimnated_rhymee
-                            colorlist[i] = rhymecolor
+                            colorlist[i] = found_rhymes
 
                         if mark_copy[idx] == rhymer:
                             mark_copy[idx] = delimnated_rhymer
-                            colorlist[idx] = rhymecolor
+                            colorlist[idx] = found_rhymes
 
                         else:
                             logging.debug(f"{rhymer, idx} alerady marked by another rhyme, rhymee: {rhymee}")
@@ -173,6 +175,19 @@ def mark_with_rhymes(lyrics : str, delims : dict) -> str:
                         #delete it so we save time
                         # iter_copy.remove(rhymee)
                         numremoved+= 1
+        if found: 
+            # this word did not rhyme and has not been delimnated / appended
+            found_rhymes += 1
+            rhymecolor = random.randint(0,0xFFFFFF)
+
+    # retroactively remove cases where the rhymer is delimnated without a rhymee 
+    # i.e. only one instance of that num in colorlist
+    for num in range(found_rhymes):
+        indicies_of_rhymenum = [i for i, x in enumerate(colorlist) if num == x]
+        if len(indicies_of_rhymenum) == 1: 
+            # marking as 0 means no highlight 
+            colorlist[indicies_of_rhymenum[0]] = 0
+    return colorlist, mark_copy
             # else:
             #     #if the word is a duplicate, check for all duplicates, count the duplicates arhymes
             #     found = True
@@ -192,12 +207,9 @@ def mark_with_rhymes(lyrics : str, delims : dict) -> str:
 
                 
             # logging.debug(80 * '-')
-        if found: 
-            # this word did not rhyme and has not been delimnated / appended
-            found_rhymes += 1
-            rhymecolor = random.randint(0,0xFFFFFF)
-        
-    return colorlist, mark_copy
+
+
+
 
 
 
@@ -285,15 +297,16 @@ def parse_and_analyze_lyrics(lyrics=None,cmd=False,args=None,genius=True) -> dic
     for item in songlyrics:
         if item != []:
             colorlist, marked = mark_with_rhymes(item, delims)
-            print(f"COLORLIST: {len(colorlist)}MARKED {len(item)} ")
+            logging.debug(f"COLORLIST: {len(colorlist)}MARKED {len(item)} ")
             colors_for_html.append(colorlist)
             marked_lyrics.append(marked)
             logging.debug(marked)
         else:
             print("Found an empty section")
     logging.debug(colors_for_html)
-    print(marked_lyrics)
-    print(colors_for_html)
+    for item in marked_lyrics:
+        logging.debug(item)
+    logging.debug(colors_for_html)
 
         # tic = time.perf_counter()
         # for i in range(100):

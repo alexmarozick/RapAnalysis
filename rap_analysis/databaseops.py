@@ -2,6 +2,7 @@ import config
 import json
 import pymongo
 from pprint import pprint as pp
+import logging
 
 mongo_user = config.get("USER",'MONGODB')
 mongo_password = config.get("PASS",'MONGODB')
@@ -29,6 +30,7 @@ def getsongdata(songdict :list) -> list:
     db = cluster['Lyrics_Actual']
     dbArtists = db.list_collection_names()
     res = []
+    query_result = []
     for item in songdict:
         if type(item['artist']) == list: # NOTE the way I am doing these checks could probably be done better also something else to consider is what if no artist is given - Abduarraheem
             for a in item['artist']:
@@ -43,21 +45,21 @@ def getsongdata(songdict :list) -> list:
                     # has the song we are looking for we would need to go 
                     # to the next artist in the list to check if the artist has the song given.
                     break  
-                else:
-                    print(f"Error Artist {artist} not in the Data Base")
-
         else:
             artist = item['artist'].lower().replace("$","s").replace(".", "")
             if artist in dbArtists:
                 query_result = db[artist].find({"$text" :{"$search" : item['song'], "$caseSensitive" : False}}) 
-            else:
-                print(f"Error Artist {artist} not in the Data Base")
+
+        if query_result == []:
+            print(f"Error Artist {artist} not in the Data Base") 
+
         try:
             docs = [doc for doc in query_result]
             res.append(docs)
         except (UnboundLocalError, TypeError): # if the artist wasn't in the db, go the next song.
             continue
     # pp(res)
+    logging.debug(f"RETURNING {res} from getsongdata")
     return res
 
 
