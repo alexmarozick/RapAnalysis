@@ -62,8 +62,12 @@ def phon_match(first_phon : list, second_phon : list,start : int, end: int,debug
 
 def word_similarity(first_word, second_word, start_phone=None, end_phone=None,debug=False):
     # print(f"looking up Phonemes for {first_word} and {second_word}")
+    first_word = first_word.strip(".!?-()").replace("in'", "ing")
+    second_word = second_word.strip(".!?-()").replace("in'", "ing")
+    
     first_phones = possible_phones(first_word)
     second_phones = possible_phones(second_word)
+    logging.debug(f"SIMILARITY BETWEEN: {first_word} {first_phones} {second_word} {second_phones}")
 
     if not first_phones or not second_phones:
         return 0
@@ -111,7 +115,7 @@ def mark_with_rhymes(lyrics : str, delims : dict) -> str:
     found_rhymes = 0 
     prev_found = 0
     numremoved = 0
-    colorlist = [0] * len(mark_copy)
+    colorlist = [-1] * len(mark_copy)
     # logging.info(f"{colorlist},{mark_copy}")
     rhymecolor = random.randint(0,0xFFFFFF)
 
@@ -122,19 +126,20 @@ def mark_with_rhymes(lyrics : str, delims : dict) -> str:
             print(rhymer)
         found = False
         # iter_seg = iter_copy[split_lyrics.index(word)-20:split_lyrics.index(word)+20]
-        for rhymee in mark_copy[idx+1:]:
+        for rhymee in mark_copy[idx + 1:]:
     #       if word similarity(word, copyword) > 0 then its a rhyme
             if rhymee in lyrics:
+                they_rhyme = False
                 # we are concerned with end rhymes for now, only want to check if the last phoneme in the word matches
                 # so start at the last phoneme of the shortest word (length of shortest - 1 OR 1 if its a 1 phoneme word)
-                rhymer_phon = possible_phones(rhymer)
-                rhymee_phon = possible_phones(rhymee)
-                #TODO: Need to mark all same words before removing 
-                if rhymer_phon == []: 
-                    logging.debug(f"rhymer {rhymer} was not found in CMUDict")
-                elif rhymee_phon == []: 
-                    logging.debug(f"cpyword {rhymee} was not found in CMUDict")
-                    # iter_copy.remove(rhymee)
+                rhymer_phon = possible_phones(rhymer.strip(".!?-()").replace("in'", "ing"))
+                rhymee_phon = possible_phones(rhymee.strip(".!?-()").replace("in'", "ing"))
+
+                #criteria for rhyming depends on if the word is in the phoneme dictionary or not
+                # if one of the words are not, the best we can do is check for exact equaliy (for now)
+                if rhymer_phon == [] or rhymee_phon == []: 
+                    they_rhyme = rhymer == rhymee
+                    logging.debug(f"{rhymer} or {rhymee} was not found in CMUDict")
                 else:
                     #shortest pronounciation of each word 
                     shortest_rhymer_phon = min(rhymer_phon, key=len)
@@ -147,34 +152,36 @@ def mark_with_rhymes(lyrics : str, delims : dict) -> str:
                     # if we have a 1 phoneneme word, we dont subtract off the end (last phoneme is the only phoneme)
                     nphones_in_shortest = 0 if (len(shortest_phon) - 1) == 0 else len(shortest_phon) - 1
                     #also do string literal comparison  
-                    if word_similarity(rhymer,rhymee, start_phone=(nphones_in_shortest -1), debug=True) == 1:
-                        found = True
-                        #print(f"{rhymer} rhymes with {rhymee}")
-                        #rhyme is between WORD in splitlyrics (original) and some other word (rhymee) in the iter_copy
-                        #mark both words in rhyme pair with the same number 
-                        delimnated_rhymer = str(found_rhymes) + rhymer + str(found_rhymes)
-                        delimnated_rhymee = str(found_rhymes) + rhymee + str(found_rhymes)
-                        # replace ALL INSTANCES of the rhymee with a delimnated version of it
-                        rhymee_indicies = [i for i, x in enumerate(mark_copy) if x == rhymee]
-                        logging.debug(f"matching {rhymer}, {rhymee} is in {rhymee_indicies}")
-                        for i in rhymee_indicies:
-                            mark_copy[i] = delimnated_rhymee
-                            colorlist[i] = found_rhymes
+                    they_rhyme = word_similarity(rhymer,rhymee, start_phone=(nphones_in_shortest -1), debug=True) == 1
 
-                        if mark_copy[idx] == rhymer:
-                            mark_copy[idx] = delimnated_rhymer
-                            colorlist[idx] = found_rhymes
 
-                        else:
-                            logging.debug(f"{rhymer, idx} alerady marked by another rhyme, rhymee: {rhymee}")
-                            logging.debug(f"{rhymee_indicies}   indicies")
-        
-                            # if we dont find the word, its because its already been marked 
-                
-                        logging.debug(f"word {delimnated_rhymer} rhymes with {delimnated_rhymee}")
-                        #delete it so we save time
-                        # iter_copy.remove(rhymee)
-                        numremoved+= 1
+                if they_rhyme:
+                    found = True
+                    #print(f"{rhymer} rhymes with {rhymee}")
+                    #rhyme is between WORD in splitlyrics (original) and some other word (rhymee) in the iter_copy
+                    #mark both words in rhyme pair with the same number 
+                    delimnated_rhymer = str(found_rhymes) + rhymer.replace("in'", "ING") + str(found_rhymes)
+                    delimnated_rhymee = str(found_rhymes) + rhymee.replace("in'", "ING") + str(found_rhymes)
+                    # replace ALL INSTANCES of the rhymee with a delimnated version of it
+                    rhymee_indicies = [i for i, x in enumerate(mark_copy) if x == rhymee]
+                    logging.debug(f"matching {rhymer}, {rhymee} is in {rhymee_indicies}")
+                    for i in rhymee_indicies:
+                        mark_copy[i] = delimnated_rhymee
+                        colorlist[i] = found_rhymes
+
+                    if mark_copy[idx] == rhymer:
+                        mark_copy[idx] = delimnated_rhymer
+                        colorlist[idx] = found_rhymes
+
+                    else:
+                        logging.debug(f"{rhymer, idx} alerady marked by another rhyme, rhymee: {rhymee}")
+                        logging.debug(f"{rhymee_indicies}   indicies")
+    
+                        # if we dont find the word, its because its already been marked 
+            
+                    logging.debug(f"word {delimnated_rhymer} rhymes with {delimnated_rhymee}")
+                    #delete it so we save time
+                    # iter_copy.remove(rhymee)
         if found: 
             # this word did not rhyme and has not been delimnated / appended
             found_rhymes += 1
@@ -282,7 +289,7 @@ def parse_and_analyze_lyrics(lyrics=None,cmd=False,args=None,genius=True) -> dic
             words = []
             for l in section[1:]:
                 for word in l.split():
-                    words.append(word.strip(",?\"'.()")) 
+                    words.append(word.strip(",?\".()—")) 
 
             songlyrics.append(words)
 
@@ -302,11 +309,13 @@ def parse_and_analyze_lyrics(lyrics=None,cmd=False,args=None,genius=True) -> dic
             marked_lyrics.append(marked)
             logging.debug(marked)
         else:
-            print("Found an empty section")
+            logging.debug("Found an empty section")
     logging.debug(colors_for_html)
     for item in marked_lyrics:
-        logging.debug(item)
-    logging.debug(colors_for_html)
+        if cmd:
+            print(item)
+    if cmd:
+        print(colors_for_html)
 
         # tic = time.perf_counter()
         # for i in range(100):

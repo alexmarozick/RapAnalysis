@@ -326,6 +326,7 @@ def buildArtist(artist_name : str):
         song_list.append( {"song" : song.title.replace('.', "").replace("$","s"), "lyrics" : song.lyrics, "album" : album, "colors" : colors})
 
     db[artist_name].insert_many(song_list)
+    db[artist_name].create_index([('song', pymongo.TEXT)], name='search_index', default_language='english')
     # db[artist.lower().replace('.', "").replace("$",'s')].insert_many(entry_list)
     
 

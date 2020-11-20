@@ -47,7 +47,7 @@ client_id = config.get('SPOTIPY_CLIENT_ID','api') # NOTE hey do this
 client_secret = config.get('SPOTIPY_CLIENT_SECRET','api') # NOTE hey do this
 token_url = 'https://accounts.spotify.com/api/token'
 
-possible_hues = [i for i in range(370) if i % 10 == 0]
+possible_hues = [i for i in range(0,370) if i % 10 == 0]
 
 # NOTE Make sure this is also the same in your Spotify app.
 REDIRECT_URI = config.get('SPOTIPY_REDIRECT_URI','uri')
@@ -272,12 +272,12 @@ def highlight_words(lyrics : str, colorlist : list):
     coloritr = 0
     skip = False
     for idx, word in enumerate(lyrics):
-
+        first_pass = True
         try:
             if word != '\n':
                 # print(colorlist[coloritr])
             
-                if colorlist[coloritr] != 0:
+                if colorlist[coloritr] != -1:
                     # color = hex(colorlist[coloritr])  # the hex is in form 0x123456
                     # color = str(color)  #hex in form str "0x123456"
                     # color = color[2:] #hex is in the form str "123456"
@@ -301,12 +301,16 @@ def highlight_words(lyrics : str, colorlist : list):
                     # hue = (hue * 360)
 
                     num = colorlist[coloritr]
-                    if num >  len(possible_hues):
-                        num+= 1
+                    modded_num = (num *2) % len(possible_hues)
+                    if  modded_num == 0 and first_pass == False:
+                        num += 1
 
-                    color = possible_hues[num % len(possible_hues)]
+                    if possible_hues[modded_num] in [350,360]:
+                        first_pass = False
 
-                    highlightword = f'<mark style=\"background: hsl({color},100% ,70% );\">{word}</mark> '
+                    hue = possible_hues[(num *2) % len(possible_hues)]
+                    lum = 80 if (hue//10 % 10) % 2 == 0 else 50
+                    highlightword = f'<mark style=\"background: hsl({hue}, 100% ,{lum}% );\">{word}</mark> '
                 
                     if '\n' in word:
                         highlightword += '<br>'
