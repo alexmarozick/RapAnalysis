@@ -196,7 +196,7 @@ def get_input():
 
     songdata = dbops.getsongdata([{'song': song_name, 'artist': artist_name}])
     if songdata == [[]]:
-        return jsonify(result="Could not Find Song")
+        return jsonify(result="Found the Artist, but not the song! Sorry!")
     
     app.logger.debug(f"Result from query: \n {songdata}")
     lyrics, colors = parse_songdata(artist_name,song_name,songdata)
