@@ -47,7 +47,7 @@ client_id = config.get('SPOTIPY_CLIENT_ID','api') # NOTE hey do this
 client_secret = config.get('SPOTIPY_CLIENT_SECRET','api') # NOTE hey do this
 token_url = 'https://accounts.spotify.com/api/token'
 
-
+possible_hues = [i for i in range(370) if i % 10 == 0]
 
 # NOTE Make sure this is also the same in your Spotify app.
 REDIRECT_URI = config.get('SPOTIPY_REDIRECT_URI','uri')
@@ -193,7 +193,12 @@ def get_input():
     app.logger.debug(artist_name)                                            
 
     # pass in a dictionary to display and highlight in form {"song": song_name, "artist" : artist_name}
+
     songdata = dbops.getsongdata([{'song': song_name, 'artist': artist_name}])
+    if songdata == [[]]:
+        return jsonify(result="Could not Find Song")
+    
+    app.logger.debug(f"Result from query: \n {songdata}")
     lyrics, colors = parse_songdata(artist_name,song_name,songdata)
     highlighted = highlight_words(lyrics,colors)
     return jsonify(result = highlighted)
@@ -244,6 +249,20 @@ def parse_songdata(artist_name : str,song_name : str, songdata : list) -> (list,
     return lyrics_nosection, colorlist
 
 
+def translate(value, leftMin, leftMax, rightMin, rightMax):
+    # Figure out how 'wide' each range is
+    leftSpan = leftMax - leftMin
+    rightSpan = rightMax - rightMin
+
+    # Convert the left range into a 0-1 range (float)
+    valueScaled = float(value - leftMin) / float(leftSpan)
+
+    # Convert the 0-1 range into a value in the right range.
+    return rightMin + (valueScaled * rightSpan)
+
+
+
+
 def highlight_words(lyrics : str, colorlist : list):
     """
     Applies a list of colors to a list of lyrics 
@@ -256,32 +275,38 @@ def highlight_words(lyrics : str, colorlist : list):
 
         try:
             if word != '\n':
-                print(colorlist[coloritr])
+                # print(colorlist[coloritr])
             
                 if colorlist[coloritr] != 0:
-                    color = hex(colorlist[coloritr])  # the hex is in form 0x123456
-                    color = str(color)  #hex in form str "0x123456"
-                    color = color[2:] #hex is in the form str "123456"
-                    while len(color) < 6:
-                        color= '0' + color
+                    # color = hex(colorlist[coloritr])  # the hex is in form 0x123456
+                    # color = str(color)  #hex in form str "0x123456"
+                    # color = color[2:] #hex is in the form str "123456"
+                    # while len(color) < 6:
+                    #     color= '0' + color
                     # print(color[:2])
                     # # print(int(color[:2]))
                     # print(int('0xab', 16))
 
                     # print(hex(int('0x' + color[:2], 16)))
-                    print(color)
-                    R = int('0x' + color[:2], 16)/255   
-                    G = int('0x' + color[2:4], 16)/255
-                    B = int('0x' + color[4:], 16)/255  
+                    # print(color)
+                    # R = int('0x' + color[:2], 16)/255   
+                    # G = int('0x' + color[2:4], 16)/255
+                    # B = int('0x' + color[4:], 16)/255  
 
 
 
-                    hue,sat,light = colorsys.rgb_to_hls(R, G, B)
-                    sat = '100%'
-                    light = '50%'
-                    hue = (hue * 360)
+                    # hue,sat,light = colorsys.rgb_to_hls(R, G, B)
+                    # sat = '100%'
+                    # light = '50%'
+                    # hue = (hue * 360)
 
-                    highlightword = f'<mark style=\"background: hsl({hue},100% ,70% );\">{word}</mark> '
+                    num = colorlist[coloritr]
+                    if num >  len(possible_hues):
+                        num+= 1
+
+                    color = possible_hues[num % len(possible_hues)]
+
+                    highlightword = f'<mark style=\"background: hsl({color},100% ,70% );\">{word}</mark> '
                 
                     if '\n' in word:
                         highlightword += '<br>'
@@ -305,6 +330,8 @@ def highlight_words(lyrics : str, colorlist : list):
     
 # if not skip
     return highlighted
+
+
 
 
 
