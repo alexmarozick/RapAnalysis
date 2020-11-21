@@ -69,31 +69,32 @@
             <h1 class="header-section">About</h1>
             <br>
             <div class="about-text">
-                This project is centralized around our algorithm for what is called a rhyme scheme analysis which I describe below under our Techincal Approach. <br><br>
+                This project is centralized around our algorithm for what is called a rhyme scheme analysis which I describe in depth below under our Technical Approach. <br><br>
 
                 A rhyme scheme is defined as the pattern according to which end rhymes (rhymes located at the end of lines) are repeated in works poetry.
-                With this webapp we are applying this analysis to rap music. <br><br>
-
-                To detect a rhyme, we must compare the phoneme (a unit of sound that distinguishes one word from another) for each word within the song.
-
+                With this webapp we are applying this analysis to rap music. To detect a rhyme, we must compare the phoneme (a unit of sound that 
+                distinguishes one word from another) for each word within the song.
+                <br><br>
                 To make this webpage more accessible and interesting for users we made it possible for them to link up 
                 with their spotify account so they can access the songs in which they listen to regularly. In addition, we have
                 a version in which they are able to analyze any song within Spotify by quering into our database for the song they want to analyze.
             </div>
             <br>
             <h2 class="header-section">Technical Approach</h3>
-                <div class="about-text">
-                    Rhyme Scheme Algorithm: When looking for a rhyme, we aren't conserned with how each word si spelled, but rather how it is pernounced. 
-                    To accomplish this, we break every word into the phonemes which can then be compared to get a good representation of whether the word
-                    rhymed or not. A case that it won't catch are when the artist mispernounces the word to make it rhyme. For this case, we decided that 
-                    if the artist has to bend the rhyme to make it match, then it shouldn't count as being a rhyme. <br><br>
-
-                    Database: For the database, we chose to go with MongoDB Atlas. For any type of query, we are able to look up the song and artist 
-                    from within our database and load the already analyzed lyrics instantly. This made it possible to be very efficient as we limit the 
-                    number of API calls to both the Spotify API and the Lyrics Genius API that we used for web scraping the lyrics. <br><br>
-
-                    Hosting the site: We are hosting out site through heroku.
-                </div>
+            <div class="about-text">
+                Rhyme Scheme Algorithm: When looking for a rhyme, we aren't concerned with how each word is spelled, but rather how each word is pronounced. 
+                To accomplish this, we break every word into the phonemes which can then be compared to get a good representation of whether the word
+                rhymed or not. A case that it won't catch are when the artist mispronounces a word to make it rhyme. For this case, we decided that 
+                if the artist has to bend the pronounciation to make it "rhyme", then it shouldn't count as being a rhyme. In future versions, we may create
+                an algorithm that takes the phonemes and audio from the artist into account to get a more accurate result for that artist.
+                <br><br>
+                Database: For our database, we chose to go with MongoDB Atlas. For any type of query, we are able to look up any song data we have using the
+                song name and artist. Lookups from within our database load the already analyzed lyrics very efficiently as we create analyze the song before
+                users query for them. This made it possible to be very efficient as we limit the number of API calls to both the Spotify API and the Lyrics 
+                Genius API that we used for web scraping the lyrics. 
+                <br><br>
+                Hosting the site: We are hosting out site through heroku.
+            </div>
         </section>
 
     </main>
