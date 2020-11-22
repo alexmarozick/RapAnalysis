@@ -44,6 +44,7 @@ for col in colnames:
 
 
 # %%
+colnames = ['jid']
 for col in colnames:
     collection = db[col]
     collection.create_index([('song', pymongo.TEXT)], name='search_index', default_language='english')
@@ -68,6 +69,7 @@ for col in colnames:
     print(f"Fixing {col}")
     for doc in collection.find():
         try:
+            print(doc['song'])
             lyrics = doc['lyrics']
             colors, marked = analyzeSong.parse_and_analyze_lyrics(cmd=False,args=lyrics)
             collection.update_one({"song" : doc['song']},{"$set" : {"colors" : colors}} )
@@ -77,4 +79,44 @@ for col in colnames:
             print("Invalid song deleted")
         print("")
 
+# %% 
+# FIX LIST OF  ARTIST
+import config
+import pymongo
+import analyzeSong
+from bson.objectid import ObjectId
+mongoconnect = config.get("DBNAME", "MONGODB")
+cluster = pymongo.MongoClient("mongodb+srv://rapAnalysisUser:fPuQRGR3aRh81BB3@lyricsstorage.9tro8.mongodb.net/LyricsStorage?retryWrites=true&w=majority")
+db = cluster["Lyrics_Actual"]
+
+#MADE IT FROM NAS TO THE GAME 
+colname = ["jid"]
+for col in colname:
+    collection = db[col]
+    print(f"Fixing {col}")
+    for doc in collection.find():
+        try:
+            print(doc['song'])
+            lyrics = doc['lyrics']
+            colors, marked = analyzeSong.parse_and_analyze_lyrics(cmd=False,args=lyrics)
+            collection.update_one({"song" : doc['song']},{"$set" : {"colors" : colors}} )
+            print(".", end=r"")
+        except KeyError:
+            collection.delete_one({"_id" : ObjectId(doc['_id'])})
+            print("Invalid song deleted")
+        print("")
+
 # %%
+possible_hues = [i for i in range(0,370) if i % 10 == 0]
+colorlist = [i for i in range(0,40)]
+first_pass = True
+
+for num in colorlist:
+    modded_num = (num *2) % len(possible_hues)
+    if  modded_num == 0 and first_pass == False:
+        num += 1
+    if possible_hues[modded_num] in [350,360]:
+        first_pass = False
+
+    color = possible_hues[(num *2) % len(possible_hues)]
+    print(color)
