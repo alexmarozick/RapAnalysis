@@ -89,15 +89,20 @@
                             </select>
                             <br><br>
                             <!-- want analyze button -->
-                            <a href=#><button class="btn" id=analyzeP>Analyze playlist</button></a>
+                            <a href=#><button class="btn" id="analyze-playlist">Analyze playlist</button></a>
                             <br>
                             <!-- button for tabbing through songs -->
+                            <!-- TODO the two divs below just figure out how u want them combined -->
+                            <div id="drop-playlist-wrapper">
+                
+                            </div>
                             <div id="dropPSongs"></div>
                         </div>
 
                         <div id="playlist_spacing_right">
-
                         </div>
+
+                        <br>
                     </div>
 
 
@@ -109,11 +114,25 @@
                         <label for="recent">Number of Recent Plays:</label>
                         <br>
                         <input class="recent" type="text" name="recent" id="recent" placeholder="Type the number of recent plays name here">
-                        <a href=#><button class="btn" id=analyzeR>Analyze Recent Plays</button></a>
+                        <a href=#><button class="btn" id=analyze-recent>Analyze Recent Plays</button></a>
+                        <!-- TODO make sure its in the right spot -->
+                        <div id="drop-recent-wrapper">
+                
+                        </div>
                     </div>
                 </div>
+                
             </div>
-            
+                
+                
+                <!-- <div id="recent_container">
+                    <div id="recents">
+                        want recent dropdown ???
+                        not really sure what else yet
+                    </div>
+                </div> -->
+
+
             <div id="right_side"> <!--right side will be 1/3 of the page-->
                 <!-- 
                     we want to have tabs, one being a text box that dislays
@@ -123,7 +142,7 @@
                 -->
                 <div id="output-box" class="output-box">
                     <div class="wrapper" id="test">
-                    LYRICS HERE MAYBE
+                    Lyrics will be generated here
                     </div>
                 </div>
             </div>
