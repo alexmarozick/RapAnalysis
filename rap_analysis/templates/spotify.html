@@ -12,11 +12,11 @@
         <link rel="stylesheet" href="../static/stylesheets/spotify.css">
         <link rel="stylesheet" href="../static/stylesheets/footer.css">
         <!-- <link rel="stylesheet" href="../static/stylesheets/style.css"> -->
-
-
+        
         <!-- Javascript:  JQuery from a content distribution network (CDN) -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script src=../static/JSscripts/spotifyData.js></script>
+       
     </head>
 
 
@@ -73,7 +73,7 @@
                         <iframe id="playlistWidget" src="" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
                         <br>
                         <label for="playlist">Choose a playlist to analyze:</label>
-                        <select id="droplistP"  onload="playlist()" onchange="playlist()">
+                        <select id="droplistP"  onchange="playlist()">
                             {% for id in playlists %}
                             <option name={{playlists[id]}} value="{{id}}">{{playlists[id]}}</option>
                             {% endfor %}
@@ -82,18 +82,21 @@
                         <!-- want dropdown menu -->
                         <!-- want widget embedding -->
                         <!-- want analyze button -->
-                        
+
                     </div>
                     <div class="spacing"></div>
                     <div class="recent">
                         <h3 class="sub_title">Recent Plays</h3>   <!-- want title -->
                         <label for="recent">Number of Recent Plays:</label>
                         <input class="recent" type="text" name="recent" id="recent" placeholder="Type the number of recent plays name here">
-                        <a href=#><button id=analyzeR>Analyze Recent Plays</button></a>
+                        <a href=#><button class="btn" id=analyzeR>Analyze Recent Plays</button></a>
                         <!-- want dropdown menu -->
                         <!-- want widget embedding -->
                         <!-- want analyze button -->
                     </div>
+                </div>
+                <div id="dropPSongs">
+                
                 </div>
                 <!-- <div id="recent_container">
                     <div id="recents">
@@ -110,8 +113,8 @@
 
                     Need to do research for this
                 -->
-                <div class="output-box">
-                    <div class="wrapper">
+                <div id="output-box" class="output-box">
+                    <div class="wrapper" id="test">
                     LYRICS HERE MAYBE
                     </div>
                 </div>
@@ -119,7 +122,7 @@
         </main>
 
         <!-- footer -->
-        <div class="footer-container">
+        <!-- <div class="footer-container">
             <div class="footer">
                 <div class="footer-heading footer-1">
                     <h3>Abdurraheam Elfandi</h3>
@@ -152,13 +155,10 @@
                     <a class="email-link" href="mailto:gjvmayer@gmail.com"> gjvmayer@gmail.com</a>
                 </div>
             </div>
-        </div>
+        </div> -->
 
         <!-- this main.js script needs to stay here -->
         <script src="../static/JSscripts/main.js"></script>
-        <script>
-            playlist()
-            recent_plays()
-        </script>
+        
     </body>
 </html>

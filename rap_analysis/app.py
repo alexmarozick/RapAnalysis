@@ -93,28 +93,74 @@ def analyzeSpotify():
     if analyzeType == 'playlist':
         playlistID = request.args.get('playlistID')
         songs_artists = spotifyData.get_songs_from_playlist(spotify, playlistID)
-        songdata = dbops.getsongdata()
+        songdata = dbops.getsongdata(songs_artists)
     elif analyzeType == 'recent':
         recent_num = int(request.args.get('recent_num'))
         # print(recent_num)
         # dbops.getsongdata(spotifyData.get_recent_plays(spotify, recent_num))
         songs_artists = spotifyData.get_recent_plays(spotify, recent_num)
-        songdata = dbops.getsongdata()
-    
+        songdata = dbops.getsongdata(songs_artists)
     songs = []
-    # songnames = [songname['song'] for songname in songs_artists]
-    # print(songnames)
-    # for i, song in enumerate(songdata):
-    #     print(song['song'])
-    #     if song['song'] in songnames: # TODO here is where the check if the correct song name was gotten from songdata
-    #         song.pop('_id')
-    #         lyrics, colors = parse_songdata("",song['song'], songdata) # NOTE I think parse_songdata should only take in songdata, also shold ONLY take in the correct song
-    #         highlighted = highlight_words(lyrics, colors)
-    #         songs.append('song' : song['song'], 'index' : i, 'highlight' : highlighted})
-    # pp(songs)
+    print(songdata)
+    songnames = [songname['song'] for songname in songs_artists] # get all song names from teh playlist
+    for i, query in enumerate(songdata): # loop through all the queries returned from getsongdata
+        skip = True # Set skip to be true for init
+        songnameP = ((songnames[i].lower()).strip(" ")).replace(".",'') # strip some characters from the song name that was gotten from the playlist
+        for songDict in query: # loop through the results of one query
+            songnameDB = ((songDict['song'].lower()).strip(" ")).replace(".",'') # strip some characters from the song name that was gotten from the query
+            print(f'Song name from playlist{songnameP}') # for debugging
+            print(f'Song name from Data Base{songnameDB}') # for debugging
+            if songnameP in songnameDB: # check if the song name from the play list is a sub string of the one gotten from the database, NOTE this check might need to be modified.
+                skip = False            # if so then do not skip 
+            if not skip:
+                # call functions
+                lyrics, colors = parse_songdata2(songDict)
+                highlighted = highlight_words(lyrics,colors)
+                songs.append({'song' : songnames[i], 'index' : i, 'highlight' : highlighted})
+                break
     return jsonify(result=songs)
 
+def parse_songdata2(songdata : dict) -> (list, list):
+    '''
+    Pareses a songdata query from the DB and returns a list of lyrics and colors to be 
+    applied 
+    '''
 
+    proc_lyrics = []
+    proc_colors = []
+    # add a check to see if songdata is none.
+    proc_lyrics = songdata['lyrics']  # string
+    proc_colors = songdata['colors']  # list of lists
+
+    app.logger.debug(proc_lyrics)
+    app.logger.debug(proc_colors)
+
+    # split the lyrics into a list of lists
+    split_newl = proc_lyrics.replace('\n', '\n ').split(' ')
+    #take section headers out of lyrics
+    lyrics_nosection = []
+    for word in split_newl: 
+        if '[' in word: 
+            skip = True
+        if ']' in word: 
+            skip = False
+            continue
+
+        if not skip:
+            lyrics_nosection.append(word)
+
+    # app.logger.debug(lyrics_nosection)
+
+    #flatten colorlist from [list[lyrics]] to [lyrics]
+    colorlist = []
+    for l in proc_colors:
+        for color in l: 
+            colorlist.append(color)
+    # these should be roughly the same
+    print(len(lyrics_nosection))
+    print(len(colorlist))
+
+    return lyrics_nosection, colorlist
 
 
 
