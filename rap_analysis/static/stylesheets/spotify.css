@@ -239,6 +239,7 @@ label.btn input[type="file"] {
   width: 67%;
   float: left;
   min-height: 100vh;
+  margin-bottom: 5rem;
 }
 .playlist_and_recents_container {
   width: 100%;
@@ -246,14 +247,32 @@ label.btn input[type="file"] {
   min-height: 70vh;
 }
 .playlist {
-  width: 45%;
+  width: 50%;
   float: left;
-  padding-top: 15px;
-  padding-left: 20px;
+  /* padding-top: 15px;
+  padding-left: 20px; */
   min-height: 70vh;
 }
+#playlist_spacing_left{
+  width: 25%;
+  float: left;
+  min-height: 70vh;
+}
+#playlistContent{
+  width: 70%;
+  float: left;
+  min-height: 70vh;
+}
+#playlist_spacing_right{
+  width: 5%;
+  min-height: 70vh;
+  float: left;
+}
+#playlistWidget{
+ width: 100%
+}
 #droplistP{
-  width: 100%
+  width: 100%;
 }
 .spacing {
   width: 10%;
@@ -263,7 +282,7 @@ label.btn input[type="file"] {
   min-height: 70vh;
 }
 .recents {
-  width: 45%;
+  width: 40%;
   float: left;
   padding-top: 15px;
   padding-left: 20px;
@@ -273,18 +292,19 @@ label.btn input[type="file"] {
   text-align: center;
   padding-bottom: 0.5rem;
 }
-
 #right_side {
   width: 33%;
   float: left;
   min-height: calc(100vh -48px);
+  margin-bottom: 5rem;
 }
 .output-box {
   margin: auto;
   width: 100%;
-  background-color: white;
+  height: 600px;
+  background-color: #ffffff;
   border: 10px solid #191d20;
-  color: black;
+  color: #000000;
   font: 16px/26px;
   overflow: auto; /* adds a scroll bar whenever necessary */
   /* border-radius: 1rem; the rounded corner effect */
@@ -295,7 +315,6 @@ label.btn input[type="file"] {
   padding: 10px;
   overflow: auto; /* adds a scroll bar whenever necessary */
 }
-
 .fa-linkedin-square {
   overflow: hidden;
   background-size: 100% 200%;

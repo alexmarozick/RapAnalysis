@@ -4,12 +4,9 @@ import pymongo
 from pprint import pprint as pp
 import logging
 
-mongo_user = config.get("USER",'MONGODB')
-mongo_password = config.get("PASS",'MONGODB')
-mongo_clusters = config.get("DBNAME",'MONGODB')
+mongo_clusters = config.get("CLIENT",'MONGODB')
+cluster = pymongo.MongoClient(mongo_clusters)
 
-
-cluster = pymongo.MongoClient("mongodb+srv://rapAnalysisUser:fPuQRGR3aRh81BB3@lyricsstorage.9tro8.mongodb.net/LyricsStorage?retryWrites=true&w=majority")
 # cluster = pymongo.MongoClient(f"mongodb+srv://{mongo_user}:{mongo_password}@{mongo_clusters}")
 db = cluster["Lyrics_Actual"]
 
