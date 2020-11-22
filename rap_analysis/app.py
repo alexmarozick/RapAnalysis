@@ -264,11 +264,15 @@ def get_input():
     # pass in a dictionary to display and highlight in form {"song": song_name, "artist" : artist_name}
 
     songdata = dbops.getsongdata([{'song': song_name, 'artist': artist_name}])
-    if songdata == [[]]:
+    print(songdata)
+    if songdata == [[]] or songdata == []:
         return jsonify(result="Found the Artist, but not the song! Sorry!")
     
     app.logger.debug(f"Result from query: \n {songdata}")
     lyrics, colors = parse_songdata(artist_name,song_name,songdata)
+    if len(lyrics) + len(colors) == 0: 
+        return jsonify(result="Found the Artist, but not the song! Sorry!")
+        
     highlighted = highlight_words(lyrics,colors)
     return jsonify(result = highlighted)
 
@@ -289,6 +293,8 @@ def parse_songdata(artist_name : str,song_name : str, songdata : list) -> (list,
 
     app.logger.debug(proc_lyrics)
     app.logger.debug(proc_colors)
+    if proc_lyrics == []: 
+        return [],[]
 
     # split the lyrics into a list of lists
     split_newl = proc_lyrics.replace('\n', '\n ').split(' ')

@@ -19,15 +19,12 @@ client_id = config.get('SPOTIPY_CLIENT_ID','api') # NOTE hey do this
 client_secret = config.get('SPOTIPY_CLIENT_SECRET','api') # NOTE hey do this
 token_url = 'https://accounts.spotify.com/api/token'
 
-mongo_user = config.get("USER",'MONGODB')
-mongo_password = config.get("PASS",'MONGODB')
-mongo_clusters = config.get("DBNAME",'MONGODB')
+mongo_client = config.get("CLIENT",'MONGODB')
 
 spotify = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=client_id, client_secret=client_secret))
 
-
 # cluster = pymongo.MongoClient(f"mongodb+srv://{mongo_user}:{mongo_password}@{mongo_clusters}")
-cluster = pymongo.MongoClient("mongodb+srv://rapAnalysisUser:fPuQRGR3aRh81BB3@lyricsstorage.9tro8.mongodb.net/LyricsStorage?retryWrites=true&w=majority")
+cluster = pymongo.MongoClient(mongo_client)
 # pymongo.MongoClient("mongodb+srv://rapAnalysisUser:fPuQRGR3aRh81BB3@lyricsstorage.9tro8.mongodb.net/<dbname>?retryWrites=true&w=majority")
 
 db = cluster["Lyrics_Actual"]
