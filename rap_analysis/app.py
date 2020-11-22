@@ -102,15 +102,24 @@ def analyzeSpotify():
         songdata = dbops.getsongdata(songs_artists)
     songs = []
     print(songdata)
-    songnames = [songname['song'] for songname in songs_artists] # get all song names from teh playlist
-    for i, query in enumerate(songdata): # loop through all the queries returned from getsongdata
-        skip = True # Set skip to be true for init
-        songnameP = ((songnames[i].lower()).strip(" ")).replace(".",'') # strip some characters from the song name that was gotten from the playlist
-        for songDict in query: # loop through the results of one query
-            songnameDB = ((songDict['song'].lower()).strip(" ")).replace(".",'') # strip some characters from the song name that was gotten from the query
-            print(f'Song name from playlist{songnameP}') # for debugging
+
+    # get all song names from teh playlist
+    songnames = [songname['song'] for songname in songs_artists] 
+    # loop through all the queries returned from getsongdata
+    for i, query in enumerate(songdata): 
+        # Set skip to be true for init
+        skip = True 
+        # strip some characters from the song name that was gotten from the playlist
+        songnameP = ((songnames[i].lower()).strip(" ")).replace(".",'') 
+        # loop through the results of one query
+        for songDict in query:
+            # strip some characters from the song name that was gotten from the query
+            print(f'Song name from playlist{songnameP}') # for debugging 
+            songnameDB = ((songDict['song'].lower()).strip(" ")).replace(".",'') 
             print(f'Song name from Data Base{songnameDB}') # for debugging
-            if songnameP in songnameDB: # check if the song name from the play list is a sub string of the one gotten from the database, NOTE this check might need to be modified.
+            # check if the song name from the play list is a sub string of the one gotten from the database, 
+            # NOTE this check might need to be modified.
+            if songnameP in songnameDB: 
                 skip = False            # if so then do not skip 
             if not skip:
                 # call functions
@@ -125,7 +134,7 @@ def parse_songdata2(songdata : dict) -> (list, list):
     Pareses a songdata query from the DB and returns a list of lyrics and colors to be 
     applied 
     '''
-
+    skip_header = False
     proc_lyrics = []
     proc_colors = []
     # add a check to see if songdata is none.
@@ -141,12 +150,12 @@ def parse_songdata2(songdata : dict) -> (list, list):
     lyrics_nosection = []
     for word in split_newl: 
         if '[' in word: 
-            skip = True
+            skip_header = True
         if ']' in word: 
-            skip = False
+            skip_header = False
             continue
 
-        if not skip:
+        if not skip_header:
             lyrics_nosection.append(word)
 
     # app.logger.debug(lyrics_nosection)
