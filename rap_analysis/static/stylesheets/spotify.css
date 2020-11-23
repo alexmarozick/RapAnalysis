@@ -284,14 +284,50 @@ label.btn input[type="file"] {
 .recents {
   width: 40%;
   float: left;
-  padding-top: 15px;
-  padding-left: 20px;
+  /* padding-top: 15px;
+  padding-left: 20px; */
+  min-height: 70vh;
+  text-align: center;
+}
+#recents_spacing_left{
+  width: 5%;
+  float: left;
+  min-height: 70vh;
+}
+#recents_content{
+  width: 90%;
+  float: left;
   min-height: 70vh;
 }
 .sub_title {
   text-align: center;
-  padding-bottom: 0.5rem;
+  padding-bottom: 1rem;
+  width: 100%;
 }
+#recent{
+  width: 60%;
+  margin-top: 2rem;
+  padding-right: 20%;
+  padding-left: 20%;
+}
+#analyze-recent{
+  width: 60%;
+  margin-top: 2rem;
+  padding-right: 20%;
+  padding-left: 20%;
+}
+#drop-recent-wrapper{
+  width: 60%;
+  margin-top: 2rem;
+  padding-right: 20%;
+  padding-left: 20%;
+}
+#recents_spacing_right{
+  width: 5%;
+  min-height: 70vh;
+  float: left;
+}
+
 #right_side {
   width: 33%;
   float: left;
