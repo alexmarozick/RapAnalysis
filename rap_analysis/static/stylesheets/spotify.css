@@ -33,10 +33,10 @@
 
 main {
   width: 100%;
-  padding: 48px 0px 20px 0px;
+  /* padding: 30px 20px; */
   margin: 0 auto;
   min-height: calc(
-    100vh
+    100vh - 48px - 129.73px
   ); /* at minimum, footer will be at bottom (viewport - size of navbar(48px)- size of footer(- 129.73px) */
 }
 
@@ -238,8 +238,9 @@ label.btn input[type="file"] {
 #left_side {
   width: 67%;
   float: left;
-  min-height: 100vh;
-  margin-bottom: 5rem;
+  /* min-height: calc(100vh - 48px -129.73px); */
+  min-height: 100%;
+  margin-top: 48px;
 }
 .playlist_and_recents_container {
   width: 100%;
@@ -269,7 +270,8 @@ label.btn input[type="file"] {
   float: left;
 }
 #playlistWidget{
- width: 100%
+ width: 100%;
+ min-height: 80%;
 }
 #droplistP{
   width: 100%;
@@ -307,21 +309,32 @@ label.btn input[type="file"] {
 #recent{
   width: 60%;
   margin-top: 2rem;
-  padding-right: 20%;
-  padding-left: 20%;
+  margin-right: 20%;
+  margin-left: 20%;
+  height: 40px;
+  border-radius: 4px;
+  outline: none;
+  border: none;
+  /* padding: top right bottom left */
+  /* padding: 0rem 1rem 0rem 0.5rem; */
+  font-size: 1rem;
+  /* margin-bottom: 1rem; */
+}
+#recent.placeholder{
+  text-align: center;
 }
 #analyze-recent{
   width: 60%;
   margin-top: 2rem;
-  padding-right: 20%;
-  padding-left: 20%;
+  margin-right: 20%;
+  margin-left: 20%;
 }
-#drop-recent-wrapper{
+/* #drop-recent-wrapper{
   width: 60%;
   margin-top: 2rem;
   padding-right: 20%;
   padding-left: 20%;
-}
+} */
 #recents_spacing_right{
   width: 5%;
   min-height: 70vh;
@@ -331,21 +344,24 @@ label.btn input[type="file"] {
 #right_side {
   width: 33%;
   float: left;
-  min-height: calc(100vh -48px);
-  margin-bottom: 5rem;
+  margin-top: 48px;
+  min-height: 100%;
+  /* margin-bottom: 5rem; */
 }
 .output-box {
-  margin: auto;
+  /* margin: auto; */
   width: 100%;
-  height: 600px;
+  /* height: 600px; */
   background-color: #ffffff;
   border: 10px solid #191d20;
+  /* margin-top: 10px; */
   color: #000000;
-  font: 16px/26px;
+  /* font: 16px/26px; */
   overflow: auto; /* adds a scroll bar whenever necessary */
   /* border-radius: 1rem; the rounded corner effect */
   justify-content: center;
-  min-height: calc(100vh - 48px);
+  min-height: calc(100vh - 48px - 129.73px);
+  /* min-height: 100%; */
 }
 .wrapper {
   padding: 10px;

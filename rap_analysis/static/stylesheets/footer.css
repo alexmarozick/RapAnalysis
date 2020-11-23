@@ -8,16 +8,18 @@
 .footer-container {
     background-color: #212329;
     padding:  1.5rem 0 1.5rem 0;/* top right bottom left */
-    
+    /* margin:  1.5rem 0 1.5rem 0; */
+    margin-top: 1.5rem;
     width: 100%;
     bottom: 0;
     position: absolute;
     clear: both;
+    height: 10vh;
 }
 
 .footer {
     width:80%;
-    height: 10vh;
+    /* height: 10vh; */
     background-color: #212329;
     color: #fff;
     display: flex; /* now everything is side by side*/
