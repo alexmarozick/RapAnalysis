@@ -8,7 +8,6 @@ from pprint import pprint as pp
 from werkzeug.utils import secure_filename
 from werkzeug.exceptions import HTTPException, default_exceptions, Aborter
 from spotipy.oauth2 import SpotifyOAuth
-from buildDB import get_lyrics
 import os
 import pprint
 import requests
@@ -282,7 +281,7 @@ def parse_songdata(artist_name : str,song_name : str, songdata : list) -> (list,
     Pareses a songdata query from the DB and returns a list of lyrics and colors to be 
     applied 
     '''
-
+    skip_header = False
     proc_lyrics = []
     proc_colors = []
     for item in songdata:
@@ -290,6 +289,7 @@ def parse_songdata(artist_name : str,song_name : str, songdata : list) -> (list,
             if song_name.lower() in i['song'].lower():
                 proc_lyrics = i['lyrics']  # string
                 proc_colors = i['colors']  # list of lists
+                break
 
     app.logger.debug(proc_lyrics)
     app.logger.debug(proc_colors)
@@ -302,12 +302,12 @@ def parse_songdata(artist_name : str,song_name : str, songdata : list) -> (list,
     lyrics_nosection = []
     for word in split_newl: 
         if '[' in word: 
-            skip = True
+            skip_header = True
         if ']' in word: 
-            skip = False
+            skip_header = False
             continue
 
-        if not skip:
+        if not skip_header:
             lyrics_nosection.append(word)
 
     # app.logger.debug(lyrics_nosection)
@@ -342,6 +342,7 @@ def highlight_words(lyrics : str, colorlist : list):
     """
     Applies a list of colors to a list of lyrics 
     """
+    possible_hues = [i for i in range(0,370) if i % 10 == 0]
     print(lyrics)
     highlighted = ""
     coloritr = 0
@@ -374,7 +375,7 @@ def highlight_words(lyrics : str, colorlist : list):
                     # sat = '100%'
                     # light = '50%'
                     # hue = (hue * 360)
-
+                    # possible_hues = list(set(possible_hues))
                     num = colorlist[coloritr]
                     modded_num = (num *2) % len(possible_hues)
                     if  modded_num == 0 and first_pass == False:
@@ -382,9 +383,8 @@ def highlight_words(lyrics : str, colorlist : list):
 
                     if possible_hues[modded_num] in [350,360]:
                         first_pass = False
-
-                    hue = possible_hues[(num *2) % len(possible_hues)]
-                    lum = 80 if (hue//10 % 10) % 2 == 0 else 50
+                    hue = possible_hues[modded_num]
+                    lum = 80 if (modded_num) % 2 == 0 else 50
                     highlightword = f'<mark style=\"background: hsl({hue}, 100% ,{lum}% );\">{word}</mark> '
                 
                     if '\n' in word:
