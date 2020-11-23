@@ -6,12 +6,13 @@ import pymongo
 from bson.objectid import ObjectId
 from pprint import pprint as pp
 import analyzeSong
-
-mongoconnect = config.get("DBNAME", "MONGODB")
-cluster = pymongo.mongo_client(mongoconnect)
+mongoconnect = config.get("CLIENT", "MONGODB")
+cluster = pymongo.mongo_client(f"{mongoconnect}")
 db = cluster["Lyrics_Actual"]
-
 colnames = db.list_collection_names()
+
+
+#%%
 print(colnames)
 print(db[col].find())
 for col in colnames:
@@ -56,8 +57,8 @@ import config
 import pymongo
 import analyzeSong
 from bson.objectid import ObjectId
-mongoconnect = config.get("DBNAME", "MONGODB")
-cluster = pymongo.MongoClient("mongodb+srv://rapAnalysisUser:fPuQRGR3aRh81BB3@lyricsstorage.9tro8.mongodb.net/LyricsStorage?retryWrites=true&w=majority")
+mongoconnect = config.get("CLIENT", "MONGODB")
+cluster = pymongo.MongoClient(mongoconnect)
 db = cluster["Lyrics_Actual"]
 
 #MADE IT FROM NAS TO THE GAME 
@@ -85,12 +86,12 @@ import config
 import pymongo
 import analyzeSong
 from bson.objectid import ObjectId
-mongoconnect = config.get("DBNAME", "MONGODB")
-cluster = pymongo.MongoClient("mongodb+srv://rapAnalysisUser:fPuQRGR3aRh81BB3@lyricsstorage.9tro8.mongodb.net/LyricsStorage?retryWrites=true&w=majority")
+mongoconnect = config.get("CLIENT", "MONGODB")
+cluster = pymongo.MongoClient(mongoconnect)
 db = cluster["Lyrics_Actual"]
 
 #MADE IT FROM NAS TO THE GAME 
-colname = ["jid"]
+colname = ["tyler, the creator"]
 for col in colname:
     collection = db[col]
     print(f"Fixing {col}")
@@ -107,16 +108,31 @@ for col in colname:
         print("")
 
 # %%
-possible_hues = [i for i in range(0,370) if i % 10 == 0]
-colorlist = [i for i in range(0,40)]
-first_pass = True
+import config
+import pymongo
+import analyzeSong
+from bson.objectid import ObjectId
+mongoconnect = config.get("CLIENT", "MONGODB")
+cluster = pymongo.MongoClient(mongoconnect)
+db = cluster["Lyrics_Actual"]
+colnames = db.list_collection_names()
+print(len(colnames))
+#MADE IT FROM NAS TO THE GAME 
+# colname = ["tyler, the creator"]
+# for col in colnames:
+#     print(f"FIXING {col}")
+#     collection = db[col]
+#     print(collection.count())
+#     for doc in collection.find():
+#         if doc['colors'] == []:
+#             continue
+#         try: 
+#             if len(str(doc['colors'][0][0])) > 4:
+#                 collection.delete_one({"_id" : ObjectId(doc['_id'])})
+#                 print(f"Deleted: {doc['song']} id {doc['_id']}")
+#         except: 
+#             print(f"{doc['song']} invalid colors {doc['colors']}")
+#             # collection.delete_one({"_id" : ObjectId(doc['_id'])})
 
-for num in colorlist:
-    modded_num = (num *2) % len(possible_hues)
-    if  modded_num == 0 and first_pass == False:
-        num += 1
-    if possible_hues[modded_num] in [350,360]:
-        first_pass = False
-
-    color = possible_hues[(num *2) % len(possible_hues)]
-    print(color)
+#     print(80 * "-")
+# %%

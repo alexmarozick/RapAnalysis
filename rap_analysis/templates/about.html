@@ -65,43 +65,93 @@
     </header>      
 
     <main>
-        <section  id="About">
-            <h1 class="header-section">About</h1>
-            <br>
-            <div class="about-text">
-                <!-- This project is centralized around our algorithm for what is called a rhyme scheme analysis which I describe in depth below under our Technical Approach. -->
-                
-                YourFavoriteRapper uses a Rhyme Detection algorithm to visualize the way that a rapper rhymes in a given song. We accomplish this by highlighting words that rhyme with the same color. This allows us to capture rhymes throughout a verse no matter their position within a given line. 
-
-                <br><br>
-                English is a fickle language. For Example: through, rough, and trough share the same '-ough' ending despite being pronouced differently (/THro͞o/, /rəf/, /trôf/). This presents an interesting problem as rhymes cannot be detected via spelling alone. Moreover, rappers frequently coerse pronounciations to force rhymes where they would not normally occur. To account for these problems, we break words down into a list of phonemes (phonetic syllables which describe how a word is prnounced) using the Python Natual Language Toolkit and a Phoneme Dictionary. This dictionary is equipped with multiple pronouciations of a given word 
-
-
-                <!-- A rhyme scheme is defined as the pattern according to which end rhymes (rhymes located at the end of lines) are repeated in works poetry.
-                With this webapp we are applying this analysis to rap music. To detect a rhyme, we must compare the phoneme (a unit of sound that 
-                distinguishes one word from another) for each word within the song. -->
-                <br><br>
-                To make this webpage more accessible and interesting for users we made it possible for them to link up 
-                with their spotify account so they can access the songs in which they listen to regularly. In addition, we have
-                a version in which they are able to analyze any song within Spotify by quering into our database for the song they want to analyze.
-            </div>
-            <br>
-            <h2 class="header-section">Technical Approach</h3>
-            <div class="about-text">
-                Rhyme Scheme Algorithm: When looking for a rhyme, we aren't concerned with how each word is spelled, but rather how each word is pronounced. 
-                To accomplish this, we break every word into the phonemes which can then be compared to get a good representation of whether the word
-                rhymed or not. A case that it won't catch are when the artist mispronounces a word to make it rhyme. For this case, we decided that 
-                if the artist has to bend the pronounciation to make it "rhyme", then it shouldn't count as being a rhyme. In future versions, we may create
-                an algorithm that takes the phonemes and audio from the artist into account to get a more accurate result for that artist.
-                <br><br>
-                Database: For our database, we chose to go with MongoDB Atlas. For any type of query, we are able to look up any song data we have using the
-                song name and artist. Lookups from within our database load the already analyzed lyrics very efficiently as we create analyze the song before
-                users query for them. This made it possible to be very efficient as we limit the number of API calls to both the Spotify API and the Lyrics 
-                Genius API that we used for web scraping the lyrics. 
-                <br><br>
-                Hosting the site: We are hosting out site through heroku.
-            </div>
-        </section>
+                <h2 id="about">About</h2>
+        <p>YourFavoriteRapper (YFM) visualizes the way that a rapper rhymes in a given song by color coding groups of words that rhyme. Simply search a song on the homepage or log in with Spotify to analyze your favorite Hip-Hop playlist and recently listened songs. Your searches query our custom database of analyzed lyrics of over ___ artists. Can't find your favorite song or artist? Check back soon! We will adding the ability to add new songs to our database on the fly in a coming update!</p>
+        <p>Lyrics are captured one verse or chorus at a time, allowing YFM to consider both internal and end rhymes while eliminating false positives occurring throughout a verse no matter their position within a given line.</p>
+        <p>Test it out with these notable examples, or read into the inner-workings of YFM Below! </p>
+        <!-- TODO JUNO: Put href link examples here
+        clout cobain -- denzel curry
+        tragedy - rza 
+        sirens - denzel curry
+        dna - kendrick lamar
+        stan - eminem
+        gin and juice - snoop dogg
+        i think - tyler the creator  
+        NOTE ALEX: you're welcome to suggest some other ones as well, i based this list off of how the highlighting looked 
+ -->
+        <h2 id="approach">Approach</h2>
+        <h3 id="obtaining-lyrics">Obtaining Lyrics</h3>
+        <p>We used the <a href="https://github.com/johnwmillr/LyricsGenius">LyricsGenius</a> python library to collect lyrics for over 100 artists. This library runs on a combination of the official Genius API and web-scraping tools. Due to Intellectual Property law and licensing, we cannot provide this database for other developers looking to contribute to this project, however, we have provided the scripts which we used to build our database. More information on using these tools is available in our wiki [LINK ME BRO]</p>
+        <h3 id="rhyme-detection">Rhyme Detection</h3>
+        <p>English is a fickle language. For Example: through, rough, and trough share the same '-ough' ending despite being pronouced differently (/THro͞o/, /rəf/, /trôf/). This presents an interesting problem as rhymes cannot be detected via spelling alone. Moreover, rappers frequently coerse pronounciations to force rhymes where they would not normally occur.</p>
+        <p>To account for these problems, we break words down into a list of phonemes (phonetic syllables which describe how a word is prnounced) using the Python Natual Language Toolkit and the CMU Pronouncing Dictionary (CMUDict) which contains 39 phonemes and three levels of syllabic stress. For example, <code>Cheese</code> -&gt; <code>CH IY Z</code>. We compare the ending phonemes of words to look for rhymes and address pronounciation coersion in two ways:</p>
+        <ol>
+        <li>
+        <p>Multiple Word Prounounciations</p>
+        <p>CMUDict contains multiple pronounciations for many words. For Example, we catch a rhyme between <code>&quot;Business&quot;</code> and <code>&quot;Witness&quot;</code> by comparing two pronounciations of <code>&quot;Business&quot;</code> ( <code>B IH1 Z N AH0 S</code> and <code>B IH1 Z N IH0 S</code>) with the single pronounciation of <code>&quot;Witness&quot;</code> (<code>W IH1 T N AH0 S</code>)</p>
+        </li>
+        <li>
+        <p>Rebuilding Truncated Stuffixes</p>
+        <p>Many rappers use a truncated suffix, ending present participle <code>-ing</code> words with <code>in'</code></p>
+        <!-- TODO: ALEX OR ABDU: the text in this <pre> is the exact same as the background, 
+            can you change it to another color in css? Thx habibis <3 -->
+        <pre><code>     Dodgin' bullets, reapin' what you sow
+            And stackin' up the footage, livin' on the go
+        </code></pre>
+        <p><code>Dodgin</code> and <code>Reapin</code> are not official words listed in the CMUDict, so we rebuild these suffixes to <code>Dodging</code> and <code>Reaping</code> to catch rhymes between words of this form and words with a complete <code>ing</code> ending</p>
+        <p>Note: For words that are not in the CMUDict, direct string equality is used.</p>
+        </li>
+        </ol>
+        <p>Our algorithm considers one verse or chorus at a time to mitigate false positives derived from rhymes detected across sections. In a given section, our algorithm operates as follows:</p>
+        <!-- Same change for this <pre> as well -->
+        <pre><code>rhymeNumber = 0
+        for A in section: 
+            for B in section[index of A onward]:
+                if A rhymes with B: 
+                    Mark A with rhymeNumber
+                    Mark All instances of B with RhymeNumber
+                    RhymeNumber++
+        </code></pre>
+        <p>We generate a list of RhymeNumbers with a 1-1 correspondence with the lyrics of a given song which is stored in our database. The Rhyme Number of a word is used to determine the color it is ascribed in on the YFM WebService.</p>
+        <!-- TODO: DEFINE RHYME NUMBER MORE CLEARLY -->
+        <h3 id="spotify-integration">Spotify Integration</h3>
+        <p>In addition to viewing one song at a time by searching on the YFM Homepage, users can log in with their Spotify account to grant YFM access to their playlists and recently listened songs. Users can then select a playlist  or number of recently listened songs they wish to analyze. Highlighted Lyrics are presented to the user with a dropdown menu to switch between songs.</p>
+        <h3 id="highlighting-lyrics">Highlighting Lyrics:</h3>
+        <p>A word's Rhyme Number is used to determine the color of its highlight: A word's rhyme number is mapped to an HSL hue value, a multiple of 10 ranging from 0 to 360. The luminance value of a rhyme given Rhyme Number alternates between a light and dark value to provide further differentiation between rhyme sets.</p>
+        <p>A rhyme number of -1 corresponds to no highlighting.</p>
+        <!-- TODO: DESCRIBE MORE CLEARLY HOW HIGHLIGHTING WORKS  -->
+        <h3 id="hosting-lyrics-and-rhyming-information">Hosting Lyrics and rhyming information</h3>
+        <p>Web-scraping lyrics using LyricsGenius proved too inefficient to rely on for realtime analysis of more than one song at a time. We opted to build a MongDB database of over 100 artists (most of which had 100-300 songs), their lyrics, and their rhyme information in the following format:</p>
+        <!-- TODO ALEX ABDU: Same shit with the other <pre> my habibi -->
+        <pre><code>{Database: 
+            {'artist1' : [
+                        {'song1': &quot;songName&quot; , 'lyrics' : &quot;lyrics go here&quot;, 'rhyme' [[List of Rhyme Numbers]]}
+                        {'song2': &quot;songName&quot; , 'lyrics' : &quot;lyrics go here&quot;, 'rhyme' [[List of Rhyme Numbers]]}
+                        ]
+            }
+            {'artist2' : [
+                        {'song1': &quot;songName&quot; , 'lyrics' : &quot;lyrics go here&quot;, 'rhyme' [[List of Rhyme Numbers]]}
+                        {'song2': &quot;songName&quot; , 'lyrics' : &quot;lyrics go here&quot;, 'rhyme' [[List of Rhyme Numbers]]}
+                        ]
+            }
+        }
+        </code></pre>
+        <p>Artist and song names were made lowercase and stripped of any special characters. ('.' replaced with '' and '$' replaced with 's' to conform to MongoDB restrictions)
+        MongoDB's Text indexing to allows users to search our database in a case-insensitive manner.</p>
+        <h3 id="next-steps">Next Steps</h3>
+        <ol>
+        <li>
+        <p>Using Rhyme Information to generate Statistics: <br>
+        We intend to calculate statistics for artists based on rhyming such as their average amount of unique rhymes per song. This information will be merged with the present Spotify page to allow a user to compare artists on their favorites list</p>
+        </li>
+        <li>
+        <p>Improving Rhyme Detection <br>
+            <!-- TODO JUNO: Im actually gonna flesh this out dw -->
+        Put a lil' bit of AI and ML in there and this thing'll be flyin'! 👍
+        <!-- TODO ALEX ABDU: for the lulz heres le funny may may echsdeeeee -->
+        <img src="http://www.google.com/url?sa=i&amp;url=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FThumb_signal&amp;psig=AOvVaw3hEzRyc5f1LGUDsdRAoVvZ&amp;ust=1606194084787000&amp;source=images&amp;cd=vfe&amp;ved=0CAIQjRxqFwoTCLD_k7Hxl-0CFQAAAAAdAAAAABAD" alt=""></p>
+        </li>
+        </ol>
 
     </main>
 
