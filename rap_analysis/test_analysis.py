@@ -8,6 +8,9 @@ class TestAnalysis(unittest.TestCase):
         res = ['rap','snitches', 'telling', 'all','their','business',
               'Sit','in','the','court','and','be','their','own','star','witness']
         string = True
+        for idx, item in enumerate(res):
+            for i in range (idx, len(res)):
+                word_similarity(item, res[i])
         self.assertEqual(True,string)
 
     def test_rhyme(self):

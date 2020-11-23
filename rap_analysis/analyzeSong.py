@@ -67,7 +67,7 @@ def word_similarity(first_word, second_word, start_phone=None, end_phone=None,de
     
     first_phones = possible_phones(first_word)
     second_phones = possible_phones(second_word)
-    logging.debug(f"SIMILARITY BETWEEN: {first_word} {first_phones} {second_word} {second_phones}")
+    print(f"SIMILARITY BETWEEN: {first_word} {first_phones} {second_word} {second_phones}")
 
     if not first_phones or not second_phones:
         return 0
