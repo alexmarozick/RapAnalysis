@@ -8,7 +8,6 @@ from pprint import pprint as pp
 from werkzeug.utils import secure_filename
 from werkzeug.exceptions import HTTPException, default_exceptions, Aborter
 from spotipy.oauth2 import SpotifyOAuth
-from buildDB import get_lyrics
 import os
 import pprint
 import requests
@@ -272,7 +271,7 @@ def get_input():
     lyrics, colors = parse_songdata(artist_name,song_name,songdata)
     if len(lyrics) + len(colors) == 0: 
         return jsonify(result="Found the Artist, but not the song! Sorry!")
-        
+
     highlighted = highlight_words(lyrics,colors)
     return jsonify(result = highlighted)
 
