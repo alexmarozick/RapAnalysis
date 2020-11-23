@@ -75,34 +75,29 @@
 
                         <div id="playlistContent">
                             <h3 class="sub_title">Playlists</h3>   <!-- want title -->
-                            <br>    
                             <!-- want widget embedding -->
                             <iframe id="playlistWidget" src="" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
-                            <br><br>
-                            <label for="playlist">Choose a playlist to analyze:</label>
                             
+                            <label for="droplistP">Choose a playlist to analyze:</label>
                             <!-- want dropdown menu -->
-                            <select id="droplistP"  onchange="playlist()">
-                                {% for id in playlists %}
-                                <option name={{playlists[id]}} value="{{id}}">{{playlists[id]}}</option>
-                                {% endfor %}
-                            </select>
-                            <br><br>
+                            <div class="select-droplist">
+                                <select id="droplistP"  onchange="playlist()">
+                                    {% for id in playlists %}
+                                    <option name={{playlists[id]}} value="{{id}}">{{playlists[id]}}</option>
+                                    {% endfor %}
+                                </select>
+                                <span class="focus"></span>
+                            </div>
+
                             <!-- want analyze button -->
                             <a href=#><button class="btn" id="analyze-playlist">Analyze playlist</button></a>
-                            <br>
                             <!-- button for tabbing through songs -->
                             <!-- TODO the two divs below just figure out how u want them combined -->
-                            <div id="drop-playlist-wrapper">
-                
-                            </div>
-                            <div id="dropPSongs"></div>
                         </div>
 
                         <div id="playlist_spacing_right">
                         </div>
 
-                        <br>
                     </div>
 
 
@@ -116,13 +111,10 @@
                         <div id="recents_content">
                             <h3 class="sub_title">Recent Plays</h3>   <!-- want title -->
                             <label for="recent">Number of Recent Plays:</label>
-                            <br>
                             <input class="recent" type="text" name="recent" id="recent" placeholder=" Type number of recent plays">
                             <a href=#><button class="btn" id=analyze-recent>Analyze Recent Plays</button></a>
                             <!-- TODO make sure its in the right spot -->
-                            <div id="drop-recent-wrapper">
-                    
-                            </div>
+
                         </div>
                         <div id="recents_spacing_right">
                         </div>

@@ -24,8 +24,12 @@ function recent_plays(){
             // console.log(data.result)
             
             if(dropList == null){ // if the drop list does not exist then create the drop list
-                var selector = $('<select></select>').attr("id","droplist-recent-songs").attr("onchange", "recent_song_change()");
+                var wrapper = $('<div></div>').attr("id","drop-recent-wrapper").attr("class", "select-droplist");
+                var selector = $('<select></select>').attr("id","droplist-recent-songs").attr("onchange", "recent_song_change()").attr("onfocus", "recent_song_change()");
+                var focus =  $('<span></span>').attr("class","focus");
+                $("#recents_content").append(wrapper);
                 $("#drop-recent-wrapper").append(selector);
+                $("#drop-recent-wrapper").append(focus);
             }
             $("#droplist-recent-songs").empty(); // clear the droplist 
 
@@ -62,8 +66,12 @@ function playlist(){
             // console.log(data.result)
             
             if(dropList == null){ // if the drop list does not exist then create the drop list
-                var selector = $('<select></select>').attr("id","droplist-playlist-songs").attr("onchange", "playlist_song_change()");
+                var wrapper = $('<div></div>').attr("id","drop-playlist-wrapper").attr("class", "select-droplist");
+                var selector = $('<select></select>').attr("id","droplist-playlist-songs").attr("onchange", "playlist_song_change()").attr("onfocus", "playlist_song_change()");
+                var focus =  $('<span></span>').attr("class","focus");
+                $("#playlistContent").append(wrapper);
                 $("#drop-playlist-wrapper").append(selector);
+                $("#drop-playlist-wrapper").append(focus);
             }
             $("#droplist-playlist-songs").empty(); // clear the droplist 
 
