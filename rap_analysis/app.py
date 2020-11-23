@@ -94,7 +94,7 @@ def analyzeSpotify():
         songs_artists = spotifyData.get_songs_from_playlist(spotify, playlistID)
         songdata = dbops.getsongdata(songs_artists)
     elif analyzeType == 'recent':
-        recent_num = int(request.args.get('recent_num'))
+        recent_num = request.args.get('recent_num', 10, int)
         # print(recent_num)
         # dbops.getsongdata(spotifyData.get_recent_plays(spotify, recent_num))
         songs_artists = spotifyData.get_recent_plays(spotify, recent_num)
