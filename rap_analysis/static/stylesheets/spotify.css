@@ -33,11 +33,8 @@
 
 main {
   width: 100%;
-  /* padding: 30px 20px; */
   margin: 0 auto;
-  min-height: calc(
-    100vh - 48px - 129.73px
-  ); /* at minimum, footer will be at bottom (viewport - size of navbar(48px)- size of footer(- 129.73px) */
+  height:100%;
 }
 
 body {
@@ -45,9 +42,7 @@ body {
   background-color: var(--bg-color);
   transition: background 0.4s;
   color: var(--font-color);
-  position: relative;
-  padding-bottom: 129.73px;
-  min-height: 100vh;
+  height: 100vh;
 }
 
 /* scroll bar on right */
@@ -238,8 +233,7 @@ label.btn input[type="file"] {
 #left_side {
   width: 67%;
   float: left;
-  /* min-height: calc(100vh - 48px -129.73px); */
-  min-height: 100%;
+  min-height: 90%;
   margin-top: 48px;
 }
 .playlist_and_recents_container {
@@ -250,8 +244,6 @@ label.btn input[type="file"] {
 .playlist {
   width: 50%;
   float: left;
-  /* padding-top: 15px;
-  padding-left: 20px; */
   min-height: 70vh;
 }
 #playlist_spacing_left{
@@ -286,8 +278,6 @@ label.btn input[type="file"] {
 .recents {
   width: 40%;
   float: left;
-  /* padding-top: 15px;
-  padding-left: 20px; */
   min-height: 70vh;
   text-align: center;
 }
@@ -315,10 +305,7 @@ label.btn input[type="file"] {
   border-radius: 4px;
   outline: none;
   border: none;
-  /* padding: top right bottom left */
-  /* padding: 0rem 1rem 0rem 0.5rem; */
   font-size: 1rem;
-  /* margin-bottom: 1rem; */
 }
 #recent.placeholder{
   text-align: center;
@@ -329,12 +316,7 @@ label.btn input[type="file"] {
   margin-right: 20%;
   margin-left: 20%;
 }
-/* #drop-recent-wrapper{
-  width: 60%;
-  margin-top: 2rem;
-  padding-right: 20%;
-  padding-left: 20%;
-} */
+
 #recents_spacing_right{
   width: 5%;
   min-height: 70vh;
@@ -345,23 +327,16 @@ label.btn input[type="file"] {
   width: 33%;
   float: left;
   margin-top: 48px;
-  min-height: 100%;
-  /* margin-bottom: 5rem; */
+  height: calc(90% - 48px);
 }
 .output-box {
-  /* margin: auto; */
   width: 100%;
-  /* height: 600px; */
   background-color: #ffffff;
   border: 10px solid #191d20;
-  /* margin-top: 10px; */
   color: #000000;
-  /* font: 16px/26px; */
   overflow: auto; /* adds a scroll bar whenever necessary */
-  /* border-radius: 1rem; the rounded corner effect */
   justify-content: center;
-  min-height: calc(100vh - 48px - 129.73px);
-  /* min-height: 100%; */
+  height:100%;
 }
 .wrapper {
   padding: 10px;
