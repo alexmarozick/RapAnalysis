@@ -6,7 +6,7 @@ import logging
 
 mongo_clusters = config.get("CLIENT",'MONGODB')
 cluster = pymongo.MongoClient(mongo_clusters)
-
+ 
 # cluster = pymongo.MongoClient(f"mongodb+srv://{mongo_user}:{mongo_password}@{mongo_clusters}")
 db = cluster["Lyrics_Actual"]
 

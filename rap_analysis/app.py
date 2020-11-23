@@ -271,7 +271,7 @@ def get_input():
     lyrics, colors = parse_songdata(artist_name,song_name,songdata)
     if len(lyrics) + len(colors) == 0: 
         return jsonify(result="Found the Artist, but not the song! Sorry!")
-        
+
     highlighted = highlight_words(lyrics,colors)
     return jsonify(result = highlighted)
 
