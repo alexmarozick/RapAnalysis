@@ -95,8 +95,6 @@ def analyzeSpotify():
         songdata = dbops.getsongdata(songs_artists)
     elif analyzeType == 'recent':
         recent_num = request.args.get('recent_num', 10, int)
-        # print(recent_num)
-        # dbops.getsongdata(spotifyData.get_recent_plays(spotify, recent_num))
         songs_artists = spotifyData.get_recent_plays(spotify, recent_num)
         songdata = dbops.getsongdata(songs_artists)
     songs = []
@@ -200,7 +198,7 @@ def spotify_login():
         display = "User: " + spotify.me()["display_name"] + " (Sign Out)"
         spotify_data = spotifyData.spotify_data(spotify)
         pp(spotify_data)
-        return render_template("spotify.html", display=display, artists=spotify_data["artists"], playlists=spotify_data["playlists"])
+        return render_template("spotify.html", display=display, playlists=spotify_data["playlists"])
     return render_template("spotify_login.html", display=display)
 
 
