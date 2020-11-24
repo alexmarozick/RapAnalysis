@@ -44,7 +44,7 @@ def getsongdata(songdict :list) -> list:
                     break  
         else:
             artist = item['artist'].lower().replace("$","s").replace(".", "")
-                        if artist in dbArtists:
+            if artist in dbArtists:
                 query_result = db[artist].find({"$text" :{"$search" : item['song'], "$caseSensitive" : False}}) 
 
         if query_result == []:
