@@ -5,7 +5,6 @@ takes lyrics, tokenizes them, prints them out to console with marks to deliminat
 
 """
 import os 
-import rhymes, scheme, syllables
 import sys
 from pprint import pprint as pp
 from copy import deepcopy
