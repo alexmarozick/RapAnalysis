@@ -63,7 +63,6 @@ def session_cache_path():
     '''
     Function that returns the session cached path (basically the cache folder).
     '''
-
     app.logger.debug("Starting session_cache_path")        # for debugging
     app.logger.debug(caches_folder)                        # for debugging
     app.logger.debug(session.get('uuid'))                  # for debugging
@@ -157,9 +156,6 @@ def parse_songdata2(songdata : dict) -> (list, list):
         if not skip_header:
             lyrics_nosection.append(word)
 
-    # app.logger.debug(lyrics_nosection)
-
-    #flatten colorlist from [list[lyrics]] to [lyrics]
     colorlist = []
     for l in proc_colors:
         for color in l: 
@@ -242,7 +238,6 @@ def sign_out():
 #     return jsonify(result=lyrics)
 
 
-
 @app.route('/get-lyrics')
 def get_input():
     
@@ -263,79 +258,28 @@ def get_input():
     # pass in a dictionary to display and highlight in form {"song": song_name, "artist" : artist_name}
 
     songdata = dbops.getsongdata([{'song': song_name, 'artist': artist_name}])
-    print(songdata)
-    if songdata == [[]] or songdata == []:
-        return jsonify(result="Found the Artist, but not the song! Sorry!")
+    if songdata == "NoArtist":
+        return jsonify(result=f"Could not find artist {artist_name} in Database")
+    elif songdata == [[]] or songdata == []:
+        return jsonify(result="Found the Artist, but not the song! Check your spelling")
     
-    app.logger.debug(f"Result from query: \n {songdata}")
-    lyrics, colors = parse_songdata(artist_name,song_name,songdata)
+    # app.logger.debug(f"Result from query: \n {songdata}")
+    songnames = [song[0]['song'] for song in songdata]
+    print(songnames)
+    lyrics = []
+    colors = []
+    for query in songdata:
+        for song in query:
+            print(song)
+            if song_name.lower().replace("'","") in song['song'].lower().replace('’', ""):
+                lyrics, colors = parse_songdata2(song)
+                break
+
     if len(lyrics) + len(colors) == 0: 
-        return jsonify(result="Found the Artist, but not the song! Sorry!")
+        return jsonify(result="Found the Artist, but not the song! Sorry! PARSE ")
 
     highlighted = highlight_words(lyrics,colors)
     return jsonify(result = highlighted)
-
-
-def parse_songdata(artist_name : str,song_name : str, songdata : list) -> (list, list):
-    '''
-    Pareses a songdata query from the DB and returns a list of lyrics and colors to be 
-    applied 
-    '''
-    skip_header = False
-    proc_lyrics = []
-    proc_colors = []
-    for item in songdata:
-        for i in item:
-            if song_name.lower() in i['song'].lower():
-                proc_lyrics = i['lyrics']  # string
-                proc_colors = i['colors']  # list of lists
-                break
-
-    app.logger.debug(proc_lyrics)
-    app.logger.debug(proc_colors)
-    if proc_lyrics == []: 
-        return [],[]
-
-    # split the lyrics into a list of lists
-    split_newl = proc_lyrics.replace('\n', '\n ').split(' ')
-    #take section headers out of lyrics
-    lyrics_nosection = []
-    for word in split_newl: 
-        if '[' in word: 
-            skip_header = True
-        if ']' in word: 
-            skip_header = False
-            continue
-
-        if not skip_header:
-            lyrics_nosection.append(word)
-
-    # app.logger.debug(lyrics_nosection)
-
-    #flatten colorlist from [list[lyrics]] to [lyrics]
-    colorlist = []
-    for l in proc_colors:
-        for color in l: 
-            colorlist.append(color)
-    # these should be roughly the same
-    print(len(lyrics_nosection))
-    print(len(colorlist))
-
-    return lyrics_nosection, colorlist
-
-
-def translate(value, leftMin, leftMax, rightMin, rightMax):
-    # Figure out how 'wide' each range is
-    leftSpan = leftMax - leftMin
-    rightSpan = rightMax - rightMin
-
-    # Convert the left range into a 0-1 range (float)
-    valueScaled = float(value - leftMin) / float(leftSpan)
-
-    # Convert the 0-1 range into a value in the right range.
-    return rightMin + (valueScaled * rightSpan)
-
-
 
 
 def highlight_words(lyrics : str, colorlist : list):
@@ -351,31 +295,8 @@ def highlight_words(lyrics : str, colorlist : list):
         first_pass = True
         try:
             if word != '\n':
-                # print(colorlist[coloritr])
-            
                 if colorlist[coloritr] != -1:
-                    # color = hex(colorlist[coloritr])  # the hex is in form 0x123456
-                    # color = str(color)  #hex in form str "0x123456"
-                    # color = color[2:] #hex is in the form str "123456"
-                    # while len(color) < 6:
-                    #     color= '0' + color
-                    # print(color[:2])
-                    # # print(int(color[:2]))
-                    # print(int('0xab', 16))
-
-                    # print(hex(int('0x' + color[:2], 16)))
-                    # print(color)
-                    # R = int('0x' + color[:2], 16)/255   
-                    # G = int('0x' + color[2:4], 16)/255
-                    # B = int('0x' + color[4:], 16)/255  
-
-
-
-                    # hue,sat,light = colorsys.rgb_to_hls(R, G, B)
-                    # sat = '100%'
-                    # light = '50%'
-                    # hue = (hue * 360)
-                    # possible_hues = list(set(possible_hues))
+            
                     num = colorlist[coloritr]
                     modded_num = (num *2) % len(possible_hues)
                     if  modded_num == 0 and first_pass == False:
@@ -401,7 +322,6 @@ def highlight_words(lyrics : str, colorlist : list):
                 highlighted += '<br>'  
                 app.logger.debug(f'FOUND NEWLINE at {idx}')        
 
-
         except IndexError:
             app.logger.debug(f"OVERFLOW at word {idx} out of {len(lyrics)}-- here's whats left") 
             app.logger.debug(lyrics[idx:])
@@ -409,73 +329,6 @@ def highlight_words(lyrics : str, colorlist : list):
     
 # if not skip
     return highlighted
-
-
-
-
-
-    #get indicies of all instances of empty string (these are blank lines inbetween sections)
-    # idx_list = [idx + 1 for idx, val in enumerate(split_newl) if '[' in val ] 
-    # #generate new list seperated by sections 
-    # sections = [split_newl[i: j] for i, j in zip([0] + idx_list, idx_list + ([size] if idx_list[-1] != size else []))] 
-    
-    # for idx, section in enumerate(sections):
-    #     words = []
-    #     for line in section:
-    #         for word in line.split(" "):
-    #             if len(line.split(" ")) == 1 and '[' in word:
-    #                 continue
-    #             else:
-    #                 words.append(word)
-    #     print(words)
-    #     print(len(words))
-    #     print(proc_colors[idx])
-    #     print(len(proc_colors[idx]))
-    # # sections : [section][line][word]
-    # # proc_colors : [section][word]
-    # # generate the highlighted string
-
-    # # AAAAA AAA AAAAAA AAAA 
-    # # BBBBB BBBB BBBB BB 
-    # # CCCC CC CCCCC 
-
-    # highlighted = ""
-    # print(f"number of sections in proc colors {len(proc_colors)}")
-    # print(f"num sections {len(sections)}")
-    # # print(proc_colors)
-    # empties = 0
-    # for idx, section in enumerate(sections): 
-    # #for section in range(len(sections)):
-    #     coloritr = 0
-    #     print(f"number of colors in section {len(proc_colors[idx])}")
-    #     for line in section:
-    #     #for line in range(len(sections[section])):
-    #         for word in line.split():
-    #         #for word in range(len(sections[section][line])):
-    #             try:
-    #                 if proc_colors[idx][coloritr] != 0:
-    #                     highlighted += '<mark style=\"background: #' + str(proc_colors[idx][coloritr]) + ';\">' + word + "</mark> "
-    #                 else: 
-    #                     highlighted += word + " "
-
-    #                 if coloritr < len(proc_colors[idx]) - 1:
-    #                     coloritr += 1
-    #             except:
-    #                 print(f"stopped in section {idx}")
-    #                 print(section)
-    #                 print(line)
-    #                 print(word)
-    #                 return jsonify(result=highlighted)
-
-    #         highlighted += '\n'
-                
-    # lyricstext.innerHTML = highlighted
-    # document.getElementById("result").innerHTML = highlighted;
-
-    # print("\n\n Highlighting done")
-    # print(highlighted)
-    
- 
 
 
 @app.route('/unknown')
@@ -497,8 +350,45 @@ if __name__ == "__main__":
     app.run(debug=True)
 
 
+# def parse_songdata(artist_name : str,song_name : str, songdata : list) -> (list, list):
+#     '''
+#     Pareses a songdata query from the DB and returns a list of lyrics and colors to be 
+#     applied 
+#     '''
+#     skip_header = False
 
-#dont color brackets -- skip if they have []
-# this shouldnt create an offset 
+#     proc_lyrics = songdata['lyrics']  # string
+#     proc_colors = songdata['colors']  # list of lists
 
-# place newlines after bracket 
+
+#     # app.logger.debug(proc_lyrics)
+#     # app.logger.debug(proc_colors)
+#     if proc_lyrics == []: 
+#         return [],[]
+
+#     # split the lyrics into a list of lists
+#     split_newl = proc_lyrics.replace('\n', '\n ').split(' ')
+#     #take section headers out of lyrics
+#     lyrics_nosection = []
+#     for word in split_newl: 
+#         if '[' in word: 
+#             skip_header = True
+#         if ']' in word: 
+#             skip_header = False
+#             continue
+
+#         if not skip_header:
+#             lyrics_nosection.append(word)
+
+#     # app.logger.debug(lyrics_nosection)
+
+#     #flatten colorlist from [list[lyrics]] to [lyrics]
+#     colorlist = []
+#     for l in proc_colors:
+#         for color in l: 
+#             colorlist.append(color)
+#     # these should be roughly the same
+#     print(len(lyrics_nosection))
+#     print(len(colorlist))
+
+#     return lyrics_nosection, colorlist

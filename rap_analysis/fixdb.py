@@ -119,20 +119,21 @@ colnames = db.list_collection_names()
 print(len(colnames))
 #MADE IT FROM NAS TO THE GAME 
 # colname = ["tyler, the creator"]
-# for col in colnames:
-#     print(f"FIXING {col}")
-#     collection = db[col]
-#     print(collection.count())
-#     for doc in collection.find():
-#         if doc['colors'] == []:
-#             continue
-#         try: 
-#             if len(str(doc['colors'][0][0])) > 4:
-#                 collection.delete_one({"_id" : ObjectId(doc['_id'])})
-#                 print(f"Deleted: {doc['song']} id {doc['_id']}")
-#         except: 
-#             print(f"{doc['song']} invalid colors {doc['colors']}")
-#             # collection.delete_one({"_id" : ObjectId(doc['_id'])})
+for col in colnames:
+    print(f"FIXING {col}")
+    collection = db[col]
+    print(collection.count())
+    for doc in collection.find():
+        if doc['colors'] == []:
+            collection.delete_one({"_id" : ObjectId(doc['_id'])})
+            print(f"Deleted: {doc['song']} id {doc['_id']}, had no colors")
+        # try: 
+        #     if len(str(doc['colors'][0][0])) > 4:
+        #         collection.delete_one({"_id" : ObjectId(doc['_id'])})
+        #         print(f"Deleted: {doc['song']} id {doc['_id']}")
+        # except: 
+        #     print(f"{doc['song']} invalid colors {doc['colors']}")
+        #     # collection.delete_one({"_id" : ObjectId(doc['_id'])})
 
-#     print(80 * "-")
+    print(80 * "-")
 # %%

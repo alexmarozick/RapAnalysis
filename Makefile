@@ -7,10 +7,10 @@ install: rebuild
 rebuild: clean env lyricsgenius dict 
 
 lyricsgenius: 
-	(source env/bin/activate; pip install git+https://github.com/johnwmillr/LyricsGenius.gitma)
+	(source env/bin/activate; pip install git+https://github.com/johnwmillr/LyricsGenius.git)
 
 activate: 
-	(source env/bin/activate)
+	(env/bin/activate)
 
 run:
 	(source env/bin/activate; python3 rap_analysis/app.py)

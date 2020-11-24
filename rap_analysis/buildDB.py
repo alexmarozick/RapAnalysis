@@ -26,8 +26,8 @@ spotify = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=client
 # cluster = pymongo.MongoClient(f"mongodb+srv://{mongo_user}:{mongo_password}@{mongo_clusters}")
 cluster = pymongo.MongoClient(mongo_client)
 # pymongo.MongoClient("mongodb+srv://rapAnalysisUser:fPuQRGR3aRh81BB3@lyricsstorage.9tro8.mongodb.net/<dbname>?retryWrites=true&w=majority")
-
-db = cluster["Lyrics_Actual"]
+database_name = config.get('DB_NAME','MONGODB')
+db = cluster[database_name]
 # col = db["testArtists"]
 
 file_name = "toprappers.txt"
@@ -272,7 +272,7 @@ def artist_list(artist_list : list):
     for artist in artist_list:
         buildArtist(artist)
 
-def buildArtist(artist_name : str):
+def buildArtist(artist_name : str, typ='remote', max_songs=20):
     '''
     Get all songs from the given artist.
     Then from the result we can build our database.
@@ -293,7 +293,7 @@ def buildArtist(artist_name : str):
 
     # NOTE If you want to get all songs from an artist remove max_songs
     try:
-        artist = genius.search_artist(artist_name, max_songs=500)
+        artist = genius.search_artist(artist_name, max_songs=max_songs)
     except: 
         print(f"Oops something happened getting {artist_name}... moving on...")
         return None
@@ -301,6 +301,7 @@ def buildArtist(artist_name : str):
     artist_name = artist.name.replace('.', "").replace("$","s").lower()
 
     print(f"Saving Lyrics for {artist_name}")
+    #IF SAVE GENIUS 
     artist.save_lyrics(filename=f"{artist_name}_Lyricsjson",overwrite=True)
 
     print(f"creating collection for {artist_name}")
@@ -309,7 +310,7 @@ def buildArtist(artist_name : str):
 
     songList = artist.songs
     song_list = []
-    print(f"Analyzing lyrics for {artist_name}")
+    print(f"Analyzing lyrics for {len(songList)} songs by {artist_name}")
     for song in songList:
         results = {}
         album = ""
@@ -319,11 +320,20 @@ def buildArtist(artist_name : str):
         except: 
             print(f"song {song} not found on spotify.. putting blank album")
         # pp(results)
-        colors, marked = analyzeSong.parse_and_analyze_lyrics(cmd=False,args=song.lyrics)
-        song_list.append( {"song" : song.title.replace('.', "").replace("$","s"), "lyrics" : song.lyrics, "album" : album, "colors" : colors})
+        colors, marked = analyzeSong.parse_and_analyze_lyrics(cmd=False,lyrics=song.lyrics)
+        song_list.append( {"song" : song.title.replace('.', "").replace("$","s"), "lyrics" : song.lyrics, "album" : album, "colors" : colors, "marked" : marked})
 
-    db[artist_name].insert_many(song_list)
-    db[artist_name].create_index([('song', pymongo.TEXT)], name='search_index', default_language='english')
+    if typ == 'remote': 
+        db[artist_name].insert_many(song_list)
+        db[artist_name].create_index([('song', pymongo.TEXT)], name='search_index', default_language='english')
+    else:
+        json_out = {}
+        json_out['songs'] = song_list
+        print(f"Writing {[song['song'] for song in song_list]} to json")
+        with open(f"{artist_name}_analyzed.json",'w') as out:
+            json.dump(json_out,out)
+
+        #write song list to json {'artist' : artistname, songs : song_list}
     # db[artist.lower().replace('.', "").replace("$",'s')].insert_many(entry_list)
     
 
@@ -377,62 +387,31 @@ def main():
     Juno -- 
     Made a main so we can call artist list from a file that we open and read 
     '''
+    usage = "USAGE: python3 buildDB.py [--remote][--local] NUMSONGS FILENAME \n \
+Builds a Database of analyzed songs for the artists listed in FILENAME \n \
+NUMSONGS per artist \n\n \ --remote: Uses Config info to place data in the \
+supplied MongoDB database \n \OR \n --local : places data in a .json file "
+
+    t = ""
+    max_songs = 50
+    if sys.argv[1] == '--remote':
+        t = 'remote'
+    elif sys.argv[1] == '--local':
+        t = 'local'
+    else: 
+        print(usage)
+        return -1
+
     song_list = []
-    with open(sys.argv[1], 'r') as f:
+    with open(sys.argv[3], 'r') as f:
         artist_list = f.read().split('\n')
+        if '' in artist_list:
+            artist_list.remove('')
         print(artist_list) 
-        #artist_list.remove('')
+
         for artist in artist_list:
-
             print(f"getting songs for {artist}")
-            buildArtist(artist)
-
-            # song_list = searchForSongs(artist)
-            # song_list = list(set(song_list))
-
-            # print(f"getting lrics for {len(song_list)} songs")
-            # entry_list = buildSongBySong(song_list, artist,[])
-
-            # print(f"{len(entry_list)} song by {artist} found")
-            # try:
-            #     with open(f"{artist}_songlyrics.txt", 'w') as f: 
-            #         f.write(str(entry_list))
-            # except: 
-            #     print("Could not write file")
-
-            
-            # print("placing into mongodb")
-            # # .replace('.', "").replace("$",'s').strip(" ")
-            # # {song: [lyrics,album,colors]}
-        
-            # # format the artists to remove special chars ($, .) and strip trailing whitespace
-            # # by updating the names of the keys in the list of dicts 
-            # songs = [list(d.keys())[0] for d in entry_list]
-            # for i,d in enumerate(entry_list): 
-            #     d[songs[i].replace('.', "").replace("$",'s').strip(" ")] = d.pop(songs[i]) 
-
-            # # add the new entries to the db
-            # db[artist.lower().replace('.', "").replace("$",'s')].insert_many(entry_list)
-    
-
-
-
-    print(song_list)
-        # for item in song_list:
-        #     buildArtist(item)
-
-                    #offset +50 
-            # if len(artist) > 1:
-            #     results = spotify.search(q='artist:' + artist, type='track',limit=50)
-            #     restracks = [item for item in results['tracks']['items']]
-            #     # resfiltered [item in for item in restracks if item['artists']
-            #     for item in restracks:
-            #         del item['available_markets']
-            #         del item['album']['available_markets']
-            #         pp(item)
-            #         print(80 * '-')
-            #pp(tracknames)
-            #buildArtist(artist)
+            buildArtist(artist,typ=t,max_songs=int(sys.argv[2]))
 
 
 if __name__ == "__main__":
