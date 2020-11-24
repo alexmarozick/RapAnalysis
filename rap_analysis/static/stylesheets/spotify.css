@@ -258,6 +258,7 @@ label.btn input[type="file"] {
   width: 70%;
   float: left;
   min-height: 70vh;
+  text-align: center;
 }
 #playlist_spacing_right{
   width: 5%;
@@ -389,11 +390,16 @@ select{
 select::-ms-expand{
   display: none;
 }
+.dropdown-containers{
+  padding-left: 20%;
+  padding-right: 20%;
+  text-align: center;
+}
 
 .select-droplist {
   width: 100%;
   min-width: 10ch;
-  max-width: 20ch;
+  /* max-width: 20ch; */
   border: 1px solid var(--select-border);
   border-radius: 0.25em;
   padding: 0.25em 0.5em;

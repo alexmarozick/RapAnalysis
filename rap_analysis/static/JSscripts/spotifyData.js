@@ -27,7 +27,7 @@ function recent_plays(){
                 var wrapper = $('<div></div>').attr("id","drop-recent-wrapper").attr("class", "select-droplist");
                 var selector = $('<select></select>').attr("id","droplist-recent-songs").attr("onchange", "recent_song_change()").attr("onfocus", "recent_song_change()");
                 var focus =  $('<span></span>').attr("class","focus");
-                $("#recents_content").append(wrapper);
+                $("#recent-container-id").append(wrapper);
                 $("#drop-recent-wrapper").append(selector);
                 $("#drop-recent-wrapper").append(focus);
             }

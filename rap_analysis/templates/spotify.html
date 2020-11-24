@@ -80,13 +80,15 @@
                             
                             <label for="droplistP">Choose a playlist to analyze:</label>
                             <!-- want dropdown menu -->
-                            <div class="select-droplist">
-                                <select id="droplistP"  onchange="playlist()">
-                                    {% for id in playlists %}
-                                    <option name={{playlists[id]}} value="{{id}}">{{playlists[id]}}</option>
-                                    {% endfor %}
-                                </select>
-                                <span class="focus"></span>
+                            <div class="dropdown-containers">
+                                <div class="select-droplist">
+                                    <select id="droplistP"  onchange="playlist()">
+                                        {% for id in playlists %}
+                                        <option name={{playlists[id]}} value="{{id}}">{{playlists[id]}}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <span class="focus"></span>
+                                </div>
                             </div>
 
                             <!-- want analyze button -->
@@ -113,8 +115,10 @@
                             <label for="recent">Number of Recent Plays:</label>
                             <input class="recent" type="text" name="recent" id="recent" placeholder=" Type number of recent plays">
                             <a href=#><button class="btn" id=analyze-recent>Analyze Recent Plays</button></a>
-                            <!-- TODO make sure its in the right spot -->
+                            <!-- TODO abdu make the recent dropdown go within the drop down container -->
+                            <div class="dropdown-containers" id="recent-container-id">
 
+                            </div>
                         </div>
                         <div id="recents_spacing_right">
                         </div>
