@@ -306,7 +306,13 @@ label.btn input[type="file"] {
   border-radius: 1rem;
   justify-content: center;
 }
-
+#examples-container{
+  margin-top: 1rem;
+  width: 100%;
+  padding-left: 40%;
+}
+#examples{
+}
 #text-submit-btn-container{
   width: 100%;
   justify-content: center;

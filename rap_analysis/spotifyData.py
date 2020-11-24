@@ -15,10 +15,10 @@ def spotify_data(spotify):
     - Recent listen as hip hop genre.
     - Followed artists.
     '''
-    artists_data = get_followed_artist(spotify)
     playlist_data = get_playlists(spotify)
+    # artists_data = get_followed_artist(spotify)
     # recent_plays_data = get_recent_plays(spotify)
-    return {'artists' : artists_data, 'playlists' : playlist_data}
+    return {'playlists' : playlist_data}
 
 
 def get_followed_artist(spotify):
@@ -136,7 +136,8 @@ def get_songs_from_playlist(spotify, playlist_id) -> list:
             if track['track']:
                 # pp(track["track"])
                 # track_artist = {} # dict that contains artist id as the key and the value is the artist name
-                # all_artist = {} # same as track_artist execpt that this will also contain artists that don't fall in the hiphop/artist genre NOTE used for debugging
+                # same as track_artist execpt that this will also contain artists that don't fall in the hiphop/artist genre 
+                # all_artist = {} # NOTE used for debugging
 
                 track_id = track['track']['id']                                 # get song id
                 track_name = track['track']['name']                             # get song name
@@ -176,7 +177,7 @@ def get_songs_from_playlist(spotify, playlist_id) -> list:
 def repetitionCheck(song_artist : list, song_name : str, artists) -> bool:
     '''
     Checks if the a list of dictionaries
-    in the format of [{song : "songname", artist : "artist name}, ...]
+    in the format of [{song : "songname", artist : "artist name"}, ...]
     '''
     for song in song_artist:
         songname = song['song']
@@ -187,13 +188,13 @@ def repetitionCheck(song_artist : list, song_name : str, artists) -> bool:
                     return True
         elif checkSong and artists in song['artist']:
             return True
-        
     return False
+
 def includeSong(spotify, songs_artists : list, artists_info : list, song_name : str):
     '''
     Function that deteremines if the song should be included to be analyzed.
     For the song to be included it must have one of the genres 
-    listed and it a song that isn't included already.
+    listed and it is a song that isn't included already.
 
     NOTE could make a few tweaks to remove some stuff if needed - Abduarraheem
     '''
