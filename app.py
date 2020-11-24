@@ -16,13 +16,11 @@ import config
 import spotipy
 import time
 import uuid
-import lyricsgenius
 import logging
 import pymongo
 import analyzeSong
 import datetime
 import spotifyData
-import colorsys
 
 # logging.basicConfig(level=app.logger.debug)
 class FileTypeException(HTTPException):   # this error is thrown when the file type is incorrect
