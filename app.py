@@ -18,10 +18,10 @@ import time
 import uuid
 import lyricsgenius
 import logging
+import pymongo
 import analyzeSong
 import datetime
 import spotifyData
-import databaseops as dbops
 import colorsys
 
 # logging.basicConfig(level=app.logger.debug)
@@ -46,6 +46,14 @@ client_id = config.get('SPOTIPY_CLIENT_ID','api') # NOTE hey do this
 client_secret = config.get('SPOTIPY_CLIENT_SECRET','api') # NOTE hey do this
 token_url = 'https://accounts.spotify.com/api/token'
 
+
+mongo_clusters = config.get("CLIENT",'MONGODB')
+db_name = config.get("DB_NAME",'MONGODB')
+
+cluster = pymongo.MongoClient(mongo_clusters)
+db = cluster[db_name]
+
+
 possible_hues = [i for i in range(0,370) if i % 10 == 0]
 
 # NOTE Make sure this is also the same in your Spotify app.
@@ -69,6 +77,48 @@ def session_cache_path():
     app.logger.debug("Finished session_cache_path")        # for debugging
     return caches_folder + session.get('uuid')
 
+def getsongdata(songdict :list) -> list:
+    '''
+    Gets the lyrics of a dict of artists and their songs  
+    songdict : {"song" : SONGNAME, "artist"}
+    returns [{object_id: ObjectID, "album": ALBUM, "colors" : COLORS, 'lyrics' : LYRICS}]
+    COLORS is a list of lists. Each sublist corresponds to a section of the song (deliminated by something like [Intro] or [Chorus])
+    '''
+
+    dbArtists = db.list_collection_names()
+    res = []
+    query_result = []
+    for item in songdict:
+        if type(item['artist']) == list: # NOTE the way I am doing these checks could probably be done better also something else to consider is what if no artist is given - Abduarraheem
+            for a in item['artist']:
+                artist = a.lower().replace("$","s").replace(".", "")
+                # query_result = db[artist].find({ "song": item['song']  })
+                if artist in dbArtists:
+                    query_result = db[artist].find({"$text" :{"$search" : item['song'], "$caseSensitive" : False}})
+                   
+                    # print(item['song'])
+                    # break because one of the artists was in the data base, 
+                    # NOTE then since we can't be 100% sure that this artist 
+                    # has the song we are looking for we would need to go 
+                    # to the next artist in the list to check if the artist has the song given.
+                    break  
+        else:
+            artist = item['artist'].lower().replace("$","s").replace(".", "")
+            if artist in dbArtists:
+                query_result = db[artist].find({"$text" :{"$search" : item['song'], "$caseSensitive" : False}}) 
+
+        if query_result == []:
+            print(f"Error Artist {artist} not in the Data Base") 
+            return "NoArtist"
+
+        try:
+            docs = [doc for doc in query_result]
+            res.append(docs)
+        except (UnboundLocalError, TypeError): # if the artist wasn't in the db, go the next song.
+            continue
+    # pp(res)
+    logging.debug(f"RETURNING {res} from getsongdata")
+    return res
 
 @app.route('/')
 def index():
@@ -91,11 +141,11 @@ def analyzeSpotify():
     if analyzeType == 'playlist':
         playlistID = request.args.get('playlistID')
         songs_artists = spotifyData.get_songs_from_playlist(spotify, playlistID)
-        songdata = dbops.getsongdata(songs_artists)
+        songdata = getsongdata(songs_artists)
     elif analyzeType == 'recent':
         recent_num = request.args.get('recent_num', 10, int)
         songs_artists = spotifyData.get_recent_plays(spotify, recent_num)
-        songdata = dbops.getsongdata(songs_artists)
+        songdata = getsongdata(songs_artists)
     songs = []
     print(songdata)
 
@@ -256,7 +306,7 @@ def get_input():
 
     # pass in a dictionary to display and highlight in form {"song": song_name, "artist" : artist_name}
 
-    songdata = dbops.getsongdata([{'song': song_name, 'artist': artist_name}])
+    songdata = getsongdata([{'song': song_name, 'artist': artist_name}])
     if songdata == "NoArtist":
         return jsonify(result=f"Could not find artist {artist_name} in Database")
     elif songdata == [[]] or songdata == []:

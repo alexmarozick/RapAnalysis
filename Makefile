@@ -13,7 +13,7 @@ activate:
 	(env/bin/activate)
 
 run:
-	(source env/bin/activate; python3 rap_analysis/app.py)
+	(source env/bin/activate; python3 app.py)
 
 dict: 
 	(source env/bin/activate; python3 clcmudict.py)
