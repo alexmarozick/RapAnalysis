@@ -4,13 +4,24 @@
 Rap Analysis website (RAW) visualizes the way that a rapper rhymes in a given song by color coding groups of words that rhyme. Simply search a song on the homepage or log in with Spotify to analyze your favorite Hip-Hop playlist and recently listened songs. Your searches query our custom database of analyzed lyrics of over ___ artists. Can't find your favorite song or artist? Check back soon! We will adding the ability to add new songs to our database on the fly in a coming update! 
 
 Noteable examples: 
+    
     Clout Cobain by Denzel Curry
+    
     Sirens by Denzel Curry
+    
     Tragedy by RZA
+    
     DNA by Kendrik Lamar
+    
     Stan by Eminem
+    
     Gin and Juice by Snoop Dogg
+    
     I Think by Tyler The Creator
+    
+Example Playlist for Testing our Spotify Integration:
+
+    https://open.spotify.com/playlist/5SiGw4acTtJWGeAEZjsZHY?si=xr3wHmaSQnKhLPCF-CDRJQ
 
 Lyrics are captured one verse or chorus at a time, allowing RAW to consider both internal and end rhymes while eliminating false positives occurring throughout a verse no matter their position within a given line.
 
