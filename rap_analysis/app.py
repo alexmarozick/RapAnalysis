@@ -207,19 +207,22 @@ def spotify_login():
 @app.route('/login-btn', methods=['GET', 'POST'])    
 def login():
     if request.method == 'POST':
-        
-        sp_oauth = SpotifyOAuth(client_id=client_id, client_secret=client_secret, redirect_uri=REDIRECT_URI, 
-                                scope=scope, cache_path=session_cache_path(), show_dialog=True)
-        
-        # So if we have a token(which means we are logged in) 
-        # and the login button is clicked then we need to sign out
+        try
+            sp_oauth = SpotifyOAuth(client_id=client_id, client_secret=client_secret, redirect_uri=REDIRECT_URI, 
+                                    scope=scope, cache_path=session_cache_path(), show_dialog=True)
+            
+            # So if we have a token(which means we are logged in) 
+            # and the login button is clicked then we need to sign out
 
-        if not sp_oauth.get_cached_token():
-            # Authorization Code Flow Step 1
-            auth_url = sp_oauth.get_authorize_url()
-            return redirect(auth_url)
-        return redirect("/sign_out")
-    return redirect("spotify_login")
+            if not sp_oauth.get_cached_token():
+                # Authorization Code Flow Step 1
+                auth_url = sp_oauth.get_authorize_url()
+                return redirect(auth_url)
+            return redirect("/sign_out")
+        return redirect("spotify_login")
+
+        except TypeError:
+           return redirect('/spotify_login')
 
 
 
