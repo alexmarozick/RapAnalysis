@@ -41,7 +41,7 @@ app.secret_key = secret_key
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_FILE_DIR'] = './.flask_session/'
 Session(app)
-scope = "user-read-private playlist-modify-private playlist-modify-public playlist-read-private user-follow-read user-read-recently-played"
+scope = "playlist-modify-public playlist-read-private user-follow-read user-read-recently-played"
 client_id = config.get('SPOTIPY_CLIENT_ID','api') # NOTE hey do this
 client_secret = config.get('SPOTIPY_CLIENT_SECRET','api') # NOTE hey do this
 token_url = 'https://accounts.spotify.com/api/token'
@@ -207,7 +207,7 @@ def spotify_login():
 @app.route('/login-btn', methods=['GET', 'POST'])    
 def login():
     if request.method == 'POST':
-        try
+        try:
             sp_oauth = SpotifyOAuth(client_id=client_id, client_secret=client_secret, redirect_uri=REDIRECT_URI, 
                                     scope=scope, cache_path=session_cache_path(), show_dialog=True)
             
@@ -219,11 +219,9 @@ def login():
                 auth_url = sp_oauth.get_authorize_url()
                 return redirect(auth_url)
             return redirect("/sign_out")
-        return redirect("spotify_login")
-
         except TypeError:
-           return redirect('/spotify_login')
-
+            pass
+    return redirect("spotify_login")
 
 
 @app.route('/sign_out')
