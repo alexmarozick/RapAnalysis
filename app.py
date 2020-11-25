@@ -145,7 +145,7 @@ def analyzeSpotify():
         songs_artists = spotifyData.get_recent_plays(spotify, recent_num)
         songdata = getsongdata(songs_artists)
     songs = []
-    print(songdata)
+    #print(songdata)
 
     # get all song names from teh playlist
     songnames = [songname['song'] for songname in songs_artists] 
@@ -158,9 +158,9 @@ def analyzeSpotify():
         # loop through the results of one query
         for songDict in query:
             # strip some characters from the song name that was gotten from the query
-            print(f'Song name from playlist{songnameP}') # for debugging 
+            #print(f'Song name from playlist{songnameP}') # for debugging 
             songnameDB = ((songDict['song'].lower()).strip(" ")).replace(".",'') 
-            print(f'Song name from Data Base{songnameDB}') # for debugging
+            #print(f'Song name from Data Base{songnameDB}') # for debugging
             # check if the song name from the play list is a sub string of the one gotten from the database, 
             # NOTE this check might need to be modified.
             if songnameP in songnameDB: 
@@ -207,8 +207,8 @@ def parse_songdata2(songdata : dict) -> (list, list):
         for color in l: 
             colorlist.append(color)
     # these should be roughly the same
-    print(len(lyrics_nosection))
-    print(len(colorlist))
+    #print(len(lyrics_nosection))
+    #print(len(colorlist))
 
     return lyrics_nosection, colorlist
 
@@ -298,6 +298,7 @@ def get_input():
     
     print(song_name)
     print(artist_name)
+
 
     app.logger.debug(song_name)                                       
     app.logger.debug(artist_name)                                            
@@ -394,7 +395,7 @@ def page_forbidden(e):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
 
 
 # def parse_songdata(artist_name : str,song_name : str, songdata : list) -> (list, list):
