@@ -1,17 +1,12 @@
 :root {
-  --primary-color: #302ae6;
-  --secondary-color: #536390;
-  --font-color: #232835;
-  --link-font-color: rgb(137, 137, 141);
-  --bg-color: #1db954;
-  --button-color: rgb(41, 41, 43);
-  --button-color: #232835;
-  --button-color-hover: #39435c;
-  --button-color-text: white;
-  --select-border: #777;
-  --select-focus: blue;
-  --select-arrow: var(--select-border);
-}
+  --font-color: #1db954;
+  --link-font-color: #e1e1ff;
+  --bg-color: #232835;
+  --heading-color: #818cab;
+  --button-color: #1db954;
+  --button-color-hover: #addfad;
+  --button-color-text: black;
+  }
 /* 
     #ADDFAD moss green  
     #1DB954 Spotify green
@@ -24,15 +19,17 @@
   scroll-behavior: smooth;
 }
 
-[data-mode="dark"] {
-  --font-color: #1db954;
-  --link-font-color: #e1e1ff;
-  --bg-color: #232835;
-  --heading-color: #818cab;
-  --button-color: #1db954;
-  --button-color-hover: #addfad;
-  --button-color-text: black;
-}
+  [data-mode="light"] {
+    --primary-color: #302ae6;
+    --secondary-color: #536390;
+    --font-color: #232835;
+    --link-font-color: rgb(137, 137, 141);
+    --bg-color: #1db954;
+    --button-color: rgb(41, 41, 43);
+    --button-color: #232835;
+    --button-color-hover: #39435c;
+    --button-color-text: white;
+  }
 
 main {
   width: 100%;
