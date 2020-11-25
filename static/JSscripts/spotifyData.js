@@ -78,7 +78,7 @@ function playlist(){
             var dropList = document.getElementById("droplist-playlist-songs"); // get drop down menu wil return null if it doesn't exist yet.
             // console.log(dropList);
             // console.log(selector)
-            console.log(data.result.length)
+            // console.log(data.result.length)
             // console.log(data.result)
             
             if(dropList == null){ // if the drop list does not exist then create the drop list
