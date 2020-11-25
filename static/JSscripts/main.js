@@ -97,7 +97,7 @@ $(function() {
         function(data){
             // document.getElementById("result").innerHTML = data.result;
             if(data.result == "") {
-                alert("Can't input empty box!")
+                alert("Please insert a song followed by the artist!")
             }
             document.getElementById("textarea").innerHTML = data.result;
         });
