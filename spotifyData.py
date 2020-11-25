@@ -4,7 +4,7 @@ import logging
 from pprint import pprint as pp
 
 # genres = ['hip hop', 'pop rap', 'rap', 'chicago rap', 'melodic rap', 'canadian hip hop', 'canadian pop', 'toronto rap']
-genres = ['hiphop', 'hip hop', 'rap', 'pop']
+genres = ['hiphop', 'hip hop', 'hip-hop', 'rap']
 
 def spotify_data(spotify):
     '''
@@ -64,7 +64,7 @@ def get_followed_artist(spotify):
 
 def checkGenre(genre_list : list) -> bool:
     for genre in genre_list:
-        if genres[0] in genre or genres[1] in genre or genres[2] in genre:
+        if genres[0] in genre or genres[1] in genre or genres[2] in genre or genres[3] in genre:
             return True
     return False
 

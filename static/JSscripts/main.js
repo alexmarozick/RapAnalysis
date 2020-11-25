@@ -85,3 +85,21 @@ const submitBtn = document.getElementById("submit-btn");
 //         outputbox.innerHTML = "Processing data...";
 //     }
 // });
+
+
+$(function() {
+    $('#submit-btn').click(function(){
+
+        $.getJSON('/get-lyrics',{
+            songid: $('#song').val(),
+            artistid: $('#artist').val()
+        },
+        function(data){
+            // document.getElementById("result").innerHTML = data.result;
+            if(data.result == "") {
+                alert("Please insert a song followed by the artist!")
+            }
+            document.getElementById("textarea").innerHTML = data.result;
+        });
+    });
+});

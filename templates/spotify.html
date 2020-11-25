@@ -16,7 +16,7 @@
         <!-- Javascript:  JQuery from a content distribution network (CDN) -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script src=../static/JSscripts/spotifyData.js></script>
-       
+        <title>Rhyme Scheme Analysis</title>
     </head>
 
 
@@ -95,6 +95,7 @@
                             <a href=#><button class="btn" id="analyze-playlist">Analyze playlist</button></a>
                             <!-- button for tabbing through songs -->
                             <!-- TODO the two divs below just figure out how u want them combined -->
+                            <span id="playlist-loading"></span>
                         </div>
 
                         <div id="playlist_spacing_right">
@@ -116,6 +117,7 @@
                             <input class="recent" type="text" name="recent" id="recent" placeholder=" Type number of recent plays">
                             <a href=#><button class="btn" id=analyze-recent>Analyze Recent Plays</button></a>
                             <!-- TODO abdu make the recent dropdown go within the drop down container -->
+                            <span id="recent-loading"></span>
                             <div class="dropdown-containers" id="recent-container-id">
 
                             </div>

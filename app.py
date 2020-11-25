@@ -309,9 +309,11 @@ def get_input():
         print("User submitted an empty string: returning to throw error message")
         return jsonify(result = error)
     
-    print(song_name)
-    print(artist_name)
-
+    # print(song_name)
+    # print(artist_name)
+    
+    song_name = song_name.strip()
+    artist_name = artist_name.strip()
 
     app.logger.debug(song_name)                                       
     app.logger.debug(artist_name)                                            
@@ -391,10 +393,6 @@ def highlight_words(lyrics : str, colorlist : list):
 # if not skip
     return highlighted
 
-
-@app.route('/unknown')
-def give_data(): 
-    return jsonify({})
 
 
 
