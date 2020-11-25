@@ -307,13 +307,14 @@ def parse_and_analyze_lyrics(lyrics=None,cmd=False,args=None,genius=True) -> dic
             print("Loaded Lyrics from Text File")
             parsed = parse_lyrics(lyrics)
             rhyme_num_list, marked_lyrics = analyze_lyrics(parsed,showResult=True)
-            with open(f'{args[2][:4]}_analyzed.txt') as fp:
+            with open(f'{args[2][:-4]}_analyzed.json','w') as fp:
                 json.dump(
                     {"filename" : args[2], 
                     "lyrics": lyrics, 
                     "marked" : marked_lyrics, 
-                    "rhymenum" : rhyme_num_list}
-                )
+                    "rhymenum" : rhyme_num_list}, fp)
+        
+            return rhyme_num_list, marked_lyrics
 
         else:
             print("USAGE: python3 analyzeSong.py [-t][-j] FILENAME \n\n \
@@ -324,11 +325,9 @@ def parse_and_analyze_lyrics(lyrics=None,cmd=False,args=None,genius=True) -> dic
     else:
         songlyrics = parse_lyrics(lyrics)
         rhyme_num, marked = analyze_lyrics(songlyrics)
-        
-    
    
     # print(marked)
-    return rhyme_num,marked
+        return rhyme_num,marked
 
 
 if __name__ == "__main__":
