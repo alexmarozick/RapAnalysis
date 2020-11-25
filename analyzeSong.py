@@ -227,11 +227,11 @@ def parse_lyrics(lyrics) -> list:
 
     return parsed_lyrics
 
-def analyze_lyrics(lyrics: list) -> list:
+def analyze_lyrics(lyrics: list,showResult=False) -> list:
     """
     Takes in lyrics, and analyzes them for rhymes, returning a list[list] of Rhyme Numbers by section
     lyrics: [[list of words in section] for each section]
-    
+    ShowResult: whether or not to print results for that song to the console, used for -t flag 
     returns:
     rhyme_numbers: [[list of rhyme numbers] for each section]
     rhyme_numbers and lyrics are one-to-one
@@ -246,7 +246,8 @@ def analyze_lyrics(lyrics: list) -> list:
             logging.debug(f"RhymeNumbers: {len(rhyme_numbers)}MARKED {len(section)} ")
             rhyme_num_list.append(rhyme_numbers)
             marked_lyrics.append(marked)
-            logging.debug(marked)
+            if showResult:
+                logging.debug(marked)
         else:
             logging.debug("Found an empty section")
     logging.debug(rhyme_num_list)
@@ -305,7 +306,7 @@ def parse_and_analyze_lyrics(lyrics=None,cmd=False,args=None,genius=True) -> dic
             lyrics = open(args[2],'r').read()
             print("Loaded Lyrics from Text File")
             parsed = parse_lyrics(lyrics)
-            rhyme_num_list, marked_lyrics = analyze_lyrics(parse)
+            rhyme_num_list, marked_lyrics = analyze_lyrics(parse,showResult=True)
             with open(f'{args[2][:4]}_analyzed.txt') as fp:
                 json.dump(
                     {"filename" : args[2], 

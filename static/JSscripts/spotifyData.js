@@ -70,7 +70,7 @@ function playlist(){
             // result of what flask returns which is contained in data.
             // data will be a json 
             if (data.result.length == 0){
-                $("#playlist-loading").text("Could not find hiphop songs in that playlist.")
+                $("#playlist-loading").text("Could not find hiphop songs in this playlist.")
                 $("#droplist-playlist-songs").remove()
                 $("#drop-playlist-wrapper").remove()
                 return false

@@ -31,6 +31,7 @@ To account for these problems, we break words down into a list of phonemes (phon
 
             Dodgin' bullets, reapin' what you sow
             And stackin' up the footage, livin' on the go
+            
     `Dodgin` and `Reapin` are not official words listed in the CMUDict, so we rebuild these suffixes to `Dodging` and `Reaping` to catch rhymes between words of this form and words with a complete `ing` ending
 
     Note: For words that are not in the CMUDict, direct string equality is used. 
@@ -70,13 +71,13 @@ Web-scraping lyrics using LyricsGenius proved too inefficient to rely on for rea
 
     {Database: 
         {'artist1' : [
-                    {'song1': "songName" , 'lyrics' : "lyrics go here", 'rhyme' [[List of Rhyme Numbers]]}
-                    {'song2': "songName" , 'lyrics' : "lyrics go here", 'rhyme' [[List of Rhyme Numbers]]}
+                    {'song': "songName1" , 'lyrics' : "lyrics go here", 'rhyme' [[List of Rhyme Numbers]]}
+                    {'song': "songName2" , 'lyrics' : "lyrics go here", 'rhyme' [[List of Rhyme Numbers]]}
                     ]
         }
         {'artist2' : [
-                    {'song1': "songName" , 'lyrics' : "lyrics go here", 'rhyme' [[List of Rhyme Numbers]]}
-                    {'song2': "songName" , 'lyrics' : "lyrics go here", 'rhyme' [[List of Rhyme Numbers]]}
+                    {'song': "songName1" , 'lyrics' : "lyrics go here", 'rhyme' [[List of Rhyme Numbers]]}
+                    {'song': "songName2" , 'lyrics' : "lyrics go here", 'rhyme' [[List of Rhyme Numbers]]}
                     ]
         }
     }
