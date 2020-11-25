@@ -279,28 +279,28 @@ def parse_and_analyze_lyrics(lyrics=None,cmd=False,args=None,genius=True) -> dic
             fp = open(args[2],'r')
             jp = json.load(fp)
             db = jp['Database']
-            for artist in db:
-                print(f"Loaded {len(artist['songs'])} songs by {artist['name']}")
-                print('Parsing...')
-                json_out['artist'] = artist['name']
-                json_out['songs'] = []
-                for song in artist['songs']:
-                    parsed = parse_lyrics(song['lyrics'])
-                    rhyme_num_list, marked_lyrics = analyze_lyrics(parse)
+            for idx, artist in enumerate(db):
+                for artist,songs in artist.items():
+                    print(f"Loaded {len(songs)} songs by {artist}")
+                    print('Parsing...')
+                    newsongs = []
+                    for song in songs:
+                        parsed = parse_lyrics(song['lyrics'])
+                        print(f"Analyzing {song['song']}")
+                        rhyme_num_list, marked_lyrics = analyze_lyrics(parsed)
+                        newsongs.append({
+                            "song" : song['song'], 
+                            "album" : song['album'],
+                            "lyrics" : song['lyrics'], 
+                            "rhyme" : rhyme_num_list,
+                            "marked" : marked_lyrics 
+                            })
 
-                    db[artist] = {
-                        "song" : song['song'], 
-                        "album" : song['album'],
-                        "lyrics" : song['lyrics'], 
-                        "rhyme" : rhyme_num_list,
-                        "marked" : marked_lyrics 
-                        }
-                
-                fp.close()
-                out = open(f"{artist['name']}_analyzed.json",'w')
-                json.dump(json_out,out)
-                out.close()
-            return json_out
+                db[idx] = {artist : newsongs}
+            with open(f"{args[2]}_reanalyzed.json",'w') as fp:
+                json.dump({"Database": db},fp)
+            return db
+
         elif args[1] == '-t':
             lyrics = open(args[2],'r').read()
             print("Loaded Lyrics from Text File")

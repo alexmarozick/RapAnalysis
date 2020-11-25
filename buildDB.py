@@ -420,7 +420,7 @@ supplied MongoDB database \n \OR \n --local : places data in a .json file "
 
     if t == 'local':
         with open(f"LyricsDatabase.json",'w') as out:
-            json.dump(json_out,out)
+        json.dump(json_out,out)
 
 
 if __name__ == "__main__":
