@@ -152,7 +152,7 @@ def analyzeSpotify():
     songs = []
     
 
-    # get all song names from teh playlist
+    # get all song names from the playlist
     songnames = [songname['song'] for songname in songs_artists]
     # loop through all the queries returned from getsongdata
     for i, query in enumerate(songdata): 
@@ -311,7 +311,7 @@ def get_input():
     
     # print(song_name)
     # print(artist_name)
-    
+
     song_name = song_name.strip()
     artist_name = artist_name.strip()
 

@@ -5,12 +5,12 @@ const pressSwitch = document.querySelector('.switch input[type="checkbox"]');
 
 function switchBtn(e) {
     if (e.target.checked) {
-        document.documentElement.setAttribute('data-mode', 'dark'); // set the attibute to dark
-        localStorage.setItem('mode', 'dark'); // set the mode to document storage so we can use it if the user refreshes
+        document.documentElement.setAttribute('data-mode', 'light'); // set the attibute to dark
+        localStorage.setItem('mode', 'light'); // set the mode to document storage so we can use it if the user refreshes
     }
     else {
-        document.documentElement.setAttribute('data-mode', 'light');  // set the attibute to light
-        localStorage.setItem('mode', 'light'); // set the mode to document storage so we can use it if the user refreshes
+        document.documentElement.setAttribute('data-mode', 'dark');  // set the attibute to light
+        localStorage.setItem('mode', 'dark'); // set the mode to document storage so we can use it if the user refreshes
     }    
 }
 
@@ -30,7 +30,7 @@ it make it so that the switch is checked.
 
 if (currentMode) {
     document.documentElement.setAttribute('data-mode', currentMode);
-    if (currentMode === 'dark') {
+    if (currentMode === 'light') {
         pressSwitch.checked = true;
     }
 }

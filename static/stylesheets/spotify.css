@@ -150,6 +150,7 @@ a.nav-link {
 }
 
 /*Set up slider box*/
+/*Set up slider box*/
 .slider {
   position: absolute;
   cursor: pointer;
@@ -158,6 +159,7 @@ a.nav-link {
   right: 0;
   bottom: 0;
   background-color: rgb(146, 215, 243);
+  background-color: #454647;
   -webkit-transition: 0.4s;
   transition: 0.4s;
   border-radius: 34px;
@@ -172,10 +174,11 @@ a.nav-link {
   left: 3px;
   top: 2px;
   bottom: 4px;
-  background-color: rgb(245, 189, 35);
+  background-color: rgb(255, 255, 255);
   -webkit-transition: 0.4s;
   transition: 0.4s;
   border-radius: 34px; /*Set the raidus of the content to be 1 so we get something like a circle*/
+  
 }
 
 /*Make the silder circle move when clicked on the slider*/
@@ -183,12 +186,13 @@ input:checked + .slider:before {
   -webkit-transform: translateX(34px);
   -ms-transform: translateX(34px);
   transform: translateX(34px);
-  background-color: rgb(255, 255, 255);
+  
+  background-color: rgb(245, 189, 35);
 }
 
 /*Set background of the slider after being clicked*/
 input:checked + .slider {
-  background-color: #454647;
+  background-color: rgb(146, 215, 243);
 }
 /*End of nav bar contents*/
 
