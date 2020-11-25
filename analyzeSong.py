@@ -241,7 +241,7 @@ def analyze_lyrics(lyrics: list,showResult=False) -> list:
     rhyme_num_list = []
     marked_lyrics = []
     for section in lyrics:
-        if section != []:
+        if section != [] and (section is not None):
             rhyme_numbers, marked = mark_with_rhymes(section)
             logging.debug(f"RhymeNumbers: {len(rhyme_numbers)}MARKED {len(section)} ")
             rhyme_num_list.append(rhyme_numbers)
