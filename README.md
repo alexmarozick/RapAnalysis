@@ -1,5 +1,9 @@
 # RapAnalysis
 
+A Rhyme Detection analysis Framework and Webservice for Hip-Hop/Rap Lyrics
+
+Created by Alex Marozick, Abduarraheem Elfandi, and Juno Mayer
+
 ## Installation and Usage Documentation
 Want to contribute to the project? [Check out our Wiki for installation and usage instructions](https://github.com/alexmarozick/RapAnalysis/wiki)
 
