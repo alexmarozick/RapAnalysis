@@ -179,7 +179,7 @@ def analyzeSpotify():
                     break
         else: 
             print(f"Missing Artist {songnames[i]}")
-            
+
     return jsonify(result=songs)
 
 def parse_songdata2(songdata : dict) -> (list, list):
@@ -192,7 +192,11 @@ def parse_songdata2(songdata : dict) -> (list, list):
     proc_colors = []
     # add a check to see if songdata is none.
     proc_lyrics = songdata['lyrics']  # string
-    proc_colors = songdata['colors']  # list of lists
+    if 'colors' in songdata:
+         proc_colors = songdata['colors']
+    else:
+        proc_colors = songdata['rhyme']
+      # list of lists
 
     app.logger.debug(proc_lyrics)
     app.logger.debug(proc_colors)

@@ -68,9 +68,9 @@
         <div id="content">
             <br><br><br><br>
             <h2 class="about_subtitles"  id="about">About</h2>
-            <p> This Rap Analysis Webpage (RPW) visualizes the way that a rapper rhymes in a given song by color coding groups of words that rhyme. Simply search a song on the homepage or log in with Spotify to analyze your favorite Hip-Hop playlist and recently listened songs. Your searches query our custom database of analyzed lyrics of over ___ artists. Can't find your favorite song or artist? Check back soon! We will adding the ability to add new songs to our database on the fly in a coming update!</p>
+            <p> Rap Analyzer visualizes the way that a rapper rhymes in a given song by color coding groups of words that rhyme. Simply search a song on the homepage or log in with Spotify to analyze your favorite Hip-Hop playlist and recently listened songs. Your searches query our custom database of analyzed lyrics of over 100 artists. Can't find your favorite song or artist? Check back soon! We will adding the ability to update our database on the fly in a coming update!</p>
             <p>Lyrics are captured one verse or chorus at a time, allowing RPW to consider both internal and end rhymes while eliminating false positives occurring throughout a verse no matter their position within a given line.</p>
-            <p>Test it out with these notable examples, or read into the inner-workings of RPW Below! </p>
+            <p>Test it out with these notable examples listed on our homepage, or read into the inner-workings of RPW Below! </p>
             <!-- TODO JUNO: Put href link examples here
             clout cobain -- denzel curry
             tragedy - rza 
@@ -83,17 +83,17 @@
     -->
             <h2 class="about_subtitles"  id="approach">Approach</h2>
             <h3 class="about_subtitles"  id="obtaining-lyrics">Obtaining Lyrics</h3>
-            <p>We used the <a href="https://github.com/johnwmillr/LyricsGenius">LyricsGenius</a> python library to collect lyrics for over 100 artists. This library runs on a combination of the official Genius API and web-scraping tools. Due to Intellectual Property law and licensing, we cannot provide this database for other developers looking to contribute to this project, however, we have provided the scripts which we used to build our database. More information on using these tools is available in our wiki [LINK ME BRO]</p>
+            <p>We used the <a href="https://github.com/johnwmillr/LyricsGenius">LyricsGenius</a> python library to collect lyrics for over 100 artists. This library runs on a combination of the official Genius API and web-scraping tools. Due to Intellectual Property law and licensing, we cannot provide this database for other developers looking to contribute to this project, however, we have provided the scripts which we used to build our database. More information on using these tools is available in our <a href= "https://github.com/alexmarozick/RapAnalysis/wiki"> GitHub wiki</a></p>
             <h3 class="about_subtitles"  id="rhyme-detection">Rhyme Detection</h3>
-            <p>English is a fickle language. For Example: through, rough, and trough share the same '-ough' ending despite being pronouced differently (/THro͞o/, /rəf/, /trôf/). This presents an interesting problem as rhymes cannot be detected via spelling alone. Moreover, rappers frequently coerse pronounciations to force rhymes where they would not normally occur.</p>
-            <p>To account for these problems, we break words down into a list of phonemes (phonetic syllables which describe how a word is prnounced) using the Python Natual Language Toolkit and the CMU Pronouncing Dictionary (CMUDict) which contains 39 phonemes and three levels of syllabic stress. For example, <code>Cheese</code> -&gt; <code>CH IY Z</code>. We compare the ending phonemes of words to look for rhymes and address pronounciation coersion in two ways:</p>
+            <p>English is a fickle language. For Example: through, rough, and trough share the same '-ough' ending despite being pronounced differently (/THro͞o/, /rəf/, /trôf/). This presents an interesting problem as rhymes cannot be detected via spelling alone. Moreover, rappers frequently coerce pronunciations to force rhymes where they would not normally occur.</p>
+            <p>To account for these problems, we break words down into a list of phonemes (phonetic syllables which describe how a word is pronounced) using the Python Natural Language Toolkit and the CMU Pronouncing Dictionary (CMUDict) which contains 39 phonemes and three levels of syllabic stress. For example, <code>Cheese</code> -&gt; <code>CH IY Z</code>. We compare the ending phonemes of words to look for rhymes and address pronounciation coersion in two ways:</p>
             <ol>
             <li>
-            <p>Multiple Word Prounounciations</p>
-            <p>CMUDict contains multiple pronounciations for many words. For Example, we catch a rhyme between <code>&quot;Business&quot;</code> and <code>&quot;Witness&quot;</code> by comparing two pronounciations of <code>&quot;Business&quot;</code> ( <code>B IH1 Z N AH0 S</code> and <code>B IH1 Z N IH0 S</code>) with the single pronounciation of <code>&quot;Witness&quot;</code> (<code>W IH1 T N AH0 S</code>)</p>
+            <p>Multiple Word Pronunciations</p>
+            <p>CMUDict contains multiple pronunciations for many words. For Example, we catch a rhyme between <code>&quot;Business&quot;</code> and <code>&quot;Witness&quot;</code> by comparing two pronunciations of <code>&quot;Business&quot;</code> ( <code>B IH1 Z N AH0 S</code> and <code>B IH1 Z N IH0 S</code>) with the single pronunciations of <code>&quot;Witness&quot;</code> (<code>W IH1 T N AH0 S</code>)</p>
             </li>
             <li>
-            <p>Rebuilding Truncated Stuffixes</p>
+            <p>Rebuilding Truncated Suffixes</p>
             <p>Many rappers use a truncated suffix, ending present participle <code>-ing</code> words with <code>in'</code></p>
             <pre class="good_codE"><code>     Dodgin' bullets, reapin' what you sow
                 And stackin' up the footage, livin' on the go
@@ -104,35 +104,50 @@
             </ol>
             <p>Our algorithm considers one verse or chorus at a time to mitigate false positives derived from rhymes detected across sections. In a given section, our algorithm operates as follows:</p>
             <!-- Same change for this <pre> as well -->
-            <pre class="good_codE"><code>rhymeNumber = 0
-            for A in section: 
-                for B in section[index of A onward]:
-                    if A rhymes with B: 
-                        Mark A with rhymeNumber
-                        Mark All instances of B with RhymeNumber
-                        RhymeNumber++
+            <pre class="good_codE"><code>    
+                rhymeNumberList = [-1] * Length of section
+                rhymeNumber = 0
+                for A in section: 
+                    for B in section[index of A onward]:
+                        if A rhymes with B: 
+                            Mark A with rhymeNumber
+                            Mark All instances of B with RhymeNumber
+                            rhymeNumbers[IndexOf(A)] = rhymeNumber
+                            RhymeNumber++
             </code></pre>
-            <p>We generate a list of RhymeNumbers with a 1-1 correspondence with the lyrics of a given song which is stored in our database. The Rhyme Number of a word is used to determine the color it is ascribed in on the YFM WebService.</p>
-            <!-- TODO: DEFINE RHYME NUMBER MORE CLEARLY -->
+            <p>A section's rhyme information is stored as a list of rhyme numbers: word A and word B rhyme if `RhymeList[IndexOf(A)] == RhymeList[IndexOf(B)]`, We use rhyme numbers to determine which color to ascribe to a set of words on the Rap Analyzer Web service.
             <h3 class="about_subtitles"  id="spotify-integration">Spotify Integration</h3>
             <p>In addition to viewing one song at a time by searching on the RPW Homepage, users can log in with their Spotify account to grant RPW access to their playlists and recently listened songs. Users can then select a playlist  or number of recently listened songs they wish to analyze. Highlighted Lyrics are presented to the user with a dropdown menu to switch between songs.</p>
             <h3 class="about_subtitles"  id="highlighting-lyrics">Highlighting Lyrics:</h3>
-            <p>A word's Rhyme Number is used to determine the color of its highlight: A word's rhyme number is mapped to an HSL hue value, a multiple of 10 ranging from 0 to 360. The luminance value of a rhyme given Rhyme Number alternates between a light and dark value to provide further differentiation between rhyme sets.</p>
-            <p>A rhyme number of -1 corresponds to no highlighting.</p>
+            <p>A word's Rhyme Number is used to determine the color of its highlight: Words with the same rhyme number rhyme with each other and are given the same highlight color. A word's rhyme number is mapped to an HSL hue value from 0 to 360. To obtain a set of diverse highlighting colors. Rhyme Numbers and are mapped to hue values as follows: 
+            <pre class="good_codE"><code>
+                Rhyme Number                             Hue
+                    [0,17]                [n * 10 for n in range(0,360) if n % 2 == 0]   (20,40,60,...360)         
+                    [18,36]               [n * 10 for n in range(0,360) if n % 2 != 0]   (10,30,50,...350)
+            
+            </code></pre>
+            The brightness value of a color alternates between a light and dark highlight to further differentiate sets of rhymes 
+            
+            A rhyme number of -1 corresponds to no highlighting.  
+            </p>
             <!-- TODO: DESCRIBE MORE CLEARLY HOW HIGHLIGHTING WORKS  -->
             <h3 class="about_subtitles"  id="hosting-lyrics-and-rhyming-information">Hosting Lyrics and rhyming information</h3>
             <p>Web-scraping lyrics using LyricsGenius proved too inefficient to rely on for realtime analysis of more than one song at a time. We opted to build a MongDB database of over 100 artists (most of which had 100-300 songs), their lyrics, and their rhyme information in the following format:</p>
-            <pre class="good_codE"><code>{Database: 
-                {'artist1' : [
-                            {'song1': &quot;songName&quot; , 'lyrics' : &quot;lyrics go here&quot;, 'rhyme' [[List of Rhyme Numbers]]}
-                            {'song2': &quot;songName&quot; , 'lyrics' : &quot;lyrics go here&quot;, 'rhyme' [[List of Rhyme Numbers]]}
-                            ]
-                }
-                {'artist2' : [
-                            {'song1': &quot;songName&quot; , 'lyrics' : &quot;lyrics go here&quot;, 'rhyme' [[List of Rhyme Numbers]]}
-                            {'song2': &quot;songName&quot; , 'lyrics' : &quot;lyrics go here&quot;, 'rhyme' [[List of Rhyme Numbers]]}
-                            ]
-                }
+            <pre class="good_codE"><code>
+                {
+                    Database: 
+                    {
+                        'artist1' : [
+                                {'song1': &quot;songName&quot; , 'lyrics' : &quot;lyrics go here&quot;, 'rhyme' [[List of Rhyme Numbers]]}
+                                {'song2': &quot;songName&quot; , 'lyrics' : &quot;lyrics go here&quot;, 'rhyme' [[List of Rhyme Numbers]]}
+                                ]
+                    }
+                    {
+                        'artist2' : [
+                                {'song1': &quot;songName&quot; , 'lyrics' : &quot;lyrics go here&quot;, 'rhyme' [[List of Rhyme Numbers]]}
+                                {'song2': &quot;songName&quot; , 'lyrics' : &quot;lyrics go here&quot;, 'rhyme' [[List of Rhyme Numbers]]}
+                                ]
+                    }
             }
             </code></pre>
             <p>Artist and song names were made lowercase and stripped of any special characters. ('.' replaced with '' and '$' replaced with 's' to conform to MongoDB restrictions)
@@ -146,9 +161,8 @@
             <li>
             <p>Improving Rhyme Detection <br>
                 <!-- TODO JUNO: Im actually gonna flesh this out dw -->
-            Put a lil' bit of AI and ML in there and this thing'll be flyin'! 👍
-            <!-- TODO ALEX ABDU: for the lulz heres le funny may may echsdeeeee -->
-            <img src="http://www.google.com/url?sa=i&amp;url=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FThumb_signal&amp;psig=AOvVaw3hEzRyc5f1LGUDsdRAoVvZ&amp;ust=1606194084787000&amp;source=images&amp;cd=vfe&amp;ved=0CAIQjRxqFwoTCLD_k7Hxl-0CFQAAAAAdAAAAABAD" alt=""></p>
+                There are many ways to improve our algorithm, including ignoring tense and plural word endings as rappers often coerce rhymes between present and past tense, or single and plural words. Furthermore, we could implement an algorithm that searches for common strings of vowels in words to detect multi-word rhyme schemes. Eventually, we want to apply Machine Learning models to rhyme detection to allow for the coverage of areas where our algorithm falls short. 
+            </p>
             </li>
             </ol>
         </div>

@@ -272,14 +272,15 @@ def artist_list(artist_list : list):
     for artist in artist_list:
         buildArtist(artist)
 
-def buildArtist(artist_name : str, typ='remote', max_songs=20):
+def buildArtist(artist_name : str, typ='remote', max_songs=20,remove_headers=False):
     '''
     Get all songs from the given artist.
     Then from the result we can build our database.
     TODO should make all artist names lower case before putting them to the DB
     or check if DB keys aren't case sensitive.
     '''
-    genius = lyricsgenius.Genius(GENIUS_ACCESS_TOKEN, retries=1000, skip_non_songs=True,excluded_terms=["Remix", "Live", "Remastered", "Cover", "Remaster", "Remix", "Listening Log", "Release Calendar"])
+    genius = lyricsgenius.Genius(GENIUS_ACCESS_TOKEN, retries=1000, skip_non_songs=True, remove_section_headers=remove_headers,
+    excluded_terms=["Remix", "Live", "Remastered", "Cover", "Remaster", "Remix", "Listening Log", "Release Calendar"])
     # Turn off status messages
     # genius.verbose = False
 
@@ -298,11 +299,14 @@ def buildArtist(artist_name : str, typ='remote', max_songs=20):
         print(f"Oops something happened getting {artist_name}... moving on...")
         return None
 
+    if artist is None:
+        return None
+
     artist_name = artist.name.replace('.', "").replace("$","s").lower()
 
     print(f"Saving Lyrics for {artist_name}")
     #IF SAVE GENIUS 
-    artist.save_lyrics(filename=f"{artist_name}_Lyricsjson",overwrite=True)
+    # tist.save_lyrics(filename=f"{artist_name}_Lyricsjson",overwrite=True)
 
     print(f"creating collection for {artist_name}")
     if artist_name not in db.list_collection_names():
@@ -321,17 +325,13 @@ def buildArtist(artist_name : str, typ='remote', max_songs=20):
             print(f"song {song} not found on spotify.. putting blank album")
         # pp(results)
         colors, marked = analyzeSong.parse_and_analyze_lyrics(cmd=False,lyrics=song.lyrics)
-        song_list.append( {"song" : song.title.replace('.', "").replace("$","s"), "lyrics" : song.lyrics, "album" : album, "colors" : colors, "marked" : marked})
+        song_list.append( {"song" : song.title.replace('.', "").replace("$","s"), "lyrics" : song.lyrics, "album" : album, "rhyme" : colors, "marked" : marked})
 
     if typ == 'remote': 
         db[artist_name].insert_many(song_list)
         db[artist_name].create_index([('song', pymongo.TEXT)], name='search_index', default_language='english')
     else:
-        json_out = {}
-        json_out['songs'] = song_list
-        print(f"Writing {[song['song'] for song in song_list]} to json")
-        with open(f"{artist_name}_analyzed.json",'w') as out:
-            json.dump(json_out,out)
+        return song_list
 
         #write song list to json {'artist' : artistname, songs : song_list}
     # db[artist.lower().replace('.', "").replace("$",'s')].insert_many(entry_list)
@@ -403,6 +403,8 @@ supplied MongoDB database \n \OR \n --local : places data in a .json file "
         return -1
 
     song_list = []
+    json_out = {"Database" : [] }
+
     with open(sys.argv[3], 'r') as f:
         artist_list = f.read().split('\n')
         if '' in artist_list:
@@ -411,7 +413,14 @@ supplied MongoDB database \n \OR \n --local : places data in a .json file "
 
         for artist in artist_list:
             print(f"getting songs for {artist}")
-            buildArtist(artist,typ=t,max_songs=int(sys.argv[2]))
+            song_list = buildArtist(artist,typ=t,max_songs=int(sys.argv[2]))
+
+            if (t == 'local') and (song_list != None):
+                json_out["Database"].append({artist : song_list})
+
+    if t == 'local':
+        with open(f"LyricsDatabase.json",'w') as out:
+            json.dump(json_out,out)
 
 
 if __name__ == "__main__":

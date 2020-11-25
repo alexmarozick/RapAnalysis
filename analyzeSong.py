@@ -277,27 +277,29 @@ def parse_and_analyze_lyrics(lyrics=None,cmd=False,args=None,genius=True) -> dic
         file = ""
         if args[1] == '-j':
             fp = open(args[2],'r')
-            artist = json.load(fp)
-            print(f"Loaded {len(artist['songs'])} songs by {artist['name']}")
-            print('Parsing...')
-            json_out['artist'] = artist['name']
-            json_out['songs'] = []
-            for song in artist['songs']:
-                parsed = parse_lyrics(song['lyrics'])
-                rhyme_num_list, marked_lyrics = analyze_lyrics(parse)
+            jp = json.load(fp)
+            db = jp['Database']
+            for artist in db:
+                print(f"Loaded {len(artist['songs'])} songs by {artist['name']}")
+                print('Parsing...')
+                json_out['artist'] = artist['name']
+                json_out['songs'] = []
+                for song in artist['songs']:
+                    parsed = parse_lyrics(song['lyrics'])
+                    rhyme_num_list, marked_lyrics = analyze_lyrics(parse)
 
-                json_out['songs'].append(
-                    {
-                    "song" : song['title'], 
-                    "album" : song['album']['name'],
-                    "lyrics" : song['lyrics'] , 
-                    "rhymenum" : rhyme_num_list 
-                    })
-            
-            fp.close()
-            out = open(f"{artist['name']}_analyzed.json",'w')
-            json.dump(json_out,out)
-            out.close()
+                    db[artist] = {
+                        "song" : song['song'], 
+                        "album" : song['album'],
+                        "lyrics" : song['lyrics'], 
+                        "rhyme" : rhyme_num_list,
+                        "marked" : marked_lyrics 
+                        }
+                
+                fp.close()
+                out = open(f"{artist['name']}_analyzed.json",'w')
+                json.dump(json_out,out)
+                out.close()
             return json_out
         elif args[1] == '-t':
             lyrics = open(args[2],'r').read()

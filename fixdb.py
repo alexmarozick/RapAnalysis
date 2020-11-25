@@ -1,3 +1,7 @@
+"""
+This is my personal Jyupiter Notebook I used for testing and curating my MongoDB database of lyrics
+"""
+
 #%%
 import config
 import json
