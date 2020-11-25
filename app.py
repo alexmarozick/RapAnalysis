@@ -388,10 +388,6 @@ def highlight_words(lyrics : str, colorlist : list):
     return highlighted
 
 
-@app.route('/unknown')
-def give_data(): 
-    return jsonify({})
-
 
 
 @app.errorhandler(404)

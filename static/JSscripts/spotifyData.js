@@ -6,6 +6,7 @@ $(document).ready(function(){
 function recent_plays(){
     $('#analyze-recent').unbind().click(function(){
         console.log("In recent")
+        $("#recent-loading").text("Analyzing recent plays please wait (It takes around 30 seconds for 100 songs).")
         $.getJSON('/_analyzeSpotify',{
             // everything here to sends data to flask and to access the data in flask you would do
             // request.args.get("<key>") where you replace <key> with the name of the key for example
@@ -17,6 +18,13 @@ function recent_plays(){
         function(data){ // TODO create a dropdown list.
             // result of what flask returns which is contained in data.
             // data will be a json 
+            if (data.result.length == 0){
+                $("#recent-loading").text("Could not find hiphop songs in recent plays.")
+                $( "#droplist-recent-songs").remove()
+                $( "#drop-recent-wrapper").remove()
+
+                return false
+            }
             var dropList = document.getElementById("droplist-recent-songs"); // get drop down menu wil return null if it doesn't exist yet.
             // console.log(dropList);
             // console.log(selector)
@@ -37,6 +45,7 @@ function recent_plays(){
                 $("#droplist-recent-songs").append($("<option>" + data.result[i].song + "</option>").data("highlight", data.result[i]));
             });
             document.getElementById("output-box").innerHTML = data.result[0].highlight; // set the output box to have the very first song's highlighting.
+            $("#recent-loading").text("Done analyzing recent plays!")
         });
     })
 
@@ -48,6 +57,7 @@ function playlist(){
     $('#playlistWidget').attr("src","https://open.spotify.com/embed/playlist/"+$('#droplistP').val());
     $('#analyze-playlist').unbind().click(function(){ // Note to self, use "off" instead of "unbind"
         // console.log("In playlist")
+        $("#playlist-loading").text("Playlist: " +  $('#droplistP option:selected').text() + " is getting analyzed please wait (It takes around 30 seconds for 100 songs).")
         $.getJSON('/_analyzeSpotify',{
             // everything here to sends data to flask and to access the data in flask you would do
             // request.args.get("<key>") where you replace <key> with the name of the key for example
@@ -59,10 +69,16 @@ function playlist(){
         function(data){
             // result of what flask returns which is contained in data.
             // data will be a json 
+            if (data.result.length == 0){
+                $("#playlist-loading").text("Could not find hiphop songs in that playlist.")
+                $("#droplist-playlist-songs").remove()
+                $("#drop-playlist-wrapper").remove()
+                return false
+            }
             var dropList = document.getElementById("droplist-playlist-songs"); // get drop down menu wil return null if it doesn't exist yet.
             // console.log(dropList);
             // console.log(selector)
-            // console.log(data.result.length)
+            console.log(data.result.length)
             // console.log(data.result)
             
             if(dropList == null){ // if the drop list does not exist then create the drop list
@@ -79,6 +95,7 @@ function playlist(){
                 $("#droplist-playlist-songs").append($("<option>" + data.result[i].song + "</option>").data("highlight", data.result[i]));
             });
             document.getElementById("output-box").innerHTML = data.result[0].highlight; // set the output box to have the very first song's highlighting.
+            $("#playlist-loading").text("Done analzying " + $('#droplistP option:selected').text() +"!")
         });
         return false;
     })
