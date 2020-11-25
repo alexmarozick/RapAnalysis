@@ -312,8 +312,8 @@ def parse_and_analyze_lyrics(lyrics=None,cmd=False,args=None,genius=True) -> dic
                     {"filename" : args[2], 
                     "lyrics": lyrics, 
                     "marked" : marked_lyrics, 
-                    "rhymenum" : rhyme_num_list}, fp)
-        
+                    "rhyme" : rhyme_num_list}, fp)
+            print(marked_lyrics)
             return rhyme_num_list, marked_lyrics
 
         else:
