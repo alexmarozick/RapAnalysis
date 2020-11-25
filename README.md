@@ -1,31 +1,16 @@
 # RapAnalysis
 
-## About
-Rap Analyzer visualizes the way that a rapper rhymes in a given song by color coding groups of words that rhyme. Simply search a song on the homepage or log in with Spotify to analyze your favorite Hip-Hop playlist and recently listened songs. Your searches query our custom database of analyzed lyrics of over 100 artists. Want to contribute to the project? [Check out our Wiki for installation and usage instructions](https://github.com/alexmarozick/RapAnalysis/wiki)
+## Installation and Usage Documentation
+Want to contribute to the project? [Check out our Wiki for installation and usage instructions](https://github.com/alexmarozick/RapAnalysis/wiki)
 
-Noteable examples: 
-    
-    Clout Cobain by Denzel Curry
-    
-    Sirens by Denzel Curry
-    
-    Tragedy by RZA
-    
-    DNA by Kendrik Lamar
-    
-    Stan by Eminem
-    
-    Gin and Juice by Snoop Dogg
-    
-    I Think by Tyler The Creator
-    
 Example Playlist for Testing our Spotify Integration:
 
     https://open.spotify.com/playlist/5SiGw4acTtJWGeAEZjsZHY?si=xr3wHmaSQnKhLPCF-CDRJQ
+    https://open.spotify.com/playlist/5TZkls9cEOzWDR6qCxwDot?si=TT1T9favTGynYp0w7qUvIg
 
-Lyrics are captured one verse or chorus at a time, allowing Rap Analyzer to consider both internal and end rhymes while eliminating false positives occurring throughout a verse no matter their position within a given line.
-
-
+## About
+Rap Analyzer visualizes the way that a rapper rhymes in a given song by color coding groups of words that rhyme. Simply search a song on the homepage or log in with Spotify to analyze your favorite Hip-Hop playlist and recently listened songs. Your searches query our custom database of analyzed lyrics of over 100 artists. 
+   
 ## Approach 
 
 ### Obtaining Lyrics
@@ -98,8 +83,6 @@ Web-scraping lyrics using LyricsGenius proved too inefficient to rely on for rea
 
 Artist and song names were made lowercase and stripped of any special characters. ('.' replaced with '' and '$' replaced with 's' to conform to MongoDB restrictions)
 MongoDB's Text indexing to allows users to search our database in a case-insensitive manner.
-
-
 
 
 ### Next Steps 
