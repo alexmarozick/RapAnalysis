@@ -152,25 +152,26 @@ def analyzeSpotify():
     # loop through all the queries returned from getsongdata
     for i, query in enumerate(songdata): 
         # Set skip to be true for init
-        skip = True 
-        # strip some characters from the song name that was gotten from the playlist
-        songnameP = ((songnames[i].lower()).strip(" ")).replace(".",'') 
-        # loop through the results of one query
-        for songDict in query:
-            # strip some characters from the song name that was gotten from the query
-            #print(f'Song name from playlist{songnameP}') # for debugging 
-            songnameDB = ((songDict['song'].lower()).strip(" ")).replace(".",'') 
-            #print(f'Song name from Data Base{songnameDB}') # for debugging
-            # check if the song name from the play list is a sub string of the one gotten from the database, 
-            # NOTE this check might need to be modified.
-            if songnameP in songnameDB: 
-                skip = False            # if so then do not skip 
-            if not skip:
-                # call functions
-                lyrics, colors = parse_songdata2(songDict)
-                highlighted = highlight_words(lyrics,colors)
-                songs.append({'song' : songnames[i], 'index' : i, 'highlight' : highlighted})
-                break
+        if query is not "NoArtist":
+            skip = True 
+            # strip some characters from the song name that was gotten from the playlist
+            songnameP = ((songnames[i].lower()).strip(" ")).replace(".",'') 
+            # loop through the results of one query
+            for songDict in query:
+                # strip some characters from the song name that was gotten from the query
+                #print(f'Song name from playlist{songnameP}') # for debugging 
+                songnameDB = ((songDict['song'].lower()).strip(" ")).replace(".",'') 
+                #print(f'Song name from Data Base{songnameDB}') # for debugging
+                # check if the song name from the play list is a sub string of the one gotten from the database, 
+                # NOTE this check might need to be modified.
+                if songnameP in songnameDB: 
+                    skip = False            # if so then do not skip 
+                if not skip:
+                    # call functions
+                    lyrics, colors = parse_songdata2(songDict)
+                    highlighted = highlight_words(lyrics,colors)
+                    songs.append({'song' : songnames[i], 'index' : i, 'highlight' : highlighted})
+                    break
     return jsonify(result=songs)
 
 def parse_songdata2(songdata : dict) -> (list, list):
