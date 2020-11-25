@@ -1,5 +1,6 @@
 """
-This is my personal Jyupiter Notebook I used for testing and curating my MongoDB database of lyrics
+This is my personal Jupyter Notebook I used for testing and curating my MongoDB database of lyrics
+Cells are separated by #%% Character, I used this notebook in VSCode's Jupyter notebook extension
 """
 
 #%%

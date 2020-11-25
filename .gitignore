@@ -23,5 +23,4 @@ env.bak/
 venv.bak/
 config.ini
 DBproducts/*
-Test_lyrics/*
 makerapperslist.py
