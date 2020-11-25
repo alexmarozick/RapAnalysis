@@ -86,7 +86,9 @@ def getsongdata(songdict :list) -> list:
     dbArtists = db.list_collection_names()
     res = []
     query_result = []
+    #for each song
     for item in songdict:
+        #case of multiple artists per song 
         if type(item['artist']) == list: # NOTE the way I am doing these checks could probably be done better also something else to consider is what if no artist is given - Abduarraheem
             for a in item['artist']:
                 artist = a.lower().replace("$","s").replace(".", "")
@@ -100,14 +102,17 @@ def getsongdata(songdict :list) -> list:
                     # has the song we are looking for we would need to go 
                     # to the next artist in the list to check if the artist has the song given.
                     break  
+        #case of one artist per song 
         else:
             artist = item['artist'].lower().replace("$","s").replace(".", "")
             if artist in dbArtists:
                 query_result = db[artist].find({"$text" :{"$search" : item['song'], "$caseSensitive" : False}}) 
 
         if query_result == []:
-            print(f"Error Artist {artist} not in the Data Base") 
-            return "NoArtist"
+            print(f"Error Artist {artist} not in the Data Base")
+            continue
+            # res.append("NoArtist")
+
 
         try:
             docs = [doc for doc in query_result]
@@ -145,14 +150,14 @@ def analyzeSpotify():
         songs_artists = spotifyData.get_recent_plays(spotify, recent_num)
         songdata = getsongdata(songs_artists)
     songs = []
-    #print(songdata)
+    
 
     # get all song names from teh playlist
-    songnames = [songname['song'] for songname in songs_artists] 
+    songnames = [songname['song'] for songname in songs_artists]
     # loop through all the queries returned from getsongdata
     for i, query in enumerate(songdata): 
         # Set skip to be true for init
-        if query is not "NoArtist":
+        if query is not []:
             skip = True 
             # strip some characters from the song name that was gotten from the playlist
             songnameP = ((songnames[i].lower()).strip(" ")).replace(".",'') 
@@ -172,6 +177,9 @@ def analyzeSpotify():
                     highlighted = highlight_words(lyrics,colors)
                     songs.append({'song' : songnames[i], 'index' : i, 'highlight' : highlighted})
                     break
+        else: 
+            print(f"Missing Artist {songnames[i]}")
+            
     return jsonify(result=songs)
 
 def parse_songdata2(songdata : dict) -> (list, list):
@@ -242,7 +250,7 @@ def spotify_login():
         spotify = spotipy.Spotify(auth_manager=sp_oauth)
         display = "User: " + spotify.me()["display_name"] + " (Sign Out)"
         spotify_data = spotifyData.spotify_data(spotify)
-        pp(spotify_data)
+        # pp(spotify_data)
         return render_template("spotify.html", display=display, playlists=spotify_data["playlists"])
     return render_template("spotify_login.html", display=display)
 
@@ -307,9 +315,9 @@ def get_input():
     # pass in a dictionary to display and highlight in form {"song": song_name, "artist" : artist_name}
 
     songdata = getsongdata([{'song': song_name, 'artist': artist_name}])
-    if songdata == "NoArtist":
+    if songdata == []:
         return jsonify(result=f"Could not find artist {artist_name} in Database")
-    elif songdata == [[]] or songdata == []:
+    elif songdata == [[]]:
         return jsonify(result="Found the Artist, but not the song! Check your spelling")
     
     # app.logger.debug(f"Result from query: \n {songdata}")
@@ -336,7 +344,7 @@ def highlight_words(lyrics : str, colorlist : list):
     Applies a list of colors to a list of lyrics 
     """
     possible_hues = [i for i in range(0,370) if i % 10 == 0]
-    print(lyrics)
+    #print(lyrics)
     highlighted = ""
     coloritr = 0
     skip = False

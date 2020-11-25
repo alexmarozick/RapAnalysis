@@ -80,7 +80,7 @@ def get_playlists(spotify) -> dict:
         "playlist1-id" : "playlist1-name", "playlist2-id" : "playlist2-name",... 
     }
     '''
-    print("Get playlists")
+    # print("Get playlists")
     playlists = spotify.current_user_playlists() # spotify api call that gives at max 50 playlists
     playlists_dict = {}    
     while playlists:
@@ -170,7 +170,7 @@ def get_songs_from_playlist(spotify, playlist_id) -> list:
     # pp(track_list)
     # print(len(song_artist))
     # print(len(track_list))
-    pp(songs_artists)
+    #pp(songs_artists)
     return songs_artists
 
 
@@ -272,7 +272,7 @@ def get_recent_plays(spotify, num_songs=10):
         else:
             recent_plays = None
     # print(songCounter)
-    pp(songs_artists)
+    #pp(songs_artists)
     # pp(list(set(songs_artists)))
     # print('in recent')
     return songs_artists
