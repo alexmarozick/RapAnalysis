@@ -95,7 +95,7 @@ function playlist(){
                 $("#droplist-playlist-songs").append($("<option>" + data.result[i].song + "</option>").data("highlight", data.result[i]));
             });
             document.getElementById("output-box").innerHTML = data.result[0].highlight; // set the output box to have the very first song's highlighting.
-            $("#playlist-loading").text("Done analzying " + $('#droplistP option:selected').text() +"!")
+            $("#playlist-loading").text("Done analyzing " + $('#droplistP option:selected').text() +"!")
         });
         return false;
     })
